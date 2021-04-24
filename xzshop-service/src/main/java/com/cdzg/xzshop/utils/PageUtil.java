@@ -1,0 +1,31 @@
+package com.cdzg.xzshop.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * describe: 分页工具类
+ *
+ * @author yt
+ * @date 2018/11/9
+ */
+public class PageUtil {
+    public static List pageForList(List dataList, int start, int limit) {
+        //当为第一页时
+        if(start == 0  && dataList.size() - 1 < start + limit){
+            return dataList;
+        }
+        //当为后面页数时
+        //如果总数小于要分页的数量 或者起始位置大于总数返回空
+        if (start != 0  && dataList.size() - 1 < start) {
+            return new ArrayList();
+        }
+
+        if(start != 0  &&(dataList.size() - 1 < start + limit && start <= dataList.size() - 1)){
+            return dataList.subList(start,dataList.size());
+        }
+        return dataList.subList(start, start + limit);
+    }
+
+
+}
