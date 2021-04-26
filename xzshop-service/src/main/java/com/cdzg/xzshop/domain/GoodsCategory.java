@@ -10,7 +10,7 @@ import lombok.Data;
 /**
  * 商品分类表
  */
-@ApiModel(value = "com-cdzg-xzshop-domain-GoodsCategory")
+@ApiModel(value = "商品分类表")
 @Data
 @Builder
 public class GoodsCategory implements Serializable {
