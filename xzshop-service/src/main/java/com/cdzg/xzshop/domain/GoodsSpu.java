@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.domain;
 
+import com.cdzg.xzshop.constant.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -74,7 +75,7 @@ public class GoodsSpu implements Serializable {
      * 支付方式:1:积分换购 2:线上支付
      */
     @ApiModelProperty(value = "支付方式:1:积分换购 2:线上支付")
-    private Byte paymentMethod;
+    private PaymentType paymentMethod;
 
     /**
      * 商家id
