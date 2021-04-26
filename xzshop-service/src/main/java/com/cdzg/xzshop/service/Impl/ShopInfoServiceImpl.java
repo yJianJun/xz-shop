@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service.Impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
@@ -8,7 +9,7 @@ import com.cdzg.xzshop.mapper.ShopInfoMapper;
 import com.cdzg.xzshop.service.ShopInfoService;
 
 @Service
-public class ShopInfoServiceImpl implements ShopInfoService {
+public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> implements ShopInfoService {
 
     @Resource
     private ShopInfoMapper shopInfoMapper;

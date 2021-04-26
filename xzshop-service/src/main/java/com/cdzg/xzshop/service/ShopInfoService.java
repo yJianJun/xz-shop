@@ -1,9 +1,11 @@
 package com.cdzg.xzshop.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cdzg.xzshop.domain.ShopInfo;
 
-public interface ShopInfoService {
+public interface ShopInfoService extends IService<ShopInfo> {
 
 
     int deleteByPrimaryKey(Long id);
