@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdzg.xzshop.mapper.ShopInfoMapper">
+  <resultMap id="BaseResultMap" type="com.cdzg.xzshop.domain.ShopInfo">
+    <!--@mbg.generated-->
+    <!--@Table shop_info-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="shop_name" jdbcType="VARCHAR" property="shopName" />
+    <result column="union" jdbcType="VARCHAR" property="union" />
+    <result column="department" jdbcType="VARCHAR" property="department" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="log" jdbcType="VARCHAR" property="log" />
+    <result column="category_id_level2" jdbcType="BIGINT" property="categoryIdLevel2" />
+    <result column="category_id_level1" jdbcType="BIGINT" property="categoryIdLevel1" />
+    <result column="gmt_put_on_the_shelf" jdbcType="TIMESTAMP" property="gmtPutOnTheShelf" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    <result column="contact_person" jdbcType="VARCHAR" property="contactPerson" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="fare" jdbcType="DECIMAL" property="fare" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, shop_name, `union`, department, phone, log, category_id_level2, category_id_level1, 
+    gmt_put_on_the_shelf, gmt_create, gmt_update, contact_person, `status`, create_user, 
+    fare
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from shop_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from shop_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ShopInfo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into shop_info (shop_name, `union`, department, 
+      phone, log, category_id_level2, 
+      category_id_level1, gmt_put_on_the_shelf, gmt_create, 
+      gmt_update, contact_person, `status`, 
+      create_user, fare)
+    values (#{shopName,jdbcType=VARCHAR}, #{union,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{log,jdbcType=VARCHAR}, #{categoryIdLevel2,jdbcType=BIGINT}, 
+      #{categoryIdLevel1,jdbcType=BIGINT}, #{gmtPutOnTheShelf,jdbcType=TIMESTAMP}, #{gmtCreate,jdbcType=TIMESTAMP}, 
+      #{gmtUpdate,jdbcType=TIMESTAMP}, #{contactPerson,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{createUser,jdbcType=VARCHAR}, #{fare,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ShopInfo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into shop_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="shopName != null">
+        shop_name,
+      </if>
+      <if test="union != null">
+        `union`,
+      </if>
+      <if test="department != null">
+        department,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="log != null">
+        log,
+      </if>
+      <if test="categoryIdLevel2 != null">
+        category_id_level2,
+      </if>
+      <if test="categoryIdLevel1 != null">
+        category_id_level1,
+      </if>
+      <if test="gmtPutOnTheShelf != null">
+        gmt_put_on_the_shelf,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update,
+      </if>
+      <if test="contactPerson != null">
+        contact_person,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="fare != null">
+        fare,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="shopName != null">
+        #{shopName,jdbcType=VARCHAR},
+      </if>
+      <if test="union != null">
+        #{union,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null">
+        #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="log != null">
+        #{log,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryIdLevel2 != null">
+        #{categoryIdLevel2,jdbcType=BIGINT},
+      </if>
+      <if test="categoryIdLevel1 != null">
+        #{categoryIdLevel1,jdbcType=BIGINT},
+      </if>
+      <if test="gmtPutOnTheShelf != null">
+        #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contactPerson != null">
+        #{contactPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="fare != null">
+        #{fare,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cdzg.xzshop.domain.ShopInfo">
+    <!--@mbg.generated-->
+    update shop_info
+    <set>
+      <if test="shopName != null">
+        shop_name = #{shopName,jdbcType=VARCHAR},
+      </if>
+      <if test="union != null">
+        `union` = #{union,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null">
+        department = #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="log != null">
+        log = #{log,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryIdLevel2 != null">
+        category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
+      </if>
+      <if test="categoryIdLevel1 != null">
+        category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
+      </if>
+      <if test="gmtPutOnTheShelf != null">
+        gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contactPerson != null">
+        contact_person = #{contactPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="fare != null">
+        fare = #{fare,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cdzg.xzshop.domain.ShopInfo">
+    <!--@mbg.generated-->
+    update shop_info
+    set shop_name = #{shopName,jdbcType=VARCHAR},
+      `union` = #{union,jdbcType=VARCHAR},
+      department = #{department,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      log = #{log,jdbcType=VARCHAR},
+      category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
+      category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
+      gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      contact_person = #{contactPerson,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=TINYINT},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      fare = #{fare,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update shop_info
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="shop_name = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.shopName,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`union` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.union,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="department = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.department,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="phone = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.phone,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="log = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.log,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="category_id_level2 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.categoryIdLevel2,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="category_id_level1 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.categoryIdLevel1,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="gmt_put_on_the_shelf = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="gmt_create = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.gmtCreate,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="gmt_update = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.gmtUpdate,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="contact_person = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.contactPerson,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="create_user = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createUser,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="fare = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.fare,jdbcType=DECIMAL}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update shop_info
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="shop_name = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.shopName != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.shopName,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`union` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.union != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.union,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="department = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.department != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.department,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="phone = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.phone != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.phone,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="log = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.log != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.log,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="category_id_level2 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.categoryIdLevel2 != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.categoryIdLevel2,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="category_id_level1 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.categoryIdLevel1 != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.categoryIdLevel1,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="gmt_put_on_the_shelf = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.gmtPutOnTheShelf != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="gmt_create = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.gmtCreate != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.gmtCreate,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="gmt_update = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.gmtUpdate != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.gmtUpdate,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="contact_person = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.contactPerson != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.contactPerson,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.status != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=TINYINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="create_user = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createUser != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.createUser,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="fare = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.fare != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.fare,jdbcType=DECIMAL}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into shop_info
+    (shop_name, `union`, department, phone, log, category_id_level2, category_id_level1, 
+      gmt_put_on_the_shelf, gmt_create, gmt_update, contact_person, `status`, create_user, 
+      fare)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.shopName,jdbcType=VARCHAR}, #{item.union,jdbcType=VARCHAR}, #{item.department,jdbcType=VARCHAR}, 
+        #{item.phone,jdbcType=VARCHAR}, #{item.log,jdbcType=VARCHAR}, #{item.categoryIdLevel2,jdbcType=BIGINT}, 
+        #{item.categoryIdLevel1,jdbcType=BIGINT}, #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}, 
+        #{item.gmtCreate,jdbcType=TIMESTAMP}, #{item.gmtUpdate,jdbcType=TIMESTAMP}, #{item.contactPerson,jdbcType=VARCHAR}, 
+        #{item.status,jdbcType=TINYINT}, #{item.createUser,jdbcType=VARCHAR}, #{item.fare,jdbcType=DECIMAL}
+        )
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ShopInfo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into shop_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      shop_name,
+      `union`,
+      department,
+      phone,
+      log,
+      category_id_level2,
+      category_id_level1,
+      gmt_put_on_the_shelf,
+      gmt_create,
+      gmt_update,
+      contact_person,
+      `status`,
+      create_user,
+      fare,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{shopName,jdbcType=VARCHAR},
+      #{union,jdbcType=VARCHAR},
+      #{department,jdbcType=VARCHAR},
+      #{phone,jdbcType=VARCHAR},
+      #{log,jdbcType=VARCHAR},
+      #{categoryIdLevel2,jdbcType=BIGINT},
+      #{categoryIdLevel1,jdbcType=BIGINT},
+      #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
+      #{gmtCreate,jdbcType=TIMESTAMP},
+      #{gmtUpdate,jdbcType=TIMESTAMP},
+      #{contactPerson,jdbcType=VARCHAR},
+      #{status,jdbcType=TINYINT},
+      #{createUser,jdbcType=VARCHAR},
+      #{fare,jdbcType=DECIMAL},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      shop_name = #{shopName,jdbcType=VARCHAR},
+      `union` = #{union,jdbcType=VARCHAR},
+      department = #{department,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      log = #{log,jdbcType=VARCHAR},
+      category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
+      category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
+      gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      contact_person = #{contactPerson,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=TINYINT},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      fare = #{fare,jdbcType=DECIMAL},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ShopInfo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into shop_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shopName != null">
+        shop_name,
+      </if>
+      <if test="union != null">
+        `union`,
+      </if>
+      <if test="department != null">
+        department,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="log != null">
+        log,
+      </if>
+      <if test="categoryIdLevel2 != null">
+        category_id_level2,
+      </if>
+      <if test="categoryIdLevel1 != null">
+        category_id_level1,
+      </if>
+      <if test="gmtPutOnTheShelf != null">
+        gmt_put_on_the_shelf,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update,
+      </if>
+      <if test="contactPerson != null">
+        contact_person,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="fare != null">
+        fare,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="shopName != null">
+        #{shopName,jdbcType=VARCHAR},
+      </if>
+      <if test="union != null">
+        #{union,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null">
+        #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="log != null">
+        #{log,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryIdLevel2 != null">
+        #{categoryIdLevel2,jdbcType=BIGINT},
+      </if>
+      <if test="categoryIdLevel1 != null">
+        #{categoryIdLevel1,jdbcType=BIGINT},
+      </if>
+      <if test="gmtPutOnTheShelf != null">
+        #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contactPerson != null">
+        #{contactPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="fare != null">
+        #{fare,jdbcType=DECIMAL},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="shopName != null">
+        shop_name = #{shopName,jdbcType=VARCHAR},
+      </if>
+      <if test="union != null">
+        `union` = #{union,jdbcType=VARCHAR},
+      </if>
+      <if test="department != null">
+        department = #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="log != null">
+        log = #{log,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryIdLevel2 != null">
+        category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
+      </if>
+      <if test="categoryIdLevel1 != null">
+        category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
+      </if>
+      <if test="gmtPutOnTheShelf != null">
+        gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contactPerson != null">
+        contact_person = #{contactPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="fare != null">
+        fare = #{fare,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+</mapper>
