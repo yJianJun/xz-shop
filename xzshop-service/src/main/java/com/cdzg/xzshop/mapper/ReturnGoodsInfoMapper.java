@@ -1,15 +1,14 @@
 package com.cdzg.xzshop.mapper;
 
-import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface ShopInfoMapper {
+public interface ReturnGoodsInfoMapper {
     /**
      * delete by primary key
-     *
      * @param id primaryKey
      * @return deleteCount
      */
@@ -17,51 +16,46 @@ public interface ShopInfoMapper {
 
     /**
      * insert record to table
-     *
      * @param record the record
      * @return insert count
      */
-    int insert(ShopInfo record);
+    int insert(ReturnGoodsInfo record);
 
-    int insertOrUpdate(ShopInfo record);
+    int insertOrUpdate(ReturnGoodsInfo record);
 
-    int insertOrUpdateSelective(ShopInfo record);
+    int insertOrUpdateSelective(ReturnGoodsInfo record);
 
     /**
      * insert record to table selective
-     *
      * @param record the record
      * @return insert count
      */
-    int insertSelective(ShopInfo record);
+    int insertSelective(ReturnGoodsInfo record);
 
     /**
      * select by primary key
-     *
      * @param id primary key
      * @return object by primary key
      */
-    ShopInfo selectByPrimaryKey(Long id);
+    ReturnGoodsInfo selectByPrimaryKey(Long id);
 
     /**
      * update record selective
-     *
      * @param record the updated record
      * @return update count
      */
-    int updateByPrimaryKeySelective(ShopInfo record);
+    int updateByPrimaryKeySelective(ReturnGoodsInfo record);
 
     /**
      * update record
-     *
      * @param record the updated record
      * @return update count
      */
-    int updateByPrimaryKey(ShopInfo record);
+    int updateByPrimaryKey(ReturnGoodsInfo record);
 
-    int updateBatch(List<ShopInfo> list);
+    int updateBatch(List<ReturnGoodsInfo> list);
 
-    int updateBatchSelective(List<ShopInfo> list);
+    int updateBatchSelective(List<ReturnGoodsInfo> list);
 
-    int batchInsert(@Param("list") List<ShopInfo> list);
+    int batchInsert(@Param("list") List<ReturnGoodsInfo> list);
 }

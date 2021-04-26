@@ -2,7 +2,8 @@ package com.cdzg.xzshop.service;
 
 import java.util.List;
 import com.cdzg.xzshop.domain.ShopInfo;
-public interface ShopInfoService{
+
+public interface ShopInfoService {
 
 
     int deleteByPrimaryKey(Long id);
@@ -28,3 +29,4 @@ public interface ShopInfoService{
     int batchInsert(List<ShopInfo> list);
 
 }
+

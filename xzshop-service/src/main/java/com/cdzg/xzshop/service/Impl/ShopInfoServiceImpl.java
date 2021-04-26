@@ -6,8 +6,9 @@ import java.util.List;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.mapper.ShopInfoMapper;
 import com.cdzg.xzshop.service.ShopInfoService;
+
 @Service
-public class ShopInfoServiceImpl implements ShopInfoService{
+public class ShopInfoServiceImpl implements ShopInfoService {
 
     @Resource
     private ShopInfoMapper shopInfoMapper;
@@ -68,3 +69,4 @@ public class ShopInfoServiceImpl implements ShopInfoService{
     }
 
 }
+

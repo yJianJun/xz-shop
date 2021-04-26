@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper">
+  <resultMap id="BaseResultMap" type="com.cdzg.xzshop.domain.ReceivePaymentInfo">
+    <!--@mbg.generated-->
+    <!--@Table receive_payment_info-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="shop_id" jdbcType="BIGINT" property="shopId" />
+    <result column="appid" jdbcType="VARCHAR" property="appid" />
+    <result column="mchid" jdbcType="VARCHAR" property="mchid" />
+    <result column="notify_url" jdbcType="VARCHAR" property="notifyUrl" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="key_path" jdbcType="VARCHAR" property="keyPath" />
+    <result column="private_key" jdbcType="LONGVARCHAR" property="privateKey" />
+    <result column="signtype" jdbcType="VARCHAR" property="signtype" />
+    <result column="public_key" jdbcType="LONGVARCHAR" property="publicKey" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, shop_id, appid, mchid, notify_url, `type`, key_path, private_key, signtype, public_key
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from receive_payment_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from receive_payment_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ReceivePaymentInfo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into receive_payment_info (shop_id, appid, mchid, 
+      notify_url, `type`, key_path, 
+      private_key, signtype, public_key
+      )
+    values (#{shopId,jdbcType=BIGINT}, #{appid,jdbcType=VARCHAR}, #{mchid,jdbcType=VARCHAR}, 
+      #{notifyUrl,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{keyPath,jdbcType=VARCHAR}, 
+      #{privateKey,jdbcType=LONGVARCHAR}, #{signtype,jdbcType=VARCHAR}, #{publicKey,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ReceivePaymentInfo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into receive_payment_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="shopId != null">
+        shop_id,
+      </if>
+      <if test="appid != null">
+        appid,
+      </if>
+      <if test="mchid != null">
+        mchid,
+      </if>
+      <if test="notifyUrl != null">
+        notify_url,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="keyPath != null">
+        key_path,
+      </if>
+      <if test="privateKey != null">
+        private_key,
+      </if>
+      <if test="signtype != null">
+        signtype,
+      </if>
+      <if test="publicKey != null">
+        public_key,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="shopId != null">
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="appid != null">
+        #{appid,jdbcType=VARCHAR},
+      </if>
+      <if test="mchid != null">
+        #{mchid,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUrl != null">
+        #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="keyPath != null">
+        #{keyPath,jdbcType=VARCHAR},
+      </if>
+      <if test="privateKey != null">
+        #{privateKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="signtype != null">
+        #{signtype,jdbcType=VARCHAR},
+      </if>
+      <if test="publicKey != null">
+        #{publicKey,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cdzg.xzshop.domain.ReceivePaymentInfo">
+    <!--@mbg.generated-->
+    update receive_payment_info
+    <set>
+      <if test="shopId != null">
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="appid != null">
+        appid = #{appid,jdbcType=VARCHAR},
+      </if>
+      <if test="mchid != null">
+        mchid = #{mchid,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUrl != null">
+        notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="keyPath != null">
+        key_path = #{keyPath,jdbcType=VARCHAR},
+      </if>
+      <if test="privateKey != null">
+        private_key = #{privateKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="signtype != null">
+        signtype = #{signtype,jdbcType=VARCHAR},
+      </if>
+      <if test="publicKey != null">
+        public_key = #{publicKey,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cdzg.xzshop.domain.ReceivePaymentInfo">
+    <!--@mbg.generated-->
+    update receive_payment_info
+    set shop_id = #{shopId,jdbcType=BIGINT},
+      appid = #{appid,jdbcType=VARCHAR},
+      mchid = #{mchid,jdbcType=VARCHAR},
+      notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=INTEGER},
+      key_path = #{keyPath,jdbcType=VARCHAR},
+      private_key = #{privateKey,jdbcType=LONGVARCHAR},
+      signtype = #{signtype,jdbcType=VARCHAR},
+      public_key = #{publicKey,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update receive_payment_info
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="shop_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.shopId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="appid = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.appid,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="mchid = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.mchid,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="notify_url = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.notifyUrl,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`type` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.type,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="key_path = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.keyPath,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="private_key = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.privateKey,jdbcType=LONGVARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="signtype = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.signtype,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="public_key = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.publicKey,jdbcType=LONGVARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update receive_payment_info
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="shop_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.shopId != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.shopId,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="appid = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.appid != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.appid,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="mchid = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.mchid != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.mchid,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="notify_url = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.notifyUrl != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.notifyUrl,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`type` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.type != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.type,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="key_path = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.keyPath != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.keyPath,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="private_key = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.privateKey != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.privateKey,jdbcType=LONGVARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="signtype = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.signtype != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.signtype,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="public_key = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.publicKey != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.publicKey,jdbcType=LONGVARCHAR}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into receive_payment_info
+    (shop_id, appid, mchid, notify_url, `type`, key_path, private_key, signtype, public_key
+      )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.shopId,jdbcType=BIGINT}, #{item.appid,jdbcType=VARCHAR}, #{item.mchid,jdbcType=VARCHAR}, 
+        #{item.notifyUrl,jdbcType=VARCHAR}, #{item.type,jdbcType=INTEGER}, #{item.keyPath,jdbcType=VARCHAR}, 
+        #{item.privateKey,jdbcType=LONGVARCHAR}, #{item.signtype,jdbcType=VARCHAR}, #{item.publicKey,jdbcType=LONGVARCHAR}
+        )
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ReceivePaymentInfo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into receive_payment_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      shop_id,
+      appid,
+      mchid,
+      notify_url,
+      `type`,
+      key_path,
+      private_key,
+      signtype,
+      public_key,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{shopId,jdbcType=BIGINT},
+      #{appid,jdbcType=VARCHAR},
+      #{mchid,jdbcType=VARCHAR},
+      #{notifyUrl,jdbcType=VARCHAR},
+      #{type,jdbcType=INTEGER},
+      #{keyPath,jdbcType=VARCHAR},
+      #{privateKey,jdbcType=LONGVARCHAR},
+      #{signtype,jdbcType=VARCHAR},
+      #{publicKey,jdbcType=LONGVARCHAR},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      shop_id = #{shopId,jdbcType=BIGINT},
+      appid = #{appid,jdbcType=VARCHAR},
+      mchid = #{mchid,jdbcType=VARCHAR},
+      notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=INTEGER},
+      key_path = #{keyPath,jdbcType=VARCHAR},
+      private_key = #{privateKey,jdbcType=LONGVARCHAR},
+      signtype = #{signtype,jdbcType=VARCHAR},
+      public_key = #{publicKey,jdbcType=LONGVARCHAR},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ReceivePaymentInfo" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into receive_payment_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shopId != null">
+        shop_id,
+      </if>
+      <if test="appid != null">
+        appid,
+      </if>
+      <if test="mchid != null">
+        mchid,
+      </if>
+      <if test="notifyUrl != null">
+        notify_url,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="keyPath != null">
+        key_path,
+      </if>
+      <if test="privateKey != null">
+        private_key,
+      </if>
+      <if test="signtype != null">
+        signtype,
+      </if>
+      <if test="publicKey != null">
+        public_key,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null">
+        #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="appid != null">
+        #{appid,jdbcType=VARCHAR},
+      </if>
+      <if test="mchid != null">
+        #{mchid,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUrl != null">
+        #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="keyPath != null">
+        #{keyPath,jdbcType=VARCHAR},
+      </if>
+      <if test="privateKey != null">
+        #{privateKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="signtype != null">
+        #{signtype,jdbcType=VARCHAR},
+      </if>
+      <if test="publicKey != null">
+        #{publicKey,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="shopId != null">
+        shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="appid != null">
+        appid = #{appid,jdbcType=VARCHAR},
+      </if>
+      <if test="mchid != null">
+        mchid = #{mchid,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUrl != null">
+        notify_url = #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="keyPath != null">
+        key_path = #{keyPath,jdbcType=VARCHAR},
+      </if>
+      <if test="privateKey != null">
+        private_key = #{privateKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="signtype != null">
+        signtype = #{signtype,jdbcType=VARCHAR},
+      </if>
+      <if test="publicKey != null">
+        public_key = #{publicKey,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

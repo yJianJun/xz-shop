@@ -9,7 +9,7 @@
     <result column="union" jdbcType="VARCHAR" property="union" />
     <result column="department" jdbcType="VARCHAR" property="department" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="log" jdbcType="VARCHAR" property="log" />
+    <result column="logo" jdbcType="VARCHAR" property="logo" />
     <result column="category_id_level2" jdbcType="BIGINT" property="categoryIdLevel2" />
     <result column="category_id_level1" jdbcType="BIGINT" property="categoryIdLevel1" />
     <result column="gmt_put_on_the_shelf" jdbcType="TIMESTAMP" property="gmtPutOnTheShelf" />
@@ -22,7 +22,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, shop_name, `union`, department, phone, log, category_id_level2, category_id_level1, 
+    id, shop_name, `union`, department, phone, logo, category_id_level2, category_id_level1, 
     gmt_put_on_the_shelf, gmt_create, gmt_update, contact_person, `status`, create_user, 
     fare
   </sql>
@@ -41,12 +41,12 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ShopInfo" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into shop_info (shop_name, `union`, department, 
-      phone, log, category_id_level2, 
+      phone, logo, category_id_level2, 
       category_id_level1, gmt_put_on_the_shelf, gmt_create, 
       gmt_update, contact_person, `status`, 
       create_user, fare)
     values (#{shopName,jdbcType=VARCHAR}, #{union,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{log,jdbcType=VARCHAR}, #{categoryIdLevel2,jdbcType=BIGINT}, 
+      #{phone,jdbcType=VARCHAR}, #{logo,jdbcType=VARCHAR}, #{categoryIdLevel2,jdbcType=BIGINT}, 
       #{categoryIdLevel1,jdbcType=BIGINT}, #{gmtPutOnTheShelf,jdbcType=TIMESTAMP}, #{gmtCreate,jdbcType=TIMESTAMP}, 
       #{gmtUpdate,jdbcType=TIMESTAMP}, #{contactPerson,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
       #{createUser,jdbcType=VARCHAR}, #{fare,jdbcType=DECIMAL})
@@ -67,8 +67,8 @@
       <if test="phone != null">
         phone,
       </if>
-      <if test="log != null">
-        log,
+      <if test="logo != null">
+        logo,
       </if>
       <if test="categoryIdLevel2 != null">
         category_id_level2,
@@ -111,8 +111,8 @@
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="log != null">
-        #{log,jdbcType=VARCHAR},
+      <if test="logo != null">
+        #{logo,jdbcType=VARCHAR},
       </if>
       <if test="categoryIdLevel2 != null">
         #{categoryIdLevel2,jdbcType=BIGINT},
@@ -159,8 +159,8 @@
       <if test="phone != null">
         phone = #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="log != null">
-        log = #{log,jdbcType=VARCHAR},
+      <if test="logo != null">
+        logo = #{logo,jdbcType=VARCHAR},
       </if>
       <if test="categoryIdLevel2 != null">
         category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
@@ -199,7 +199,7 @@
       `union` = #{union,jdbcType=VARCHAR},
       department = #{department,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
-      log = #{log,jdbcType=VARCHAR},
+      logo = #{logo,jdbcType=VARCHAR},
       category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
       category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
       gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
@@ -235,9 +235,9 @@
           when id = #{item.id,jdbcType=BIGINT} then #{item.phone,jdbcType=VARCHAR}
         </foreach>
       </trim>
-      <trim prefix="log = case" suffix="end,">
+      <trim prefix="logo = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
-          when id = #{item.id,jdbcType=BIGINT} then #{item.log,jdbcType=VARCHAR}
+          when id = #{item.id,jdbcType=BIGINT} then #{item.logo,jdbcType=VARCHAR}
         </foreach>
       </trim>
       <trim prefix="category_id_level2 = case" suffix="end,">
@@ -323,10 +323,10 @@
           </if>
         </foreach>
       </trim>
-      <trim prefix="log = case" suffix="end,">
+      <trim prefix="logo = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
-          <if test="item.log != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.log,jdbcType=VARCHAR}
+          <if test="item.logo != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.logo,jdbcType=VARCHAR}
           </if>
         </foreach>
       </trim>
@@ -402,13 +402,13 @@
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into shop_info
-    (shop_name, `union`, department, phone, log, category_id_level2, category_id_level1, 
+    (shop_name, `union`, department, phone, logo, category_id_level2, category_id_level1, 
       gmt_put_on_the_shelf, gmt_create, gmt_update, contact_person, `status`, create_user, 
       fare)
     values
     <foreach collection="list" item="item" separator=",">
       (#{item.shopName,jdbcType=VARCHAR}, #{item.union,jdbcType=VARCHAR}, #{item.department,jdbcType=VARCHAR}, 
-        #{item.phone,jdbcType=VARCHAR}, #{item.log,jdbcType=VARCHAR}, #{item.categoryIdLevel2,jdbcType=BIGINT}, 
+        #{item.phone,jdbcType=VARCHAR}, #{item.logo,jdbcType=VARCHAR}, #{item.categoryIdLevel2,jdbcType=BIGINT}, 
         #{item.categoryIdLevel1,jdbcType=BIGINT}, #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}, 
         #{item.gmtCreate,jdbcType=TIMESTAMP}, #{item.gmtUpdate,jdbcType=TIMESTAMP}, #{item.contactPerson,jdbcType=VARCHAR}, 
         #{item.status,jdbcType=TINYINT}, #{item.createUser,jdbcType=VARCHAR}, #{item.fare,jdbcType=DECIMAL}
@@ -426,7 +426,7 @@
       `union`,
       department,
       phone,
-      log,
+      logo,
       category_id_level2,
       category_id_level1,
       gmt_put_on_the_shelf,
@@ -446,7 +446,7 @@
       #{union,jdbcType=VARCHAR},
       #{department,jdbcType=VARCHAR},
       #{phone,jdbcType=VARCHAR},
-      #{log,jdbcType=VARCHAR},
+      #{logo,jdbcType=VARCHAR},
       #{categoryIdLevel2,jdbcType=BIGINT},
       #{categoryIdLevel1,jdbcType=BIGINT},
       #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
@@ -466,7 +466,7 @@
       `union` = #{union,jdbcType=VARCHAR},
       department = #{department,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
-      log = #{log,jdbcType=VARCHAR},
+      logo = #{logo,jdbcType=VARCHAR},
       category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
       category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
       gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
@@ -497,8 +497,8 @@
       <if test="phone != null">
         phone,
       </if>
-      <if test="log != null">
-        log,
+      <if test="logo != null">
+        logo,
       </if>
       <if test="categoryIdLevel2 != null">
         category_id_level2,
@@ -545,8 +545,8 @@
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="log != null">
-        #{log,jdbcType=VARCHAR},
+      <if test="logo != null">
+        #{logo,jdbcType=VARCHAR},
       </if>
       <if test="categoryIdLevel2 != null">
         #{categoryIdLevel2,jdbcType=BIGINT},
@@ -593,8 +593,8 @@
       <if test="phone != null">
         phone = #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="log != null">
-        log = #{log,jdbcType=VARCHAR},
+      <if test="logo != null">
+        logo = #{logo,jdbcType=VARCHAR},
       </if>
       <if test="categoryIdLevel2 != null">
         category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},

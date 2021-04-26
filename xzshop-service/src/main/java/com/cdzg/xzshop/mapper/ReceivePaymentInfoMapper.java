@@ -1,12 +1,12 @@
 package com.cdzg.xzshop.mapper;
 
-import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface ShopInfoMapper {
+public interface ReceivePaymentInfoMapper {
     /**
      * delete by primary key
      *
@@ -21,11 +21,11 @@ public interface ShopInfoMapper {
      * @param record the record
      * @return insert count
      */
-    int insert(ShopInfo record);
+    int insert(ReceivePaymentInfo record);
 
-    int insertOrUpdate(ShopInfo record);
+    int insertOrUpdate(ReceivePaymentInfo record);
 
-    int insertOrUpdateSelective(ShopInfo record);
+    int insertOrUpdateSelective(ReceivePaymentInfo record);
 
     /**
      * insert record to table selective
@@ -33,7 +33,7 @@ public interface ShopInfoMapper {
      * @param record the record
      * @return insert count
      */
-    int insertSelective(ShopInfo record);
+    int insertSelective(ReceivePaymentInfo record);
 
     /**
      * select by primary key
@@ -41,7 +41,7 @@ public interface ShopInfoMapper {
      * @param id primary key
      * @return object by primary key
      */
-    ShopInfo selectByPrimaryKey(Long id);
+    ReceivePaymentInfo selectByPrimaryKey(Long id);
 
     /**
      * update record selective
@@ -49,7 +49,7 @@ public interface ShopInfoMapper {
      * @param record the updated record
      * @return update count
      */
-    int updateByPrimaryKeySelective(ShopInfo record);
+    int updateByPrimaryKeySelective(ReceivePaymentInfo record);
 
     /**
      * update record
@@ -57,11 +57,11 @@ public interface ShopInfoMapper {
      * @param record the updated record
      * @return update count
      */
-    int updateByPrimaryKey(ShopInfo record);
+    int updateByPrimaryKey(ReceivePaymentInfo record);
 
-    int updateBatch(List<ShopInfo> list);
+    int updateBatch(List<ReceivePaymentInfo> list);
 
-    int updateBatchSelective(List<ShopInfo> list);
+    int updateBatchSelective(List<ReceivePaymentInfo> list);
 
-    int batchInsert(@Param("list") List<ShopInfo> list);
+    int batchInsert(@Param("list") List<ReceivePaymentInfo> list);
 }
