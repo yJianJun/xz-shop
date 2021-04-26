@@ -2,7 +2,8 @@ package com.cdzg.xzshop.service;
 
 import java.util.List;
 import com.cdzg.xzshop.domain.GoodsSpu;
-public interface GoodsSpuService{
+
+public interface GoodsSpuService {
 
 
     int updateBatch(List<GoodsSpu> list);
@@ -15,4 +16,16 @@ public interface GoodsSpuService{
 
     int insertOrUpdateSelective(GoodsSpu record);
 
+    int deleteByPrimaryKey(Long id);
+
+    int insert(GoodsSpu record);
+
+    int insertSelective(GoodsSpu record);
+
+    GoodsSpu selectByPrimaryKey(Long id);
+
+    int updateByPrimaryKeySelective(GoodsSpu record);
+
+    int updateByPrimaryKey(GoodsSpu record);
 }
+
