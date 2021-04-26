@@ -11,7 +11,7 @@ import lombok.Data;
 /**
     * 店铺详情
     */
-@ApiModel(value="com-cdzg-xzshop-domain-ShopInfo")
+@ApiModel(value="店铺详情")
 @Data
 @Builder
 public class ShopInfo implements Serializable {

@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdzg.xzshop.mapper.GoodsCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.cdzg.xzshop.domain.GoodsCategory">
+    <!--@mbg.generated-->
+    <!--@Table goods_category-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, category_name, `level`, parent_id, `status`, gmt_create, gmt_update, create_user
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from goods_category
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from goods_category
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsCategory" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into goods_category (category_name, `level`, parent_id, 
+      `status`, gmt_create, gmt_update, 
+      create_user)
+    values (#{categoryName,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{parentId,jdbcType=BIGINT}, 
+      #{status,jdbcType=TINYINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsCategory" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into goods_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="categoryName != null">
+        category_name,
+      </if>
+      <if test="level != null">
+        `level`,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="categoryName != null">
+        #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cdzg.xzshop.domain.GoodsCategory">
+    <!--@mbg.generated-->
+    update goods_category
+    <set>
+      <if test="categoryName != null">
+        category_name = #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cdzg.xzshop.domain.GoodsCategory">
+    <!--@mbg.generated-->
+    update goods_category
+    set category_name = #{categoryName,jdbcType=VARCHAR},
+      `level` = #{level,jdbcType=INTEGER},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      `status` = #{status,jdbcType=TINYINT},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update goods_category
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="category_name = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.categoryName,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`level` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.level,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="parent_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.parentId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="gmt_create = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.gmtCreate,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="gmt_update = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.gmtUpdate,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="create_user = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createUser,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update goods_category
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="category_name = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.categoryName != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.categoryName,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`level` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.level != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.level,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="parent_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.parentId != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.parentId,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.status != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=TINYINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="gmt_create = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.gmtCreate != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.gmtCreate,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="gmt_update = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.gmtUpdate != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.gmtUpdate,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="create_user = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createUser != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.createUser,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into goods_category
+    (category_name, `level`, parent_id, `status`, gmt_create, gmt_update, create_user
+      )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.categoryName,jdbcType=VARCHAR}, #{item.level,jdbcType=INTEGER}, #{item.parentId,jdbcType=BIGINT}, 
+        #{item.status,jdbcType=TINYINT}, #{item.gmtCreate,jdbcType=TIMESTAMP}, #{item.gmtUpdate,jdbcType=TIMESTAMP}, 
+        #{item.createUser,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsCategory" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into goods_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      category_name,
+      `level`,
+      parent_id,
+      `status`,
+      gmt_create,
+      gmt_update,
+      create_user,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{categoryName,jdbcType=VARCHAR},
+      #{level,jdbcType=INTEGER},
+      #{parentId,jdbcType=BIGINT},
+      #{status,jdbcType=TINYINT},
+      #{gmtCreate,jdbcType=TIMESTAMP},
+      #{gmtUpdate,jdbcType=TIMESTAMP},
+      #{createUser,jdbcType=VARCHAR},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      category_name = #{categoryName,jdbcType=VARCHAR},
+      `level` = #{level,jdbcType=INTEGER},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      `status` = #{status,jdbcType=TINYINT},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsCategory" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into goods_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="categoryName != null">
+        category_name,
+      </if>
+      <if test="level != null">
+        `level`,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="categoryName != null">
+        #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="categoryName != null">
+        category_name = #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>
