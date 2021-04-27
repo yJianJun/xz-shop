@@ -23,6 +23,8 @@ public interface ShopInfoService extends IService<ShopInfo> {
     int batchInsert(List<ShopInfo> list);
 
     PageInfo<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String shopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf);
+
+    PageInfo<ShopInfo> findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String likeShopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf);
 }
 
 

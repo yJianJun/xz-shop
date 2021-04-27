@@ -23,12 +23,12 @@ public class ShopPageVo extends PageParam {
     @ApiModelProperty(value = "店鋪名称", position = 4,allowEmptyValue = true)
     private String shopName;
 
-    @ApiModelProperty(value = "入驻开始时间", position = 5,allowEmptyValue = true)
+    @ApiModelProperty(value = "入驻开始时间", position = 5,allowEmptyValue = true,reference = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date start;
 
-    @ApiModelProperty(value = "入驻结束时间", position = 6,allowEmptyValue = true)
+    @ApiModelProperty(value = "入驻结束时间", position = 6,allowEmptyValue = true,reference = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date end;

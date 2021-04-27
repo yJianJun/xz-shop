@@ -75,7 +75,7 @@ public class ShopInfoController {
         //if (adminUser == null) {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         //}
-        PageInfo<ShopInfo> pageInfo = shopInfoService.findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(vo.getPageNum(), vo.getPageSize(), vo.getShopName(), vo.getStatus(), vo.getStart(), vo.getEnd());
+        PageInfo<ShopInfo> pageInfo = shopInfoService.findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(vo.getPageNum(), vo.getPageSize(), vo.getShopName(), vo.getStatus(), vo.getStart(), vo.getEnd());
         return ApiResponse.buildSuccessResponse(pageInfo);
     }
 

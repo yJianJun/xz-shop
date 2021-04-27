@@ -59,6 +59,12 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         PageHelper.startPage(page, pageSize);
         return new PageInfo<>(shopInfoMapper.findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(shopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf));
     }
+
+    @Override
+    public PageInfo<ShopInfo> findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String likeShopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf) {
+        PageHelper.startPage(page, pageSize);
+        return new PageInfo<>(shopInfoMapper.findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqual(likeShopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf));
+    }
 }
 
 
