@@ -78,5 +78,7 @@ public class ShopInfoController {
         PageInfo<ShopInfo> pageInfo = shopInfoService.findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(vo.getPageNum(), vo.getPageSize(), vo.getShopName(), vo.getStatus(), vo.getStart(), vo.getEnd());
         return ApiResponse.buildSuccessResponse(pageInfo);
     }
+
+
 }
 

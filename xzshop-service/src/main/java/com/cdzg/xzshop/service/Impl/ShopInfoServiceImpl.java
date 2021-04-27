@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.util.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.cdzg.xzshop.domain.ShopInfo;
@@ -49,12 +50,12 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     }
 
 
-    public List<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(String shopName, Boolean status, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf) {
+    public List<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(String shopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf) {
         return shopInfoMapper.findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(shopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf);
     }
 
     @Override
-    public PageInfo<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String shopName, Boolean status, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf) {
+    public PageInfo<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String shopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf) {
         PageHelper.startPage(page, pageSize);
         return new PageInfo<>(shopInfoMapper.findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(shopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf));
     }

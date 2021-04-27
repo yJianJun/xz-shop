@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service;
 
+import java.util.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface ShopInfoService extends IService<ShopInfo> {
 
     int batchInsert(List<ShopInfo> list);
 
-    PageInfo<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String shopName, Boolean status, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf);
+    PageInfo<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String shopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf);
 }
 
 

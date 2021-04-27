@@ -2,6 +2,8 @@ package com.cdzg.xzshop.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cdzg.xzshop.domain.ShopInfo;
+
+import java.util.Date;
 import java.time.LocalDateTime;import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,7 +20,7 @@ public interface ShopInfoMapper extends BaseMapper<ShopInfo> {
 
     int insertOrUpdateSelective(ShopInfo record);
 
-    List<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(@Param("shopName")String shopName,@Param("status")Boolean status,@Param("minGmtPutOnTheShelf")LocalDateTime minGmtPutOnTheShelf,@Param("maxGmtPutOnTheShelf")LocalDateTime maxGmtPutOnTheShelf);
+    List<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(@Param("shopName")String shopName, @Param("status")Boolean status, @Param("minGmtPutOnTheShelf") Date minGmtPutOnTheShelf, @Param("maxGmtPutOnTheShelf")Date maxGmtPutOnTheShelf);
 
 
 }

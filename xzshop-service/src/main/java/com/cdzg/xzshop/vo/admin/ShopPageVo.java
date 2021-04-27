@@ -1,11 +1,14 @@
 package com.cdzg.xzshop.vo.admin;
 
 import com.cdzg.xzshop.vo.common.PageParam;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
@@ -21,10 +24,14 @@ public class ShopPageVo extends PageParam {
     private String shopName;
 
     @ApiModelProperty(value = "入驻开始时间", position = 5,allowEmptyValue = true)
-    private LocalDateTime start;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date start;
 
     @ApiModelProperty(value = "入驻结束时间", position = 6,allowEmptyValue = true)
-    private LocalDateTime end;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date end;
 
 
 }
