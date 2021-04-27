@@ -1,6 +1,8 @@
 package com.cdzg.xzshop.vo.common;
 
 
+import com.github.pagehelper.PageHelper;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -19,14 +21,14 @@ public class BasePageRequest implements Serializable {
     public BasePageRequest() {
     }
 
-    //public void startPage() {
-    //    if (!this.hasTotalNum()) {
-    //        PageHelper.startPage(this.currentPage, this.pageSize);
-    //    } else {
-    //        PageHelper.startPage(this.currentPage, this.pageSize, false);
-    //    }
-    //
-    //}
+    public void startPage() {
+        if (!this.hasTotalNum()) {
+            PageHelper.startPage(this.currentPage, this.pageSize);
+        } else {
+            PageHelper.startPage(this.currentPage, this.pageSize, false);
+        }
+
+    }
 
     public boolean hasTotalNum() {
         return this.totalNum != null && this.totalNum > 0L;
