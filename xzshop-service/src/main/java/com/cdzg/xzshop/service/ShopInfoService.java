@@ -1,14 +1,13 @@
 package com.cdzg.xzshop.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.github.pagehelper.PageInfo;
 
 public interface ShopInfoService extends IService<ShopInfo> {
-
-
-    int deleteByPrimaryKey(Long id);
 
     int insert(ShopInfo record);
 
@@ -16,19 +15,16 @@ public interface ShopInfoService extends IService<ShopInfo> {
 
     int insertOrUpdateSelective(ShopInfo record);
 
-    int insertSelective(ShopInfo record);
-
-    ShopInfo selectByPrimaryKey(Long id);
-
-    int updateByPrimaryKeySelective(ShopInfo record);
-
-    int updateByPrimaryKey(ShopInfo record);
-
     int updateBatch(List<ShopInfo> list);
 
     int updateBatchSelective(List<ShopInfo> list);
 
     int batchInsert(List<ShopInfo> list);
 
+    PageInfo<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String shopName, Boolean status, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf);
 }
+
+
+
+
 

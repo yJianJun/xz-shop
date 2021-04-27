@@ -25,6 +25,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableAsync(proxyTargetClass = true)
 @EnableBusinessLoginFilter
 @ServletComponentScan(basePackages = {"com.cdzg.xzshop.filter"})
+@MapperScan("com.cdzg.xzshop.mapper")
 @EnableApolloConfig
 @EnableScheduling
 public class ServiceApplication {
