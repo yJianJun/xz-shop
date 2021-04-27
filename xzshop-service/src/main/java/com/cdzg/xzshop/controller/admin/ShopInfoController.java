@@ -92,14 +92,14 @@ public class ShopInfoController {
     @ApiOperation("新建店铺")
     public ApiResponse<String> add(@RequestBody @Valid ShopInfoAddVo addVo) {
 
-        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        if (adminUser == null) {
-            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        }
+        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        //if (adminUser == null) {
+        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
+        //}
 
         ShopInfo shopInfo = ShopInfo.builder()
                 .shopName(addVo.getShopName())
-                .createUser(adminUser.getUserId() + "")
+                .createUser("")   //yjjtodo 需改
                 .contactPerson(addVo.getPerson())
                 .department(addVo.getDepartment())
                 .fare(addVo.getFare())

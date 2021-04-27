@@ -13,10 +13,6 @@ public class ReceivePaymentInfoServiceImpl implements ReceivePaymentInfoService 
     @Resource
     private ReceivePaymentInfoMapper receivePaymentInfoMapper;
 
-    @Override
-    public int deleteByPrimaryKey(Long id) {
-        return receivePaymentInfoMapper.deleteByPrimaryKey(id);
-    }
 
     @Override
     public int insert(ReceivePaymentInfo record) {
@@ -31,26 +27,6 @@ public class ReceivePaymentInfoServiceImpl implements ReceivePaymentInfoService 
     @Override
     public int insertOrUpdateSelective(ReceivePaymentInfo record) {
         return receivePaymentInfoMapper.insertOrUpdateSelective(record);
-    }
-
-    @Override
-    public int insertSelective(ReceivePaymentInfo record) {
-        return receivePaymentInfoMapper.insertSelective(record);
-    }
-
-    @Override
-    public ReceivePaymentInfo selectByPrimaryKey(Long id) {
-        return receivePaymentInfoMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public int updateByPrimaryKeySelective(ReceivePaymentInfo record) {
-        return receivePaymentInfoMapper.updateByPrimaryKeySelective(record);
-    }
-
-    @Override
-    public int updateByPrimaryKey(ReceivePaymentInfo record) {
-        return receivePaymentInfoMapper.updateByPrimaryKey(record);
     }
 
     @Override
