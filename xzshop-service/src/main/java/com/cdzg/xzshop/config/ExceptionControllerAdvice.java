@@ -13,20 +13,21 @@ import io.swagger.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -137,6 +138,31 @@ public class ExceptionControllerAdvice {
     public ApiResponse httpMessageNotReadableException(HttpMessageNotReadableException e, WebRequest wq){
         logger.error("控制器方法中@RequestBody类型参数数据类型转换异常！原因是:{}", Json.pretty(e.getStackTrace()));
         return CommonResult.error(ResultCode.PARAMETER_ERROR,"参数数据类型转换异常,参数:"+e.getHttpInputMessage());
+    }
+
+    /***
+     * 参数异常 -- ConstraintViolationException()
+     * 用于处理类似http://localhost:8080/user/getUser?age=30&name=yoyo请求中age和name的校验引发的异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    public ApiResponse urlParametersExceptionHandle(ConstraintViolationException e) {
+        logger.error("【请求参数异常】:{}", Json.pretty(e.getStackTrace()));
+        //收集所有错误信息
+        List<String> errorMsg = e.getConstraintViolations()
+                .stream().map(s -> s.getMessage()).collect(Collectors.toList());
+
+        StringBuffer sb = new StringBuffer(errorMsg.size() * 16);
+        for (int i = 0; i < errorMsg.size(); i++) {
+
+            if (i > 0) {
+                sb.append(";");
+            }
+            String s = errorMsg.get(i);
+            sb.append(s);
+        }
+        return CommonResult.error(ResultCode.PARAMETER_ERROR,sb.toString());
     }
 
 }

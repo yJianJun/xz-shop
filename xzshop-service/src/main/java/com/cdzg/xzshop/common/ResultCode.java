@@ -8,18 +8,18 @@ public enum ResultCode {
     /**
      * 操作失败
      */
-    FAILED(400, "操作失败"),
+    FAILED(405, "操作失败"),
     /**
      * 参数检验失败
      */
-    VALIDATE_FAILED(405, "参数检验失败"),
+    VALIDATE_FAILED(400, "参数检验失败"),
 
     /**
      * 参数有误
      */
-    PARAMETER_ERROR(405, "参数有误"),
+    PARAMETER_ERROR(400, "参数有误"),
 
-    REQUEST_ERROR(405, "请求方式有误"),
+    REQUEST_ERROR(400, "请求方式有误"),
     /**
      * 请重新登录
      */
@@ -35,7 +35,7 @@ public enum ResultCode {
     /**
      * 数据问题
      */
-    DATA_ERROR(405, "系统未找到请求的数据！"),
+    DATA_ERROR(400, "系统未找到请求的数据！"),
     /**
      * 当前用户未设置交易密码
      */
