@@ -1,7 +1,6 @@
 package com.cdzg.xzshop.vo.admin;
 
 import com.cdzg.xzshop.vo.common.BasePageRequest;
-import com.cdzg.xzshop.vo.common.PageParam;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

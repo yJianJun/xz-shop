@@ -1,5 +1,8 @@
 package com.cdzg.xzshop.service.Impl;
 
+import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import com.cdzg.xzshop.domain.GoodsCategory;
@@ -68,5 +71,15 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         return goodsCategoryMapper.batchInsert(list);
     }
 
+	@Override
+	public List<GoodsCategory> findByLevelAndCategoryNameLike(Integer level,String likeCategoryName){
+		 return goodsCategoryMapper.page(level,likeCategoryName);
+	}
+
+	@Override
+    public PageResultVO<GoodsCategory> page(int page, int pageSize, Integer level, String likeCategoryName) {
+        PageHelper.startPage(page, pageSize);
+        return new PageResultVO<>(goodsCategoryMapper.page(level, likeCategoryName));
+    }
 }
 

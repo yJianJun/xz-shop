@@ -64,4 +64,8 @@ public interface GoodsCategoryMapper {
     int updateBatchSelective(List<GoodsCategory> list);
 
     int batchInsert(@Param("list") List<GoodsCategory> list);
+
+    List<GoodsCategory> page(@Param("level")Integer level,@Param("likeCategoryName")String likeCategoryName);
+
+
 }

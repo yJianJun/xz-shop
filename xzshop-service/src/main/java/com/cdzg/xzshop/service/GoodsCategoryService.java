@@ -1,6 +1,8 @@
 package com.cdzg.xzshop.service;
 
 import com.cdzg.xzshop.domain.GoodsCategory;
+import com.cdzg.xzshop.vo.common.PageResultVO;
+
 import java.util.List;
 
 public interface GoodsCategoryService {
@@ -28,5 +30,11 @@ public interface GoodsCategoryService {
 
     int batchInsert(List<GoodsCategory> list);
 
+
+
+	List<GoodsCategory> findByLevelAndCategoryNameLike(Integer level,String likeCategoryName);
+
+
+    PageResultVO<GoodsCategory> page(int page, int pageSize, Integer level, String likeCategoryName);
 }
 
