@@ -90,7 +90,7 @@ public class ShopInfoController {
     @PostMapping("/add")
     @IgnoreAuth
     @ApiOperation("新建店铺")
-    public ApiResponse<String> add(@RequestBody @Valid ShopInfoAddVo addVo) {
+    public ApiResponse<String> add(@ApiParam(value = "店铺添加参数模型", required = true)@RequestBody @Valid ShopInfoAddVo addVo) {
 
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         //if (adminUser == null) {

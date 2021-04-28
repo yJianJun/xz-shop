@@ -1,6 +1,8 @@
 package com.cdzg.xzshop.utils.excel;
 
 
+import com.cdzg.xzshop.common.BaseException;
+
 /**
  * excel异常类
  *
