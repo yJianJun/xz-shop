@@ -12,6 +12,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
 public class PageResultVO<T> extends PageInfo<T> {
 
 
