@@ -16,13 +16,13 @@ public class PageResultVO<T> extends PageInfo<T> {
 
 
     @ApiModelProperty(value = "总条数")
-    private int size;
+    private int totalNum;
 
     @ApiModelProperty(value = "总页数")
-    private int pages;
+    private int totalPage;
 
     @ApiModelProperty(value = "当前页码")
-    private int pageNum;
+    private int currentPage;
 
     @ApiModelProperty(value = "当前尺寸")
     private int pageSize;
@@ -31,17 +31,17 @@ public class PageResultVO<T> extends PageInfo<T> {
     private List<T> data;
 
     public void setPageParams(IPage page){
-        this.pageNum = new Long(page.getCurrent()).intValue();
-        this.pages = new Long(page.getPages()).intValue();
+        this.currentPage = new Long(page.getCurrent()).intValue();
+        this.totalPage = new Long(page.getPages()).intValue();
         this.pageSize = new Long(page.getSize()).intValue();
-        this.size = new Long(page.getTotal()).intValue();;
+        this.totalNum = new Long(page.getTotal()).intValue();;
     }
 
     public PageResultVO(List<T> list) {
         super(list, 8);
-        size =super.getSize();
-        pages = super.getPages();
-        pageNum = super.getPageNum();
+        totalNum =super.getSize();
+        totalPage = super.getPages();
+        currentPage = super.getPageNum();
         pageSize = super.getPageSize();
         data = super.getList();
     }
