@@ -13,6 +13,13 @@ public enum ResultCode {
      * 参数检验失败
      */
     VALIDATE_FAILED(405, "参数检验失败"),
+
+    /**
+     * 参数有误
+     */
+    PARAMETER_ERROR(405, "参数有误"),
+
+    REQUEST_ERROR(405, "请求方式有误"),
     /**
      * 请重新登录
      */
@@ -69,10 +76,7 @@ public enum ResultCode {
      * 动态不存在
      */
     DYNAMIC_DOES_NOT_EXIST(521, "动态不存在"),
-    /**
-     * 参数有误
-     */
-    PARAMETER_ERROR(522, "参数有误"),
+
     /**
      * 未抢到红包，请稍后重试
      */

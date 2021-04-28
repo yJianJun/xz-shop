@@ -2,6 +2,7 @@ package com.cdzg.xzshop.config;
 
 
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.CommonResult;
@@ -15,12 +16,15 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -106,4 +110,33 @@ public class ExceptionControllerAdvice {
         logger.error("缺少参数！原因是:{}", Json.pretty(ex.getStackTrace()));
         return CommonResult.error(ResultCode.PARAMETER_ERROR, "缺少必要参数,参数名称为" + ex.getParameterName());
     }
+
+    /**
+     * 参数类型不匹配
+     */
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    public ApiResponse requestTypeMismatch(MethodArgumentTypeMismatchException ex){
+        logger.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getStackTrace()));
+        return CommonResult.error(ResultCode.PARAMETER_ERROR, "参数类型不匹配,参数" + ex.getPropertyName() + "类型应该为" + ex.getRequiredType());
+    }
+
+    /**
+     * 请求method不匹配
+     */
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    public ApiResponse requestMissingServletRequest(HttpRequestMethodNotSupportedException ex) {
+        logger.error("请求method不匹配！原因是:{}", Json.pretty(ex.getStackTrace()));
+        return CommonResult.error(ResultCode.REQUEST_ERROR, "不支持"+ex.getMethod()+"方法，支持"+ StringUtils.join(ex.getSupportedMethods(), ",")+"类型");
+    }
+
+    /**
+     *
+     * 控制器方法中@RequestBody类型参数数据类型转换异常
+     */
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    public ApiResponse httpMessageNotReadableException(HttpMessageNotReadableException e, WebRequest wq){
+        logger.error("控制器方法中@RequestBody类型参数数据类型转换异常！原因是:{}", Json.pretty(e.getStackTrace()));
+        return CommonResult.error(ResultCode.PARAMETER_ERROR,"参数数据类型转换异常,参数:"+e.getHttpInputMessage());
+    }
+
 }
