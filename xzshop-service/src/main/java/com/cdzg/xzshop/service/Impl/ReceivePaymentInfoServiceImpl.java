@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.service.Impl;
+import com.cdzg.xzshop.constant.ReceivePaymentType;
 
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -43,6 +44,22 @@ public class ReceivePaymentInfoServiceImpl implements ReceivePaymentInfoService 
     public int batchInsert(List<ReceivePaymentInfo> list) {
         return receivePaymentInfoMapper.batchInsert(list);
     }
+
+	@Override
+	public List<ReceivePaymentInfo> findAllByShopId(Long shopId){
+		 return receivePaymentInfoMapper.findAllByShopId(shopId);
+	}
+
+	@Override
+	public ReceivePaymentInfo findOneByShopIdAndType(Long shopId,ReceivePaymentType type){
+		 return receivePaymentInfoMapper.findOneByShopIdAndType(shopId,type);
+	}
+
+
+
+
+
+
 
 }
 
