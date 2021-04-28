@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageInfo;
 
 public interface ShopInfoService extends IService<ShopInfo> {
@@ -22,9 +23,7 @@ public interface ShopInfoService extends IService<ShopInfo> {
 
     int batchInsert(List<ShopInfo> list);
 
-    PageInfo<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String shopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf);
-
-    PageInfo<ShopInfo> findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String likeShopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf);
+    PageResultVO<ShopInfo> page(int page, int pageSize, String likeShopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf);
 }
 
 

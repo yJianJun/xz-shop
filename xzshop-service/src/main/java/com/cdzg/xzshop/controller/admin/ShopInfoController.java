@@ -12,6 +12,7 @@ import com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper;
 import com.cdzg.xzshop.service.ReceivePaymentInfoService;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.vo.admin.*;
+import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -77,12 +78,12 @@ public class ShopInfoController {
     @PostMapping("/page")
     @IgnoreAuth
     @ApiOperation("分页查询店铺列表")
-    public ApiResponse<PageInfo<ShopInfo>> page(@ApiParam(value = "店铺分页参数模型", required = true)@RequestBody @Valid ShopPageVo vo) {
+    public ApiResponse<PageResultVO<ShopInfo>> page(@ApiParam(value = "店铺分页参数模型", required = true)@RequestBody @Valid ShopPageVo vo) {
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         //if (adminUser == null) {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         //}
-        PageInfo<ShopInfo> pageInfo = shopInfoService.findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(vo.getCurrentPage(), vo.getPageSize(), vo.getShopName(), vo.getStatus(), vo.getStart(), vo.getEnd());
+        PageResultVO<ShopInfo> pageInfo = shopInfoService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getShopName(), vo.getStatus(), vo.getStart(), vo.getEnd());
         return ApiResponse.buildSuccessResponse(pageInfo);
     }
 

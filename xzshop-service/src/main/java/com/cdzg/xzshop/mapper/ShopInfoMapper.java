@@ -20,7 +20,6 @@ public interface ShopInfoMapper extends BaseMapper<ShopInfo> {
 
     int insertOrUpdateSelective(ShopInfo record);
 
-    List<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(@Param("shopName")String shopName, @Param("status")Boolean status, @Param("minGmtPutOnTheShelf") Date minGmtPutOnTheShelf, @Param("maxGmtPutOnTheShelf")Date maxGmtPutOnTheShelf);
 
     List<ShopInfo> findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqual(@Param("likeShopName")String likeShopName,@Param("status")Boolean status,@Param("minGmtPutOnTheShelf") Date minGmtPutOnTheShelf, @Param("maxGmtPutOnTheShelf")Date maxGmtPutOnTheShelf);
 

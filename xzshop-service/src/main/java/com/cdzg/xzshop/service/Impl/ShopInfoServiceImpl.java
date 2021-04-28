@@ -1,6 +1,7 @@
 package com.cdzg.xzshop.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
@@ -49,21 +50,10 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         return shopInfoMapper.batchInsert(list);
     }
 
-
-    public List<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(String shopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf) {
-        return shopInfoMapper.findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(shopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf);
-    }
-
     @Override
-    public PageInfo<ShopInfo> findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String shopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf) {
+    public PageResultVO<ShopInfo> page(int page, int pageSize, String likeShopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf) {
         PageHelper.startPage(page, pageSize);
-        return new PageInfo<>(shopInfoMapper.findAllByShopNameAndStatusAndGmtPutOnTheShelfBetweenEqual(shopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf));
-    }
-
-    @Override
-    public PageInfo<ShopInfo> findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqualwithPage(int page, int pageSize, String likeShopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf) {
-        PageHelper.startPage(page, pageSize);
-        return new PageInfo<>(shopInfoMapper.findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqual(likeShopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf));
+        return new PageResultVO<>(shopInfoMapper.findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqual(likeShopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf));
     }
 }
 
