@@ -7,11 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel(description = "商品分类To")
 public class GoodsCategoryTo extends GoodsCategory {
 
     @ApiModelProperty(value = "店铺信息",required = true)
-    private Boolean hasChildren;
+    private List<GoodsCategory> children;
 }

@@ -91,8 +91,8 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
             GoodsCategoryTo categoryTo = new GoodsCategoryTo();
             BeanUtils.copyProperties(category,categoryTo);
 
-            List<GoodsCategory> subs = findByParentIdAndLevel(category.getId(), level);
-            categoryTo.setHasChildren(CollectionUtils.isNotEmpty(subs));
+            List<GoodsCategory> subs = findByParentIdAndLevel(category.getId(),2);
+            categoryTo.setChildren(subs);
             categoryTos.add(categoryTo);
         }
         return new PageResultVO<GoodsCategoryTo>(categoryTos);
