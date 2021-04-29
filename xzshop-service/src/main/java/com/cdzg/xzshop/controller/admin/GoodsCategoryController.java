@@ -93,15 +93,15 @@ public class GoodsCategoryController {
 
 
     @WebApi
-    @PostMapping("/page")
+    @PostMapping("/list")
     @IgnoreAuth
-    @ApiOperation("分页查询商品类别列表")
-    public ApiResponse<PageResultVO<GoodsCategoryTo>> page(@ApiParam(value = "商品类别分页参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
+    @ApiOperation("查询商品类别列表")
+    public ApiResponse<List<GoodsCategoryTo>> list(@ApiParam(value = "商品类别分页参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         //if (adminUser == null) {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         //}
-        PageResultVO<GoodsCategoryTo> resultVO = goodsCategoryService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getLevel(), vo.getName());
+        List<GoodsCategoryTo> resultVO = goodsCategoryService.list(vo.getLevel(), vo.getName());
         return CommonResult.buildSuccessResponse(resultVO);
     }
 

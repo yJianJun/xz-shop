@@ -36,7 +36,7 @@ public interface GoodsCategoryService {
 	List<GoodsCategory> findByLevelAndCategoryNameLike(Integer level,String likeCategoryName);
 
 
-    PageResultVO<GoodsCategoryTo> page(int page, int pageSize, Integer level, String likeCategoryName);
+    List<GoodsCategoryTo> list(Integer level, String likeCategoryName);
 
 
 

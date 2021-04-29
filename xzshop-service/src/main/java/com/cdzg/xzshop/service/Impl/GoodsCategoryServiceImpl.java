@@ -81,8 +81,9 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
 	}
 
 	@Override
-    public PageResultVO<GoodsCategoryTo> page(int page, int pageSize, Integer level, String likeCategoryName) {
-        PageHelper.startPage(page, pageSize);
+    public List<GoodsCategoryTo> list(Integer level, String likeCategoryName) {
+
+
         List<GoodsCategory> data = goodsCategoryMapper.findByLevelAndCategoryNameLike(level, likeCategoryName);
 
         List<GoodsCategoryTo> categoryTos = new ArrayList<>();
@@ -95,7 +96,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
             categoryTo.setChildren(subs);
             categoryTos.add(categoryTo);
         }
-        return new PageResultVO<GoodsCategoryTo>(categoryTos);
+        return categoryTos;
     }
 
 	@Override

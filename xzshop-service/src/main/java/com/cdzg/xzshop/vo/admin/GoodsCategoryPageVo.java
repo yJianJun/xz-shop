@@ -11,10 +11,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel(description = "商品类别分页参数模型")
-public class GoodsCategoryPageVo extends BasePageRequest{
+public class GoodsCategoryPageVo{
 
 
     @ApiModelProperty(value = "分类等级", position = 1,required = true,allowableValues = "1,2")
