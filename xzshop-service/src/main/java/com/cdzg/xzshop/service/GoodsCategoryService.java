@@ -36,5 +36,11 @@ public interface GoodsCategoryService {
 
 
     PageResultVO<GoodsCategory> page(int page, int pageSize, Integer level, String likeCategoryName);
+
+
+
+	List<GoodsCategory> findByParentIdAndLevel(Long parentId,Integer level);
+
+    PageResultVO<GoodsCategory> pageSub(int page, int pageSize, Long parentId, Integer level);
 }
 

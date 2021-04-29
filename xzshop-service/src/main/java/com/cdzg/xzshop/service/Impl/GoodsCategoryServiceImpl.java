@@ -73,13 +73,24 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
 
 	@Override
 	public List<GoodsCategory> findByLevelAndCategoryNameLike(Integer level,String likeCategoryName){
-		 return goodsCategoryMapper.page(level,likeCategoryName);
+		 return goodsCategoryMapper.findByLevelAndCategoryNameLike(level,likeCategoryName);
 	}
 
 	@Override
     public PageResultVO<GoodsCategory> page(int page, int pageSize, Integer level, String likeCategoryName) {
         PageHelper.startPage(page, pageSize);
-        return new PageResultVO<>(goodsCategoryMapper.page(level, likeCategoryName));
+        return new PageResultVO<>(goodsCategoryMapper.findByLevelAndCategoryNameLike(level, likeCategoryName));
+    }
+
+	@Override
+	public List<GoodsCategory> findByParentIdAndLevel(Long parentId,Integer level){
+		 return goodsCategoryMapper.findByParentIdAndLevel(parentId,level);
+	}
+
+	@Override
+    public PageResultVO<GoodsCategory> pageSub(int page, int pageSize, Long parentId, Integer level) {
+        PageHelper.startPage(page, pageSize);
+        return new PageResultVO<>(goodsCategoryMapper.findByParentIdAndLevel(parentId, level));
     }
 }
 

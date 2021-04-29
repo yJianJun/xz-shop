@@ -65,7 +65,11 @@ public interface GoodsCategoryMapper {
 
     int batchInsert(@Param("list") List<GoodsCategory> list);
 
-    List<GoodsCategory> page(@Param("level")Integer level,@Param("likeCategoryName")String likeCategoryName);
+    List<GoodsCategory> findByLevelAndCategoryNameLike(@Param("level")Integer level,@Param("likeCategoryName")String likeCategoryName);
+
+    List<GoodsCategory> findByParentIdAndLevel(@Param("parentId")Long parentId,@Param("level")Integer level);
+
+
 
 
 }

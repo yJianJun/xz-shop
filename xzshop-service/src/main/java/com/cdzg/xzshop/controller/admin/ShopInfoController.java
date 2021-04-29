@@ -72,6 +72,10 @@ public class ShopInfoController {
                 ShopInfo shopInfo = shopInfoService.getBaseMapper().selectOne(queryWrapper.eq("id",id));
                 if (Objects.nonNull(shopInfo)){
                     shopInfo.setStatus(statusVO.getFlag());
+
+                    if (statusVO.getFlag()){
+                        shopInfo.setGmtPutOnTheShelf(LocalDateTime.now());
+                    }
                     shopInfoService.updateById(shopInfo);
                 }
             }
@@ -160,7 +164,7 @@ public class ShopInfoController {
     @GetMapping("/get")
     @IgnoreAuth
     @ApiOperation("店铺详情")
-    public ApiResponse<ShopInfoDetailTo> get(@Valid @RequestParam("id") @NotNull Long id ) {
+    public ApiResponse<ShopInfoDetailTo> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "店铺id", required = true) Long id ) {
 
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         //if (adminUser == null) {

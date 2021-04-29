@@ -24,7 +24,7 @@ public class ShopInfoUpdateVO extends ShopInfoAddVo {
 
     private static final long serialVersionUID = 1429523364761128797L;
 
-    @ApiModelProperty(value = "课程id", required = true, position = 10)
+    @ApiModelProperty(value = "店铺id", required = true, position = 10)
     @JsonSerialize(using = ToStringSerializer.class)
     @NotNull(message = "店铺id不能为空")
     private Long id;
