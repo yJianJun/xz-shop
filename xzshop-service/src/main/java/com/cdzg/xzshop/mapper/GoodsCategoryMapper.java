@@ -70,6 +70,4 @@ public interface GoodsCategoryMapper {
     List<GoodsCategory> findByParentIdAndLevel(@Param("parentId")Long parentId,@Param("level")Integer level);
 
 
-
-
 }

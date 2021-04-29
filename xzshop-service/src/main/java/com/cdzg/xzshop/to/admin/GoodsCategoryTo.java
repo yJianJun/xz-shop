@@ -14,6 +14,6 @@ import java.util.List;
 @ApiModel(description = "商品分类To")
 public class GoodsCategoryTo extends GoodsCategory {
 
-    @ApiModelProperty(value = "店铺信息",required = true)
+    @ApiModelProperty(value = "商品2级分类集合",required = true)
     private List<GoodsCategory> children;
 }
