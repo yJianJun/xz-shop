@@ -10,6 +10,7 @@ import com.cdzg.xzshop.domain.GoodsCategory;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.service.GoodsCategoryService;
+import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
 import com.cdzg.xzshop.to.admin.ShopInfoDetailTo;
 import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.vo.common.PageResultVO;
@@ -95,12 +96,12 @@ public class GoodsCategoryController {
     @PostMapping("/page")
     @IgnoreAuth
     @ApiOperation("分页查询商品类别列表")
-    public ApiResponse<PageResultVO<GoodsCategory>> page(@ApiParam(value = "商品类别分页参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
+    public ApiResponse<PageResultVO<GoodsCategoryTo>> page(@ApiParam(value = "商品类别分页参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         //if (adminUser == null) {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         //}
-        PageResultVO<GoodsCategory> resultVO = goodsCategoryService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getLevel(), vo.getName());
+        PageResultVO<GoodsCategoryTo> resultVO = goodsCategoryService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getLevel(), vo.getName());
         return CommonResult.buildSuccessResponse(resultVO);
     }
 

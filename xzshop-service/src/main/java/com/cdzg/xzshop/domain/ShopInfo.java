@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import javax.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 店铺信息表
@@ -80,6 +82,8 @@ public class ShopInfo implements Serializable {
      */
     @Column(name = "gmt_put_on_the_shelf")
     @ApiModelProperty(value = "店铺上线时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtPutOnTheShelf;
 
     /**
@@ -87,6 +91,8 @@ public class ShopInfo implements Serializable {
      */
     @Column(name = "gmt_create")
     @ApiModelProperty(value = "gmtCreate")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
 
     /**
@@ -94,6 +100,8 @@ public class ShopInfo implements Serializable {
      */
     @Column(name = "gmt_update")
     @ApiModelProperty(value = "gmtUpdate")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtUpdate;
 
     /**

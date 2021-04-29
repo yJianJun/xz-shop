@@ -1,12 +1,16 @@
 package com.cdzg.xzshop.service.Impl;
 
+import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import com.cdzg.xzshop.domain.GoodsCategory;
 import com.cdzg.xzshop.mapper.GoodsCategoryMapper;
+
+import java.util.ArrayList;
 import java.util.List;
 import com.cdzg.xzshop.service.GoodsCategoryService;
 
@@ -77,9 +81,21 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
 	}
 
 	@Override
-    public PageResultVO<GoodsCategory> page(int page, int pageSize, Integer level, String likeCategoryName) {
+    public PageResultVO<GoodsCategoryTo> page(int page, int pageSize, Integer level, String likeCategoryName) {
         PageHelper.startPage(page, pageSize);
-        return new PageResultVO<>(goodsCategoryMapper.findByLevelAndCategoryNameLike(level, likeCategoryName));
+        List<GoodsCategory> data = goodsCategoryMapper.findByLevelAndCategoryNameLike(level, likeCategoryName);
+
+        List<GoodsCategoryTo> categoryTos = new ArrayList<>();
+        for (GoodsCategory category : data) {
+
+            GoodsCategoryTo categoryTo = new GoodsCategoryTo();
+            BeanUtils.copyProperties(category,categoryTo);
+
+            List<GoodsCategory> subs = findByParentIdAndLevel(category.getId(), level);
+            categoryTo.setHasChildren(CollectionUtils.isNotEmpty(subs));
+            categoryTos.add(categoryTo);
+        }
+        return new PageResultVO<GoodsCategoryTo>(categoryTos);
     }
 
 	@Override

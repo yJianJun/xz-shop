@@ -1,6 +1,7 @@
 package com.cdzg.xzshop.domain;
 
 import com.cdzg.xzshop.constant.PaymentType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 商品spu
@@ -111,19 +113,25 @@ public class GoodsSpu implements Serializable {
      * 商品上架时间
      */
     @ApiModelProperty(value = "商品上架时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtPutOnTheShelf;
 
     /**
      * gmtCreate
      */
     @ApiModelProperty(value = "gmtCreate")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
 
     /**
      * gmtUpdate
      */
     @ApiModelProperty(value = "gmtUpdate")
-    private Date gmtUpdate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime gmtUpdate;
 
     private static final long serialVersionUID = 1L;
 }

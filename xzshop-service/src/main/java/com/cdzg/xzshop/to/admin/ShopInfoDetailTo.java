@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
-@ApiModel(description = "店铺详情")
+@ApiModel(description = "店铺详情To")
 public class ShopInfoDetailTo {
 
     @ApiModelProperty(value = "店铺信息", position = 1,required = true)
