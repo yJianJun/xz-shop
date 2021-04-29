@@ -100,7 +100,7 @@ public class ShopInfoController {
     @WebApi
     @PostMapping("/add")
     @IgnoreAuth
-    @ApiOperation("新建店铺")
+    @ApiOperation("新建店铺-运营端")
     public ApiResponse<String> add(@ApiParam(value = "店铺添加参数模型", required = true)@RequestBody @Valid ShopInfoAddVo addVo) {
 
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
@@ -163,7 +163,7 @@ public class ShopInfoController {
     @WebApi
     @GetMapping("/get")
     @IgnoreAuth
-    @ApiOperation("店铺详情")
+    @ApiOperation("店铺详情-运营端")
     public ApiResponse<ShopInfoDetailTo> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "店铺id", required = true) Long id ) {
 
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
