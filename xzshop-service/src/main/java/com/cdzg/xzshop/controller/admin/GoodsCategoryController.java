@@ -96,7 +96,7 @@ public class GoodsCategoryController {
     @PostMapping("/list")
     @IgnoreAuth
     @ApiOperation("查询商品类别列表")
-    public ApiResponse<List<GoodsCategoryTo>> list(@ApiParam(value = "商品类别分页参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
+    public ApiResponse<List<GoodsCategoryTo>> list(@ApiParam(value = "商品类别参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         //if (adminUser == null) {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");

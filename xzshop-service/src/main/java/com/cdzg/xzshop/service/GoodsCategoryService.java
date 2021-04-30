@@ -43,5 +43,10 @@ public interface GoodsCategoryService {
 	List<GoodsCategory> findByParentIdAndLevel(Long parentId,Integer level);
 
     PageResultVO<GoodsCategory> pageSub(int page, int pageSize, Long parentId, Integer level);
+
+
+
+	GoodsCategory findOneByIdAndLevel(Long id,Integer level);
+
 }
 

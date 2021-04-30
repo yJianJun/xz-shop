@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
-@ApiModel(description = "商品类别分页参数模型")
+@ApiModel(description = "商品类别参数模型")
 public class GoodsCategoryPageVo{
 
 
