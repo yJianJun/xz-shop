@@ -53,18 +53,7 @@ public class GoodsCategoryController {
         if (adminUser == null) {
             return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         }
-
-        GoodsCategory category = GoodsCategory.builder()
-                .categoryName(addVo.getName())
-                .createUser(Long.toString(adminUser.getUserId()))
-                .gmtCreate(LocalDateTime.now())
-                .gmtUpdate(LocalDateTime.now())
-                .level(addVo.getLevel())
-                .parentId(addVo.getParentId())
-                .status(addVo.getStatus())
-                .build();
-
-        goodsCategoryService.insert(category);
+        goodsCategoryService.add(adminUser,addVo);
         return CommonResult.buildSuccessResponse();
     }
 
@@ -162,20 +151,11 @@ public class GoodsCategoryController {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         //}
         List<Long> list = statusVO.getList();
+        Boolean flag = statusVO.getFlag();
+
         if (CollectionUtils.isNotEmpty(list)) {
 
-            for (int i = 0; i < list.size(); i++) {
-
-                Long id = list.get(i);
-                GoodsCategory goodsCategory = goodsCategoryService.selectByPrimaryKey(id);
-
-                if (Objects.nonNull(goodsCategory)) {
-
-                    goodsCategory.setStatus(statusVO.getFlag());
-                    goodsCategory.setGmtUpdate(LocalDateTime.now());
-                    goodsCategoryService.insertOrUpdate(goodsCategory);
-                }
-            }
+            goodsCategoryService.batchPutOnDown(list, flag);
             return CommonResult.buildSuccessResponse();
         }
         return CommonResult.error(ResultCode.PARAMETER_ERROR);

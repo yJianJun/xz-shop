@@ -63,22 +63,11 @@ public class ShopInfoController {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         //}
         List<Long> list = statusVO.getList();
+        Boolean flag = statusVO.getFlag();
+
         if (CollectionUtils.isNotEmpty(list)){
 
-            QueryWrapper<ShopInfo> queryWrapper = new QueryWrapper<>();
-            for (int i = 0; i < list.size(); i++) {
-
-                Long id = list.get(i);
-                ShopInfo shopInfo = shopInfoService.getBaseMapper().selectOne(queryWrapper.eq("id",id));
-                if (Objects.nonNull(shopInfo)){
-                    shopInfo.setStatus(statusVO.getFlag());
-
-                    if (statusVO.getFlag()){
-                        shopInfo.setGmtPutOnTheShelf(LocalDateTime.now());
-                    }
-                    shopInfoService.updateById(shopInfo);
-                }
-            }
+            shopInfoService.batchPutOnDown(list,flag);
             return ApiResponse.buildSuccessResponse("编辑成功");
         }
         return ApiResponse.buildCommonErrorResponse("编辑失败");
@@ -101,63 +90,14 @@ public class ShopInfoController {
     @PostMapping("/add")
     @IgnoreAuth
     @ApiOperation("新建店铺-运营端")
-    public ApiResponse<String> add(@ApiParam(value = "店铺添加参数模型", required = true)@RequestBody @Valid ShopInfoAddVo addVo) {
+    public ApiResponse add(@ApiParam(value = "店铺添加参数模型", required = true)@RequestBody @Valid ShopInfoAddVo addVo) {
 
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         //if (adminUser == null) {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         //}
-
-        ShopInfo shopInfo = ShopInfo.builder()
-                .shopName(addVo.getShopName())
-                .createUser("")   //yjjtodo 需改
-                .contactPerson(addVo.getPerson())
-                .department(addVo.getDepartment())
-                .fare(addVo.getFare())
-                .gmtCreate(LocalDateTime.now())
-                .logo(addVo.getLogoUrl())
-                .status(false)
-                .shopUnion(addVo.getUnion())
-                .phone(addVo.getContact())
-                .build();
-
-        shopInfoService.save(shopInfo);
-
-        AliPayReceiveVo aliPayVo = addVo.getAliPayVo();
-
-        if (Objects.nonNull(aliPayVo)){
-
-            ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
-                    .appid(aliPayVo.getAppId())
-                    .shopId(shopInfo.getId())
-                    .keyPath("")
-                    .mchid("")
-                    .privateKey(aliPayVo.getPrivateKey())
-                    .publicKey(aliPayVo.getPublicKey())
-                    .signtype(aliPayVo.getSigntype())
-                    .type(ReceivePaymentType.Alipay)
-                    .build();
-            receivePaymentInfoService.insert(aliInfo);
-        }
-
-        WeChatReceiveVo wxPayVo = addVo.getWxPayVo();
-        if (Objects.nonNull(wxPayVo)){
-
-            ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
-                    .appid(wxPayVo.getAppId())
-                    .signtype("")
-                    .shopId(shopInfo.getId())
-                    .keyPath(wxPayVo.getKeyPath())
-                    .mchid(wxPayVo.getMchId())
-                    .privateKey(wxPayVo.getPrivateKey())
-                    .publicKey("")
-                    .type(ReceivePaymentType.Wechat)
-                    .build();
-
-            receivePaymentInfoService.insert(aliInfo);
-        }
-
-        return ApiResponse.buildSuccessResponse("成功");
+        shopInfoService.add(addVo);
+        return CommonResult.buildSuccessResponse();
     }
 
     @WebApi
@@ -191,79 +131,7 @@ public class ShopInfoController {
         //if (adminUser == null) {
         //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         //}
-
-        ShopInfo shopInfo  = shopInfoService.getById(vo.getId());
-
-        if (Objects.nonNull(shopInfo)){
-
-            shopInfo.setShopName(vo.getShopName());
-            shopInfo.setContactPerson(vo.getPerson());
-            shopInfo.setDepartment(vo.getDepartment());
-            shopInfo.setFare(vo.getFare());
-            shopInfo.setLogo(vo.getLogoUrl());
-            shopInfo.setGmtUpdate(LocalDateTime.now());
-            shopInfo.setShopUnion(vo.getUnion());
-            shopInfo.setPhone(vo.getContact());
-
-            shopInfoService.saveOrUpdate(shopInfo);
-        }else {
-           throw new BaseException(ResultCode.DATA_ERROR);
-        }
-
-        ReceivePaymentInfo alipay = receivePaymentInfoService.findOneByShopIdAndType(shopInfo.getId(), ReceivePaymentType.Alipay);
-        ReceivePaymentInfo wechat = receivePaymentInfoService.findOneByShopIdAndType(shopInfo.getId(), ReceivePaymentType.Wechat);
-
-        AliPayReceiveVo aliPayVo = vo.getAliPayVo();
-
-        if (Objects.nonNull(aliPayVo)){
-            if (Objects.nonNull(alipay)){
-
-                alipay.setAppid(aliPayVo.getAppId());
-                alipay.setPrivateKey(aliPayVo.getPrivateKey());
-                alipay.setPublicKey(alipay.getPublicKey());
-                alipay.setSigntype(aliPayVo.getSigntype());
-                receivePaymentInfoService.insertOrUpdate(alipay);
-            }else {
-                ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
-                        .appid(aliPayVo.getAppId())
-                        .shopId(shopInfo.getId())
-                        .keyPath("")
-                        .mchid("")
-                        .privateKey(aliPayVo.getPrivateKey())
-                        .publicKey(aliPayVo.getPublicKey())
-                        .signtype(aliPayVo.getSigntype())
-                        .type(ReceivePaymentType.Alipay)
-                        .build();
-                receivePaymentInfoService.insert(aliInfo);
-            }
-        }
-
-        WeChatReceiveVo wxPayVo = vo.getWxPayVo();
-        if (Objects.nonNull(wxPayVo)){
-            if (Objects.nonNull(wechat)){
-
-                wechat.setAppid(wxPayVo.getAppId());
-                wechat.setKeyPath(wxPayVo.getKeyPath());
-                wechat.setMchid(wxPayVo.getMchId());
-                wechat.setPrivateKey(wxPayVo.getPrivateKey());
-
-                receivePaymentInfoService.insertOrUpdate(wechat);
-            }else {
-
-                ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
-                        .appid(wxPayVo.getAppId())
-                        .signtype("")
-                        .shopId(shopInfo.getId())
-                        .keyPath(wxPayVo.getKeyPath())
-                        .mchid(wxPayVo.getMchId())
-                        .privateKey(wxPayVo.getPrivateKey())
-                        .publicKey("")
-                        .type(ReceivePaymentType.Wechat)
-                        .build();
-                receivePaymentInfoService.insert(aliInfo);
-            }
-        }
-
+        shopInfoService.update(vo);
         return CommonResult.buildSuccessResponse();
     }
 

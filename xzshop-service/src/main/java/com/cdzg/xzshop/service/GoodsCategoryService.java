@@ -1,7 +1,9 @@
 package com.cdzg.xzshop.service;
 
+import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.domain.GoodsCategory;
 import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
+import com.cdzg.xzshop.vo.admin.GoodsCategoryAddVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 
 import java.util.List;
@@ -48,5 +50,8 @@ public interface GoodsCategoryService {
 
 	GoodsCategory findOneByIdAndLevel(Long id,Integer level);
 
+    void add(UserLoginResponse adminUser, GoodsCategoryAddVo addVo);
+
+    void batchPutOnDown(List<Long> list, Boolean flag);
 }
 

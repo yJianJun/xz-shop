@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.vo.admin.ShopInfoAddVo;
+import com.cdzg.xzshop.vo.admin.ShopInfoUpdateVO;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageInfo;
 
@@ -24,6 +26,12 @@ public interface ShopInfoService extends IService<ShopInfo> {
     int batchInsert(List<ShopInfo> list);
 
     PageResultVO<ShopInfo> page(int page, int pageSize, String likeShopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf);
+
+    void batchPutOnDown(List<Long> list, Boolean flag);
+
+    void add(ShopInfoAddVo addVo);
+
+    void update(ShopInfoUpdateVO vo);
 }
 
 

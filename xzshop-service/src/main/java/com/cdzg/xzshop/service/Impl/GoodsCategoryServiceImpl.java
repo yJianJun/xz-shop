@@ -1,7 +1,9 @@
 package com.cdzg.xzshop.service.Impl;
 
 import com.beust.jcommander.internal.Lists;
+import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
+import com.cdzg.xzshop.vo.admin.GoodsCategoryAddVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.collections.CollectionUtils;
@@ -13,6 +15,7 @@ import javax.annotation.Resource;
 import com.cdzg.xzshop.domain.GoodsCategory;
 import com.cdzg.xzshop.mapper.GoodsCategoryMapper;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import com.cdzg.xzshop.service.GoodsCategoryService;
@@ -144,6 +147,40 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     @Override
     public GoodsCategory findOneByIdAndLevel(Long id, Integer level) {
         return goodsCategoryMapper.findOneByIdAndLevel(id, level);
+    }
+
+    @Override
+    public void add(UserLoginResponse adminUser, GoodsCategoryAddVo addVo) {
+
+        GoodsCategory category = GoodsCategory.builder()
+                .categoryName(addVo.getName())
+                .createUser(Long.toString(adminUser.getUserId()))
+                .gmtCreate(LocalDateTime.now())
+                .gmtUpdate(LocalDateTime.now())
+                .level(addVo.getLevel())
+                .parentId(addVo.getParentId())
+                .status(addVo.getStatus())
+                .build();
+
+        insert(category);
+    }
+
+    @Override
+    public void batchPutOnDown(List<Long> list, Boolean flag) {
+
+        for (int i = 0; i < list.size(); i++) {
+
+            Long id = list.get(i);
+            GoodsCategory goodsCategory = selectByPrimaryKey(id);
+
+            if (Objects.nonNull(goodsCategory)) {
+
+                goodsCategory.setStatus(flag);
+                goodsCategory.setGmtUpdate(LocalDateTime.now());
+                insertOrUpdate(goodsCategory);
+            }
+        }
+
     }
 
 
