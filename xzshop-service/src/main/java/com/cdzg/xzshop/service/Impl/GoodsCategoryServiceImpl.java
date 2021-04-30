@@ -126,6 +126,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
                 categoryTos.add(categoryTo);
             }
         }
+        //yjjtodo 返回数据时将用户id 转成用户名
         return categoryTos;
     }
 

@@ -16,4 +16,7 @@ public class GoodsCategoryTo extends GoodsCategory {
 
     @ApiModelProperty(value = "商品2级分类集合",required = true)
     private List<GoodsCategory> children;
+
+    @ApiModelProperty(value = "商品分类创建人")
+    private String createUser;
 }
