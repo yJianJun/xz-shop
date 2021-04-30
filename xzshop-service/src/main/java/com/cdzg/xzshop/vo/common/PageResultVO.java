@@ -3,17 +3,16 @@ package com.cdzg.xzshop.vo.common;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
+
 @Data
 @NoArgsConstructor
-public class PageResultVO<T> extends PageInfo<T> {
+@AllArgsConstructor
+@Builder
+public class PageResultVO<T>{
 
 
     @ApiModelProperty(value = "总条数")
@@ -36,14 +35,5 @@ public class PageResultVO<T> extends PageInfo<T> {
         this.totalPage = new Long(page.getPages()).intValue();
         this.pageSize = new Long(page.getSize()).intValue();
         this.totalNum = new Long(page.getTotal()).intValue();;
-    }
-
-    public PageResultVO(List<T> list) {
-        super(list, 8);
-        totalNum =super.getSize();
-        totalPage = super.getPages();
-        currentPage = super.getPageNum();
-        pageSize = super.getPageSize();
-        data = super.getList();
     }
 }

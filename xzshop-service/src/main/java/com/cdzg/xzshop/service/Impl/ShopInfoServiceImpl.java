@@ -11,6 +11,7 @@ import com.cdzg.xzshop.vo.admin.AliPayReceiveVo;
 import com.cdzg.xzshop.vo.admin.ShopInfoAddVo;
 import com.cdzg.xzshop.vo.admin.ShopInfoUpdateVO;
 import com.cdzg.xzshop.vo.admin.WeChatReceiveVo;
+import com.cdzg.xzshop.utils.PageUtil;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -70,7 +71,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     @Override
     public PageResultVO<ShopInfo> page(int page, int pageSize, String likeShopName, Boolean status, Date minGmtPutOnTheShelf, Date maxGmtPutOnTheShelf) {
         PageHelper.startPage(page, pageSize);
-        return new PageResultVO<>(shopInfoMapper.findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqual(likeShopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf));
+        return PageUtil.transform(new PageInfo(shopInfoMapper.findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqual(likeShopName, status, minGmtPutOnTheShelf, maxGmtPutOnTheShelf)));
     }
 
     @Override

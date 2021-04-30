@@ -4,8 +4,10 @@ import com.beust.jcommander.internal.Lists;
 import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
 import com.cdzg.xzshop.vo.admin.GoodsCategoryAddVo;
+import com.cdzg.xzshop.utils.PageUtil;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -143,7 +145,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     @Override
     public PageResultVO<GoodsCategory> pageSub(int page, int pageSize, Long parentId, Integer level) {
         PageHelper.startPage(page, pageSize);
-        return new PageResultVO<>(goodsCategoryMapper.findByParentIdAndLevel(parentId, level));
+        return PageUtil.transform(new PageInfo(goodsCategoryMapper.findByParentIdAndLevel(parentId, level)));
     }
 
     @Override
