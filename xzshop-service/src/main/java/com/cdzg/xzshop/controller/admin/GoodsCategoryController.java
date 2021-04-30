@@ -1,6 +1,7 @@
 package com.cdzg.xzshop.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
@@ -9,6 +10,7 @@ import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsCategory;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.GoodsCategoryService;
 import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
 import com.cdzg.xzshop.to.admin.ShopInfoDetailTo;
@@ -47,14 +49,14 @@ public class GoodsCategoryController {
     @ApiOperation("新建商品分类")
     public ApiResponse add(@ApiParam(value = "商品分类添加参数模型", required = true) @RequestBody @Valid GoodsCategoryAddVo addVo) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        if (adminUser == null) {
+            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
+        }
 
         GoodsCategory category = GoodsCategory.builder()
                 .categoryName(addVo.getName())
-                .createUser("")  //yjjtodo 后面需修改 目前测试
+                .createUser(Long.toString(adminUser.getUserId()))
                 .gmtCreate(LocalDateTime.now())
                 .gmtUpdate(LocalDateTime.now())
                 .level(addVo.getLevel())
