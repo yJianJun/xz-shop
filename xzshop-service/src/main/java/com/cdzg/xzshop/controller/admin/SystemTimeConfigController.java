@@ -20,7 +20,7 @@ public class SystemTimeConfigController {
     private SystemTimeConfigService systemTimeConfigService;
 
     @WebApi
-    @GetMapping("getSystemTimeConfig")
+    @GetMapping("/getSystemTimeConfig")
     @ApiOperation("03001-查询配置")
     public ApiResponse<SystemTimeConfigVO> getSystemTimeConfig(){
         log.info("SystemTimeConfigController-getSystemTimeConfig");
@@ -28,7 +28,7 @@ public class SystemTimeConfigController {
     }
 
     @WebApi
-    @PostMapping("updateSystemTimeConfig")
+    @PostMapping("/updateSystemTimeConfig")
     @ApiOperation("03002-修改配置")
     public ApiResponse<String> updateSystemTimeConfig(@RequestBody SystemTimeConfigVO vo){
         log.info("SystemTimeConfigController-updateSystemTimeConfig vo:{}", vo);
