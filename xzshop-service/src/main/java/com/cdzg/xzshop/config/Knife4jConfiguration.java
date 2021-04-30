@@ -65,7 +65,7 @@ public class Knife4jConfiguration {
         paraList.add(pc);
         paraList.add(mobile);
         return new Docket(DocumentationType.SWAGGER_2)
-                .pathMapping("/")
+                .pathMapping("/xz-shop")
                 .apiInfo(apiAllInfo())
                 .groupName("ALL-所有接口")
                 .select()
@@ -109,7 +109,7 @@ public class Knife4jConfiguration {
                         .build();
         paraList.add(param1);
         return new Docket(DocumentationType.SWAGGER_2)
-                .pathMapping("/")
+                .pathMapping("/xz-shop")
                 .apiInfo(apiPCInfo())
                 .groupName("PC-web接口")
                 .select()
@@ -147,7 +147,7 @@ public class Knife4jConfiguration {
                         .build();
         paraList.add(param1);
         return new Docket(DocumentationType.SWAGGER_2)
-                .pathMapping("/")
+                .pathMapping("/xz-shop")
                 .apiInfo(apiMobileInfo())
                 .groupName("Mobile-移动接口")
                 .select()
