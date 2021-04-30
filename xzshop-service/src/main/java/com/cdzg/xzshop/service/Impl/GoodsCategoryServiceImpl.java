@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.cdzg.xzshop.service.GoodsCategoryService;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class GoodsCategoryServiceImpl implements GoodsCategoryService {
@@ -150,6 +152,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void add(UserLoginResponse adminUser, GoodsCategoryAddVo addVo) {
 
         GoodsCategory category = GoodsCategory.builder()
@@ -166,6 +169,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void batchPutOnDown(List<Long> list, Boolean flag) {
 
         for (int i = 0; i < list.size(); i++) {

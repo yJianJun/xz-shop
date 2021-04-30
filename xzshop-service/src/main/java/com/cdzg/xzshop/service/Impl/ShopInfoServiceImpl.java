@@ -24,6 +24,8 @@ import java.util.Objects;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.mapper.ShopInfoMapper;
 import com.cdzg.xzshop.service.ShopInfoService;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> implements ShopInfoService {
@@ -72,6 +74,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void batchPutOnDown(List<Long> list, Boolean flag) {
 
         QueryWrapper<ShopInfo> queryWrapper = new QueryWrapper<>();
@@ -91,6 +94,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void add(ShopInfoAddVo addVo) {
 
         ShopInfo shopInfo = ShopInfo.builder()
@@ -144,6 +148,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void update(ShopInfoUpdateVO vo) {
 
         ShopInfo shopInfo  = getById(vo.getId());

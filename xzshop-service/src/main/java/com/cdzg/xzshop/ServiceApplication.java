@@ -20,10 +20,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableAsync(proxyTargetClass = true)
 @EnableBusinessLoginFilter
+@EnableTransactionManagement
 @ServletComponentScan(basePackages = {"com.cdzg.xzshop.filter"})
 @MapperScan("com.cdzg.xzshop.mapper")
 @EnableApolloConfig
