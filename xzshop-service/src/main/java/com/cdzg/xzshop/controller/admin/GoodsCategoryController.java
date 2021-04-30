@@ -18,9 +18,7 @@ import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -45,8 +43,10 @@ public class GoodsCategoryController {
 
     @WebApi
     @PostMapping("/add")
-    @IgnoreAuth
     @ApiOperation("新建商品分类")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse add(@ApiParam(value = "商品分类添加参数模型", required = true) @RequestBody @Valid GoodsCategoryAddVo addVo) {
 
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
