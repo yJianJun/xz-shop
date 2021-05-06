@@ -58,4 +58,6 @@ public interface ReturnGoodsInfoMapper {
     int updateBatchSelective(List<ReturnGoodsInfo> list);
 
     int batchInsert(@Param("list") List<ReturnGoodsInfo> list);
+
+    ReturnGoodsInfo findOneByShopId(@Param("shopId")Long shopId);
 }

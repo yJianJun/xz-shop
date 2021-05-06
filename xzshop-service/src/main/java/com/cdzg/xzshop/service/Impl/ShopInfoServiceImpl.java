@@ -6,11 +6,10 @@ import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
+import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper;
-import com.cdzg.xzshop.vo.admin.AliPayReceiveVo;
-import com.cdzg.xzshop.vo.admin.ShopInfoAddVo;
-import com.cdzg.xzshop.vo.admin.ShopInfoUpdateVO;
-import com.cdzg.xzshop.vo.admin.WeChatReceiveVo;
+import com.cdzg.xzshop.mapper.ReturnGoodsInfoMapper;
+import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.utils.PageUtil;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
@@ -33,6 +32,9 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
     @Resource
     private ShopInfoMapper shopInfoMapper;
+
+    @Resource
+    private ReturnGoodsInfoMapper returnGoodsInfoMapper;
 
     @Resource
     private ReceivePaymentInfoMapper receivePaymentInfoMapper;
@@ -133,7 +135,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
             receivePaymentInfoMapper.insert(aliInfo);
 
         }else {
-            if (Objects.nonNull(receiveMoney)&& !receiveMoney.equals(1)){
+            if (receiveMoney!=1){
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
@@ -156,10 +158,20 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
             receivePaymentInfoMapper.insert(aliInfo);
         }else {
-            if (Objects.nonNull(receiveMoney)&& !receiveMoney.equals(0)){
+            if (receiveMoney != 0){
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
+
+        ReturnGoodsInfoVo returnfoVo = addVo.getReturnfoVo();
+        ReturnGoodsInfo returnGoodsInfo = ReturnGoodsInfo.builder()
+                .address(returnfoVo.getAddress())
+                .shopId(shopInfo.getId())
+                .phone(returnfoVo.getPhone())
+                .precautions(returnfoVo.getPrecautions())
+                .recipient(returnfoVo.getRecipient())
+                .build();
+        returnGoodsInfoMapper.insert(returnGoodsInfo);
     }
 
     @Override
@@ -186,13 +198,17 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         ReceivePaymentInfo alipay = receivePaymentInfoMapper.findOneByShopIdAndType(shopInfo.getId(), ReceivePaymentType.Alipay);
         ReceivePaymentInfo wechat = receivePaymentInfoMapper.findOneByShopIdAndType(shopInfo.getId(), ReceivePaymentType.Wechat);
 
+        Integer receiveMoney = vo.getReceiveMoney();
         AliPayReceiveVo aliPayVo = vo.getAliPayVo();
 
         if (Objects.nonNull(aliPayVo)){
+
+            boolean flag = receiveMoney == null || (receiveMoney == 0); // 全部 支付宝 | 微信
             if (Objects.nonNull(alipay)){
 
                 alipay.setAppid(aliPayVo.getAppId());
                 alipay.setPrivateKey(aliPayVo.getPrivateKey());
+                alipay.setStatus(flag);
                 alipay.setPublicKey(alipay.getPublicKey());
                 alipay.setSigntype(aliPayVo.getSigntype());
                 receivePaymentInfoMapper.insertOrUpdate(alipay);
@@ -200,6 +216,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                 ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
                         .appid(aliPayVo.getAppId())
                         .shopId(shopInfo.getId())
+                        .status(flag)
                         .keyPath("")
                         .mchid("")
                         .privateKey(aliPayVo.getPrivateKey())
@@ -209,23 +226,30 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                         .build();
                 receivePaymentInfoMapper.insert(aliInfo);
             }
+        }else {
+            if (1 != receiveMoney){
+                throw new BaseException(ResultCode.PARAMETER_ERROR);
+            }
         }
 
         WeChatReceiveVo wxPayVo = vo.getWxPayVo();
         if (Objects.nonNull(wxPayVo)){
+
+            boolean flag = receiveMoney == null || (receiveMoney == 1); // 全部 微信 | 支付宝
             if (Objects.nonNull(wechat)){
 
                 wechat.setAppid(wxPayVo.getAppId());
                 wechat.setKeyPath(wxPayVo.getKeyPath());
                 wechat.setMchid(wxPayVo.getMchId());
+                wechat.setStatus(flag);
                 wechat.setPrivateKey(wxPayVo.getPrivateKey());
 
                 receivePaymentInfoMapper.insertOrUpdate(wechat);
             }else {
-
                 ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
                         .appid(wxPayVo.getAppId())
                         .signtype("")
+                        .status(flag)
                         .shopId(shopInfo.getId())
                         .keyPath(wxPayVo.getKeyPath())
                         .mchid(wxPayVo.getMchId())
@@ -235,6 +259,21 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                         .build();
                 receivePaymentInfoMapper.insert(aliInfo);
             }
+        }else {
+            if (0 != receiveMoney){
+                throw new BaseException(ResultCode.PARAMETER_ERROR);
+            }
+        }
+        ReturnGoodsInfo returnGoodsInfo = returnGoodsInfoMapper.findOneByShopId(shopInfo.getId());
+        ReturnGoodsInfoVo returnfoVo = vo.getReturnfoVo();
+
+        if (Objects.nonNull(returnGoodsInfo)){
+
+            returnGoodsInfo.setPhone(returnfoVo.getPhone());
+            returnGoodsInfo.setAddress(returnfoVo.getAddress());
+            returnGoodsInfo.setRecipient(returnfoVo.getRecipient());
+            returnGoodsInfo.setPrecautions(returnfoVo.getPrecautions());
+            returnGoodsInfoMapper.insertOrUpdate(returnGoodsInfo);
         }
     }
 }

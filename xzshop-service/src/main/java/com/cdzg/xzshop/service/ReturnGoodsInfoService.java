@@ -27,4 +27,5 @@ public interface ReturnGoodsInfoService{
 
     int batchInsert(List<ReturnGoodsInfo> list);
 
+    ReturnGoodsInfo findOneByShopId(Long shopId);
 }

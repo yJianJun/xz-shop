@@ -1,6 +1,7 @@
 package com.cdzg.xzshop.vo.admin;
 
 
+import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -52,5 +53,9 @@ public class ShopInfoAddVo {
 
     @ApiModelProperty(value = "启用收款方式标识 null:全部 0:支付宝 1:微信支付", position = 10,allowEmptyValue = true,allowableValues = "null,0,1")
     private Integer receiveMoney;
+
+    @ApiModelProperty(value = "退货信息", position = 11,required = true)
+    @NotNull
+    private ReturnGoodsInfoVo returnfoVo;
 
 }

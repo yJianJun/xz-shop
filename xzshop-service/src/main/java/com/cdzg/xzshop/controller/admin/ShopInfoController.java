@@ -4,8 +4,10 @@ import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
+import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.service.ReceivePaymentInfoService;
+import com.cdzg.xzshop.service.ReturnGoodsInfoService;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.ShopInfoDetailTo;
 import com.cdzg.xzshop.vo.admin.*;
@@ -36,6 +38,8 @@ public class ShopInfoController {
     @Autowired
     ReceivePaymentInfoService receivePaymentInfoService;
 
+    @Autowired
+    ReturnGoodsInfoService returnGoodsInfoService;
 
     @WebApi
     @PostMapping("/batch/switch")
@@ -98,9 +102,11 @@ public class ShopInfoController {
 
         ShopInfo shopInfo = shopInfoService.getById(id);
         List<ReceivePaymentInfo> paymentInfos = receivePaymentInfoService.findAllByShopId(id);
+        ReturnGoodsInfo returnGoodsInfo = returnGoodsInfoService.findOneByShopId(id);
 
         ShopInfoDetailTo detail = ShopInfoDetailTo.builder()
                 .shopInfo(shopInfo)
+                .returnGoodsInfo(returnGoodsInfo)
                 .payments(paymentInfos).build();
 
         return CommonResult.buildSuccessResponse(detail);

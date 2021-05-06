@@ -67,4 +67,12 @@ public class ReturnGoodsInfoServiceImpl implements ReturnGoodsInfoService{
         return returnGoodsInfoMapper.batchInsert(list);
     }
 
+	@Override
+	public ReturnGoodsInfo findOneByShopId(Long shopId){
+		 return returnGoodsInfoMapper.findOneByShopId(shopId);
+	}
+
+
+
+
 }
