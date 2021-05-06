@@ -113,29 +113,39 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
         save(shopInfo);
 
-        AliPayReceiveVo aliPayVo = addVo.getAliPayVo();
+        Integer receiveMoney = addVo.getReceiveMoney();
 
+        AliPayReceiveVo aliPayVo = addVo.getAliPayVo();
         if (Objects.nonNull(aliPayVo)){
 
+            boolean flag = receiveMoney == null || (receiveMoney == 0); // 全部 支付宝 | 微信
             ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
                     .appid(aliPayVo.getAppId())
                     .shopId(shopInfo.getId())
                     .keyPath("")
                     .mchid("")
+                    .status(flag)
                     .privateKey(aliPayVo.getPrivateKey())
                     .publicKey(aliPayVo.getPublicKey())
                     .signtype(aliPayVo.getSigntype())
                     .type(ReceivePaymentType.Alipay)
                     .build();
             receivePaymentInfoMapper.insert(aliInfo);
+
+        }else {
+            if (Objects.nonNull(receiveMoney)&& !receiveMoney.equals(1)){
+                throw new BaseException(ResultCode.PARAMETER_ERROR);
+            }
         }
 
         WeChatReceiveVo wxPayVo = addVo.getWxPayVo();
         if (Objects.nonNull(wxPayVo)){
 
+            boolean flag = receiveMoney == null || (receiveMoney == 1); // 全部 微信 | 支付宝
             ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
                     .appid(wxPayVo.getAppId())
                     .signtype("")
+                    .status(flag)
                     .shopId(shopInfo.getId())
                     .keyPath(wxPayVo.getKeyPath())
                     .mchid(wxPayVo.getMchId())
@@ -145,6 +155,10 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                     .build();
 
             receivePaymentInfoMapper.insert(aliInfo);
+        }else {
+            if (Objects.nonNull(receiveMoney)&& !receiveMoney.equals(0)){
+                throw new BaseException(ResultCode.PARAMETER_ERROR);
+            }
         }
     }
 

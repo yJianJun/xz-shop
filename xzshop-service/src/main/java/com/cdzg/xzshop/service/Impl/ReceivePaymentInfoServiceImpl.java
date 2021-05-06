@@ -45,23 +45,20 @@ public class ReceivePaymentInfoServiceImpl implements ReceivePaymentInfoService 
         return receivePaymentInfoMapper.batchInsert(list);
     }
 
-	@Override
-	public List<ReceivePaymentInfo> findAllByShopId(Long shopId){
-		 return receivePaymentInfoMapper.findAllByShopId(shopId);
-	}
+    @Override
+    public List<ReceivePaymentInfo> findAllByShopId(Long shopId) {
+        return receivePaymentInfoMapper.findAllByShopId(shopId);
+    }
 
-	@Override
-	public ReceivePaymentInfo findOneByShopIdAndType(Long shopId,ReceivePaymentType type){
-		 return receivePaymentInfoMapper.findOneByShopIdAndType(shopId,type);
-	}
-
-
-
-
-
+    @Override
+    public ReceivePaymentInfo findOneByShopIdAndType(Long shopId, ReceivePaymentType type) {
+        return receivePaymentInfoMapper.findOneByShopIdAndType(shopId, type);
+    }
 
 
 }
+
+
 
 
 

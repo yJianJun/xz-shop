@@ -2,12 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper">
   <resultMap id="BaseResultMap" type="com.cdzg.xzshop.domain.ReceivePaymentInfo">
-    <!--@mbg.generated generated on Tue Apr 27 17:47:51 CST 2021.-->
+    <!--@mbg.generated generated on Thu May 06 17:36:59 CST 2021.-->
     <!--@Table receive_payment_info-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="shop_id" jdbcType="BIGINT" property="shopId" />
     <result column="appid" jdbcType="VARCHAR" property="appid" />
     <result column="mchid" jdbcType="VARCHAR" property="mchid" />
+    <result column="status" jdbcType="TINYINT" property="status" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="key_path" jdbcType="VARCHAR" property="keyPath" />
     <result column="private_key" jdbcType="VARCHAR" property="privateKey" />
@@ -15,11 +16,11 @@
     <result column="public_key" jdbcType="VARCHAR" property="publicKey" />
   </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated generated on Tue Apr 27 17:47:51 CST 2021.-->
-    id, shop_id, appid, mchid, `type`, key_path, private_key, signtype, public_key
+    <!--@mbg.generated generated on Thu May 06 17:36:59 CST 2021.-->
+    id, shop_id, appid, mchid, `status`, `type`, key_path, private_key, signtype, public_key
   </sql>
   <update id="updateBatch" parameterType="java.util.List">
-    <!--@mbg.generated generated on Tue Apr 27 17:47:51 CST 2021.-->
+    <!--@mbg.generated generated on Thu May 06 17:36:59 CST 2021.-->
     update receive_payment_info
     <trim prefix="set" suffixOverrides=",">
       <trim prefix="shop_id = case" suffix="end,">
@@ -35,6 +36,11 @@
       <trim prefix="mchid = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
           when id = #{item.id,jdbcType=BIGINT} then #{item.mchid,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=TINYINT}
         </foreach>
       </trim>
       <trim prefix="`type` = case" suffix="end,">
@@ -69,7 +75,7 @@
     </foreach>
   </update>
   <update id="updateBatchSelective" parameterType="java.util.List">
-    <!--@mbg.generated generated on Tue Apr 27 17:47:51 CST 2021.-->
+    <!--@mbg.generated generated on Thu May 06 17:36:59 CST 2021.-->
     update receive_payment_info
     <trim prefix="set" suffixOverrides=",">
       <trim prefix="shop_id = case" suffix="end,">
@@ -90,6 +96,13 @@
         <foreach collection="list" index="index" item="item">
           <if test="item.mchid != null">
             when id = #{item.id,jdbcType=BIGINT} then #{item.mchid,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.status != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=TINYINT}
           </if>
         </foreach>
       </trim>
@@ -135,18 +148,20 @@
     </foreach>
   </update>
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
-    <!--@mbg.generated generated on Tue Apr 27 17:47:51 CST 2021.-->
+    <!--@mbg.generated generated on Thu May 06 17:36:59 CST 2021.-->
     insert into receive_payment_info
-    (shop_id, appid, mchid, `type`, key_path, private_key, signtype, public_key)
+    (shop_id, appid, mchid, `status`, `type`, key_path, private_key, signtype, public_key
+      )
     values
     <foreach collection="list" item="item" separator=",">
       (#{item.shopId,jdbcType=BIGINT}, #{item.appid,jdbcType=VARCHAR}, #{item.mchid,jdbcType=VARCHAR}, 
-        #{item.type,jdbcType=INTEGER}, #{item.keyPath,jdbcType=VARCHAR}, #{item.privateKey,jdbcType=VARCHAR}, 
-        #{item.signtype,jdbcType=VARCHAR}, #{item.publicKey,jdbcType=VARCHAR})
+        #{item.status,jdbcType=TINYINT}, #{item.type,jdbcType=INTEGER}, #{item.keyPath,jdbcType=VARCHAR}, 
+        #{item.privateKey,jdbcType=VARCHAR}, #{item.signtype,jdbcType=VARCHAR}, #{item.publicKey,jdbcType=VARCHAR}
+        )
     </foreach>
   </insert>
   <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ReceivePaymentInfo" useGeneratedKeys="true">
-    <!--@mbg.generated generated on Tue Apr 27 17:47:51 CST 2021.-->
+    <!--@mbg.generated generated on Thu May 06 17:36:59 CST 2021.-->
     insert into receive_payment_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -155,6 +170,7 @@
       shop_id,
       appid,
       mchid,
+      `status`,
       `type`,
       key_path,
       private_key,
@@ -169,6 +185,7 @@
       #{shopId,jdbcType=BIGINT},
       #{appid,jdbcType=VARCHAR},
       #{mchid,jdbcType=VARCHAR},
+      #{status,jdbcType=TINYINT},
       #{type,jdbcType=INTEGER},
       #{keyPath,jdbcType=VARCHAR},
       #{privateKey,jdbcType=VARCHAR},
@@ -183,6 +200,7 @@
       shop_id = #{shopId,jdbcType=BIGINT},
       appid = #{appid,jdbcType=VARCHAR},
       mchid = #{mchid,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=TINYINT},
       `type` = #{type,jdbcType=INTEGER},
       key_path = #{keyPath,jdbcType=VARCHAR},
       private_key = #{privateKey,jdbcType=VARCHAR},
@@ -191,7 +209,7 @@
     </trim>
   </insert>
   <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.ReceivePaymentInfo" useGeneratedKeys="true">
-    <!--@mbg.generated generated on Tue Apr 27 17:47:51 CST 2021.-->
+    <!--@mbg.generated generated on Thu May 06 17:36:59 CST 2021.-->
     insert into receive_payment_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -200,25 +218,28 @@
       <if test="shopId != null">
         shop_id,
       </if>
-      <if test="appid != null">
+      <if test="appid != null and appid != ''">
         appid,
       </if>
-      <if test="mchid != null">
+      <if test="mchid != null and mchid != ''">
         mchid,
+      </if>
+      <if test="status != null">
+        `status`,
       </if>
       <if test="type != null">
         `type`,
       </if>
-      <if test="keyPath != null">
+      <if test="keyPath != null and keyPath != ''">
         key_path,
       </if>
-      <if test="privateKey != null">
+      <if test="privateKey != null and privateKey != ''">
         private_key,
       </if>
-      <if test="signtype != null">
+      <if test="signtype != null and signtype != ''">
         signtype,
       </if>
-      <if test="publicKey != null">
+      <if test="publicKey != null and publicKey != ''">
         public_key,
       </if>
     </trim>
@@ -230,25 +251,28 @@
       <if test="shopId != null">
         #{shopId,jdbcType=BIGINT},
       </if>
-      <if test="appid != null">
+      <if test="appid != null and appid != ''">
         #{appid,jdbcType=VARCHAR},
       </if>
-      <if test="mchid != null">
+      <if test="mchid != null and mchid != ''">
         #{mchid,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
       </if>
-      <if test="keyPath != null">
+      <if test="keyPath != null and keyPath != ''">
         #{keyPath,jdbcType=VARCHAR},
       </if>
-      <if test="privateKey != null">
+      <if test="privateKey != null and privateKey != ''">
         #{privateKey,jdbcType=VARCHAR},
       </if>
-      <if test="signtype != null">
+      <if test="signtype != null and signtype != ''">
         #{signtype,jdbcType=VARCHAR},
       </if>
-      <if test="publicKey != null">
+      <if test="publicKey != null and publicKey != ''">
         #{publicKey,jdbcType=VARCHAR},
       </if>
     </trim>
@@ -260,25 +284,28 @@
       <if test="shopId != null">
         shop_id = #{shopId,jdbcType=BIGINT},
       </if>
-      <if test="appid != null">
+      <if test="appid != null and appid != ''">
         appid = #{appid,jdbcType=VARCHAR},
       </if>
-      <if test="mchid != null">
+      <if test="mchid != null and mchid != ''">
         mchid = #{mchid,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=TINYINT},
       </if>
       <if test="type != null">
         `type` = #{type,jdbcType=INTEGER},
       </if>
-      <if test="keyPath != null">
+      <if test="keyPath != null and keyPath != ''">
         key_path = #{keyPath,jdbcType=VARCHAR},
       </if>
-      <if test="privateKey != null">
+      <if test="privateKey != null and privateKey != ''">
         private_key = #{privateKey,jdbcType=VARCHAR},
       </if>
-      <if test="signtype != null">
+      <if test="signtype != null and signtype != ''">
         signtype = #{signtype,jdbcType=VARCHAR},
       </if>
-      <if test="publicKey != null">
+      <if test="publicKey != null and publicKey != ''">
         public_key = #{publicKey,jdbcType=VARCHAR},
       </if>
     </trim>
@@ -287,7 +314,7 @@
 <!--auto generated by MybatisCodeHelper on 2021-04-28-->
   <select id="findAllByShopId" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from receive_payment_info
         where shop_id=#{shopId,jdbcType=BIGINT}
     </select>
@@ -295,7 +322,7 @@
 <!--auto generated by MybatisCodeHelper on 2021-04-28-->
   <select id="findOneByShopIdAndType" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"/>
+    <include refid="Base_Column_List" />
     from receive_payment_info
     where shop_id=#{shopId,jdbcType=BIGINT} and `type`=#{type,jdbcType=INTEGER}
   </select>

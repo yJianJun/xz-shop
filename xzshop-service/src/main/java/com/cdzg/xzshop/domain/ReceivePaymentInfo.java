@@ -47,6 +47,13 @@ public class ReceivePaymentInfo implements Serializable {
     private String mchid;
 
     /**
+     * 是否启用 1:启用,0未启用
+     */
+    @Column(name = "`status`")
+    @ApiModelProperty(value = "是否启用 1:启用,0未启用")
+    private Boolean status;
+
+    /**
      * 收款类型：1:支付宝支付 2:微信支付
      */
     @Column(name = "`type`")

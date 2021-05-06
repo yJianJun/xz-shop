@@ -20,16 +20,15 @@ public interface ReceivePaymentInfoService {
     int batchInsert(List<ReceivePaymentInfo> list);
 
 
-
-	List<ReceivePaymentInfo> findAllByShopId(Long shopId);
-
+    List<ReceivePaymentInfo> findAllByShopId(Long shopId);
 
 
-	ReceivePaymentInfo findOneByShopIdAndType(Long shopId,ReceivePaymentType type);
-
+    ReceivePaymentInfo findOneByShopIdAndType(Long shopId, ReceivePaymentType type);
 
 
 }
+
+
 
 
 
