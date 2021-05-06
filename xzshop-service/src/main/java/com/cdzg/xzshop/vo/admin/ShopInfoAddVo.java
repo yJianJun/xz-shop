@@ -17,7 +17,7 @@ public class ShopInfoAddVo {
 
     @ApiModelProperty(value = "店铺所属工会", position = 1, required = true)
     @NotEmpty
-    private List<String> union;
+    private String union;
 
     @ApiModelProperty(value = "店铺运营部门", position = 2, required = true)
     @NotEmpty
