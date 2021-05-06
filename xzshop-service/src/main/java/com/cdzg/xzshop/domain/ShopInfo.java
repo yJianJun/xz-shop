@@ -1,11 +1,15 @@
 package com.cdzg.xzshop.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +22,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 @Builder
 @Table(name = "shop_info")
+@TableName(autoResultMap = true)
 public class ShopInfo implements Serializable {
     /**
      * id
@@ -40,7 +45,8 @@ public class ShopInfo implements Serializable {
      */
     @Column(name = "shop_union")
     @ApiModelProperty(value = "所属工会")
-    private String shopUnion;
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private List<String> shopUnion;
 
     /**
      * 运营部门

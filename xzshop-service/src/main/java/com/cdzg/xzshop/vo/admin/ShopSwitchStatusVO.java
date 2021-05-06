@@ -22,7 +22,7 @@ public class ShopSwitchStatusVO {
     private static final long serialVersionUID = 1139868838434896803L;
 
     @ApiModelProperty(value = "店鋪id")
-    @NotNull
+    @NotEmpty
     private List<Long> list;
 
     @ApiModelProperty(value = "下架/上架",required = true,allowableValues = "true,false")

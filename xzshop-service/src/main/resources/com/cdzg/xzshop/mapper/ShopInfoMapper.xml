@@ -6,7 +6,7 @@
     <!--@Table shop_info-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="shop_name" jdbcType="VARCHAR" property="shopName" />
-    <result column="shop_union" jdbcType="VARCHAR" property="shopUnion" />
+    <result column="shop_union" jdbcType="VARCHAR" property="shopUnion" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler" />
     <result column="department" jdbcType="VARCHAR" property="department" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="logo" jdbcType="VARCHAR" property="logo" />

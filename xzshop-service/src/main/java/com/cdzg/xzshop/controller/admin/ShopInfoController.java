@@ -1,42 +1,27 @@
 package com.cdzg.xzshop.controller.admin;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cdzg.universal.vo.response.user.UserLoginResponse;
-import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.CommonResult;
-import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
-import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ShopInfo;
-import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
-import com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper;
 import com.cdzg.xzshop.service.ReceivePaymentInfoService;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.ShopInfoDetailTo;
 import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("admin/shop")
