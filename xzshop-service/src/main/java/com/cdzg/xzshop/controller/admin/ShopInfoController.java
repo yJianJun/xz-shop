@@ -3,6 +3,8 @@ package com.cdzg.xzshop.controller.admin;
 import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
+import com.cdzg.xzshop.constant.PaymentType;
+import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.domain.ShopInfo;
@@ -17,12 +19,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -93,7 +97,7 @@ public class ShopInfoController {
     @GetMapping("/get")
     @IgnoreAuth
     @ApiOperation("店铺详情-运营端")
-    public ApiResponse<ShopInfoDetailTo> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "店铺id", required = true) Long id ) {
+    public ApiResponse<ShopInfoUpdateVO> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "店铺id", required = true) Long id ) {
 
         //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         //if (adminUser == null) {
@@ -104,12 +108,64 @@ public class ShopInfoController {
         List<ReceivePaymentInfo> paymentInfos = receivePaymentInfoService.findAllByShopId(id);
         ReturnGoodsInfo returnGoodsInfo = returnGoodsInfoService.findOneByShopId(id);
 
-        ShopInfoDetailTo detail = ShopInfoDetailTo.builder()
-                .shopInfo(shopInfo)
-                .returnGoodsInfo(returnGoodsInfo)
-                .payments(paymentInfos).build();
+        ShopInfoUpdateVO updateVO = ShopInfoUpdateVO.builder().build();
+        BeanUtils.copyProperties(shopInfo,updateVO);
+        updateVO.setUnion(shopInfo.getShopUnion());
+        updateVO.setLogoUrl(shopInfo.getLogo());
+        updateVO.setPerson(shopInfo.getContactPerson());
+        updateVO.setContact(shopInfo.getPhone());
+        updateVO.setReceiveMoney(setReceiveMoney(paymentInfos));
+        setReceiveVo(paymentInfos,updateVO);
+        ReturnGoodsInfoVo infoVo = new ReturnGoodsInfoVo();
+        BeanUtils.copyProperties(returnGoodsInfo,infoVo);
+        updateVO.setReturnfoVo(infoVo);
 
-        return CommonResult.buildSuccessResponse(detail);
+        return CommonResult.buildSuccessResponse(updateVO);
+    }
+
+    private void setReceiveVo(List<ReceivePaymentInfo> paymentInfos, ShopInfoUpdateVO updateVO) {
+
+        for (ReceivePaymentInfo paymentInfo : paymentInfos) {
+
+            if (paymentInfo.getType()==ReceivePaymentType.Alipay){
+
+                AliPayReceiveVo aliPayReceiveVo = new AliPayReceiveVo();
+                aliPayReceiveVo.setAppId(paymentInfo.getAppid());
+                BeanUtils.copyProperties(paymentInfo,aliPayReceiveVo);
+                updateVO.setAliPayVo(aliPayReceiveVo);
+            }
+
+            if (paymentInfo.getType()==ReceivePaymentType.Wechat){
+
+                WeChatReceiveVo chatReceiveVo = new WeChatReceiveVo();
+                chatReceiveVo.setAppId(paymentInfo.getAppid());
+                chatReceiveVo.setMchId(paymentInfo.getMchid());
+                BeanUtils.copyProperties(paymentInfo,chatReceiveVo);
+                updateVO.setWxPayVo(chatReceiveVo);
+            }
+        }
+    }
+
+    private int setReceiveMoney(List<ReceivePaymentInfo> paymentInfos) {
+
+        List<Integer> flag = new ArrayList<>();
+        for (ReceivePaymentInfo paymentInfo : paymentInfos) {
+            if (paymentInfo.getStatus()){
+
+                if (ReceivePaymentType.Alipay == paymentInfo.getType()){
+                    flag.add(1);
+                }
+                if (ReceivePaymentType.Wechat == paymentInfo.getType()){
+                    flag.add(2);
+                }
+            }
+        }
+
+        if (flag.size() == 2){
+            return 3;
+        }else {
+            return flag.get(0);
+        }
     }
 
     @WebApi

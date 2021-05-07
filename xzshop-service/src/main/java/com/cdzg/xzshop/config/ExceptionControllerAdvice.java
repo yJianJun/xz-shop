@@ -27,6 +27,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,8 +41,8 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse bindExceptionHandler(MethodArgumentNotValidException ex) {
-        logger.error("发生参数异常！原因是：{}", Json.pretty(ex.getStackTrace()));
-        log.error("发生参数异常！原因是：{}", Json.pretty(ex.getStackTrace()));
+        logger.error("发生参数异常！原因是：{}", Json.pretty(ex.getSuppressed()));
+        log.error("发生参数异常！原因是：{}", Json.pretty(ex.getSuppressed()));
         BindingResult bindingResult = ex.getBindingResult();
         StringBuffer sb = new StringBuffer(bindingResult.getFieldErrors().size() * 16);
         for (int i = 0; i < bindingResult.getFieldErrors().size(); i++) {
@@ -66,8 +67,8 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(value = BaseException.class)
     public ApiResponse BaseExceptionHandler(HttpServletRequest req, BaseException e) {
-        logger.error("发生业务异常！原因是：{}", Json.pretty(e.getStackTrace()));
-        log.error("发生业务异常！原因是：{}", Json.pretty(e.getStackTrace()));
+        logger.error("发生业务异常！原因是：{}", Json.pretty(e.getSuppressed()));
+        log.error("发生业务异常！原因是：{}", Json.pretty(e.getSuppressed()));
         return CommonResult.error(e.getErrorCode(), e.getErrorMsg());
     }
 
@@ -80,8 +81,8 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(value = NullPointerException.class)
     public ApiResponse exceptionHandler(HttpServletRequest req, NullPointerException e) {
-        logger.error("发生空指针异常！原因是:{}", Json.pretty(e.getStackTrace()));
-        log.error("发生空指针异常！原因是:{}", Json.pretty(e.getStackTrace()));
+        logger.error("发生空指针异常！原因是:{}", Json.pretty(e.getSuppressed()));
+        log.error("发生空指针异常！原因是:{}", Json.pretty(e.getSuppressed()));
         return CommonResult.error(ResultCode.DATA_ERROR);
     }
 
@@ -95,8 +96,9 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(value = Exception.class)
     public ApiResponse exceptionHandler(HttpServletRequest req, Exception e) {
-        logger.error("未知异常！原因是:{}", Json.pretty(e.getStackTrace()));
-        log.error("未知异常！原因是:{}", Json.pretty(e.getStackTrace()));
+        e.printStackTrace();
+        logger.error("未知异常！原因是:{}", Json.pretty("cause:"+e.getCause()+",suppressed:"+ Arrays.toString(e.getSuppressed())));
+        log.error("未知异常！原因是:{}", Json.pretty("cause:"+e.getCause()+",suppressed:"+ Arrays.toString(e.getSuppressed())));
         return CommonResult.error(ResultCode.FAILURE,e.getMessage());
     }
 
@@ -106,8 +108,8 @@ public class ExceptionControllerAdvice {
 //getRequiredType()实际要求客户端传递的数据类型
     @ExceptionHandler({TypeMismatchException.class})
     public ApiResponse requestTypeMismatch(TypeMismatchException ex) {
-        logger.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getStackTrace()));
-        log.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getStackTrace()));
+        logger.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getSuppressed()));
+        log.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getSuppressed()));
         return CommonResult.error(ResultCode.PARAMETER_ERROR, "参数类型不匹配,参数" + ex.getPropertyName() + "类型应该为" + ex.getRequiredType());
     }
 
@@ -115,8 +117,8 @@ public class ExceptionControllerAdvice {
 //getParameterName() 缺少的参数名称
     @ExceptionHandler({MissingServletRequestParameterException.class})
     public ApiResponse requestMissingServletRequest(MissingServletRequestParameterException ex) {
-        logger.error("缺少参数！原因是:{}", Json.pretty(ex.getStackTrace()));
-        log.error("缺少参数！原因是:{}", Json.pretty(ex.getStackTrace()));
+        logger.error("缺少参数！原因是:{}", Json.pretty(ex.getSuppressed()));
+        log.error("缺少参数！原因是:{}", Json.pretty(ex.getSuppressed()));
         return CommonResult.error(ResultCode.PARAMETER_ERROR, "缺少必要参数,参数名称为" + ex.getParameterName());
     }
 
@@ -125,8 +127,8 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     public ApiResponse requestTypeMismatch(MethodArgumentTypeMismatchException ex){
-        logger.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getStackTrace()));
-        log.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getStackTrace()));
+        logger.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getSuppressed()));
+        log.error("参数类型不匹配！原因是:{}", Json.pretty(ex.getSuppressed()));
         return CommonResult.error(ResultCode.PARAMETER_ERROR, "参数类型不匹配,参数" + ex.getPropertyName() + "类型应该为" + ex.getRequiredType());
     }
 
@@ -135,8 +137,8 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
     public ApiResponse requestMissingServletRequest(HttpRequestMethodNotSupportedException ex) {
-        logger.error("请求method不匹配！原因是:{}", Json.pretty(ex.getStackTrace()));
-        log.error("请求method不匹配！原因是:{}", Json.pretty(ex.getStackTrace()));
+        logger.error("请求method不匹配！原因是:{}", Json.pretty(ex.getSuppressed()));
+        log.error("请求method不匹配！原因是:{}", Json.pretty(ex.getSuppressed()));
         return CommonResult.error(ResultCode.REQUEST_ERROR, "不支持"+ex.getMethod()+"方法，支持"+ StringUtils.join(ex.getSupportedMethods(), ",")+"类型");
     }
 
@@ -146,8 +148,8 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler({HttpMessageNotReadableException.class})
     public ApiResponse httpMessageNotReadableException(HttpMessageNotReadableException e, WebRequest wq){
-        logger.error("控制器方法中@RequestBody类型参数数据类型转换异常！原因是:{}", Json.pretty(e.getStackTrace()));
-        log.error("控制器方法中@RequestBody类型参数数据类型转换异常！原因是:{}", Json.pretty(e.getStackTrace()));
+        logger.error("控制器方法中@RequestBody类型参数数据类型转换异常！原因是:{}", Json.pretty(e.getSuppressed()));
+        log.error("控制器方法中@RequestBody类型参数数据类型转换异常！原因是:{}", Json.pretty(e.getSuppressed()));
         return CommonResult.error(ResultCode.PARAMETER_ERROR,"参数数据类型转换异常,参数:"+e.getHttpInputMessage());
     }
 
@@ -159,8 +161,8 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ApiResponse urlParametersExceptionHandle(ConstraintViolationException e) {
-        logger.error("【请求参数异常】:{}", Json.pretty(e.getStackTrace()));
-        log.error("【请求参数异常】:{}", Json.pretty(e.getStackTrace()));
+        logger.error("【请求参数异常】:{}", Json.pretty(e.getSuppressed()));
+        log.error("【请求参数异常】:{}", Json.pretty(e.getSuppressed()));
         //收集所有错误信息
         List<String> errorMsg = e.getConstraintViolations()
                 .stream().map(s -> s.getMessage()).collect(Collectors.toList());
