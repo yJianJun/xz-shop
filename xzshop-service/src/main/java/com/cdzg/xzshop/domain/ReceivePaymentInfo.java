@@ -1,6 +1,8 @@
 package com.cdzg.xzshop.domain;
 
 import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -23,6 +25,7 @@ public class ReceivePaymentInfo implements Serializable {
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "主键")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
