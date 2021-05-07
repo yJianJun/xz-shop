@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -41,9 +42,11 @@ public class ShopInfoAddVo {
     private String contact;
 
     @ApiModelProperty(value = "支付宝收款信息", position = 7, allowEmptyValue = true)
+    @Valid
     private AliPayReceiveVo aliPayVo;
 
     @ApiModelProperty(value = "微信收款信息", position = 8, allowEmptyValue = true)
+    @Valid
     private WeChatReceiveVo wxPayVo;
 
 
@@ -57,6 +60,7 @@ public class ShopInfoAddVo {
 
     @ApiModelProperty(value = "退货信息", position = 11,required = true)
     @NotNull
+    @Valid
     private ReturnGoodsInfoVo returnfoVo;
 
 }

@@ -4,6 +4,7 @@ package com.cdzg.xzshop.config;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.common.ResultCode;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -27,6 +29,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,6 +57,21 @@ public class ExceptionControllerAdvice {
         }
 
         return ApiResponse.buildResponse(206, sb.toString());
+    }
+
+    /**
+     * 拦截捕捉 BindException 异常
+     */
+    @ExceptionHandler(BindException.class)
+    public ApiResponse handleBindException(BindException ex) {
+        List<FieldError> bindingResult = ex.getBindingResult().getFieldErrors();
+        List<String> msgList = new ArrayList<String>();
+        for (FieldError fieldError : bindingResult) {
+            System.err.println(fieldError.getField() + " " + fieldError.getDefaultMessage());
+            msgList.add(fieldError.getDefaultMessage());
+        }
+        String firstMsg = msgList.get(0);
+        return CommonResult.error(ResultCode.PARAMETER_ERROR,firstMsg);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
