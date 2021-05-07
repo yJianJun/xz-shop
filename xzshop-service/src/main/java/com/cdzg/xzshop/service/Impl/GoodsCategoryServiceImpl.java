@@ -1,7 +1,6 @@
 package com.cdzg.xzshop.service.Impl;
 
 import com.beust.jcommander.internal.Lists;
-import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
 import com.cdzg.xzshop.vo.admin.GoodsCategoryAddVo;
 import com.cdzg.xzshop.utils.PageUtil;
@@ -133,7 +132,6 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
                 categoryTos.add(categoryTo);
             }
         }
-        //yjjtodo 返回数据时将用户id 转成用户名
         return categoryTos;
     }
 
@@ -155,11 +153,11 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void add(UserLoginResponse adminUser, GoodsCategoryAddVo addVo) {
+    public void add(String adminUser, GoodsCategoryAddVo addVo) {
 
         GoodsCategory category = GoodsCategory.builder()
                 .categoryName(addVo.getName())
-                .createUser(Long.toString(adminUser.getUserId()))
+                .createUser(adminUser)
                 .gmtCreate(LocalDateTime.now())
                 .gmtUpdate(LocalDateTime.now())
                 .level(addVo.getLevel())

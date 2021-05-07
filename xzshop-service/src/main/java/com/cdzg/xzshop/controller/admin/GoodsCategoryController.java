@@ -53,7 +53,7 @@ public class GoodsCategoryController {
         if (adminUser == null) {
             return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         }
-        goodsCategoryService.add(adminUser,addVo);
+        goodsCategoryService.add(adminUser.getUserBaseInfo().getUserName(),addVo);
         return CommonResult.buildSuccessResponse();
     }
 

@@ -1,6 +1,5 @@
 package com.cdzg.xzshop.service.Impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
@@ -16,7 +15,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDateTime;
 
@@ -88,11 +86,11 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void add(ShopInfoAddVo addVo) {
+    public void add(ShopInfoAddVo addVo, String adminUser) {
 
         ShopInfo shopInfo = ShopInfo.builder()
                 .shopName(addVo.getShopName())
-                .createUser("")   //yjjtodo 需改
+                .createUser(adminUser)
                 .contactPerson(addVo.getPerson())
                 .department(addVo.getDepartment())
                 .fare(addVo.getFare())

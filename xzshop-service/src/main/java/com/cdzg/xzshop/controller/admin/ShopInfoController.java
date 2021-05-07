@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.controller.admin;
 
+import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
@@ -8,6 +9,7 @@ import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.ReceivePaymentInfoService;
 import com.cdzg.xzshop.service.ReturnGoodsInfoService;
 import com.cdzg.xzshop.service.ShopInfoService;
@@ -85,11 +87,11 @@ public class ShopInfoController {
     @ApiOperation("新建店铺-运营端")
     public ApiResponse add(@ApiParam(value = "店铺添加参数模型", required = true)@RequestBody @Valid ShopInfoAddVo addVo) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
-        shopInfoService.add(addVo);
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        if (adminUser == null) {
+            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
+        }
+        shopInfoService.add(addVo,adminUser.getUserBaseInfo().getUserName());
         return CommonResult.buildSuccessResponse();
     }
 

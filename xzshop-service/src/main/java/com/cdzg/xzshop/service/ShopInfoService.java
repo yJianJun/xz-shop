@@ -10,7 +10,6 @@ import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.vo.admin.ShopInfoAddVo;
 import com.cdzg.xzshop.vo.admin.ShopInfoUpdateVO;
 import com.cdzg.xzshop.vo.common.PageResultVO;
-import com.github.pagehelper.PageInfo;
 
 public interface ShopInfoService extends IService<ShopInfo> {
 
@@ -30,7 +29,7 @@ public interface ShopInfoService extends IService<ShopInfo> {
 
     void batchPutOnDown(List<Long> list, Boolean flag);
 
-    void add(ShopInfoAddVo addVo);
+    void add(ShopInfoAddVo addVo, String adminUser);
 
     void update(ShopInfoUpdateVO vo);
 
