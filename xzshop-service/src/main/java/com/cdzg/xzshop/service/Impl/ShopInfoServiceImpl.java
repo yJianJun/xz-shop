@@ -120,7 +120,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         AliPayReceiveVo aliPayVo = addVo.getAliPayVo();
         if (Objects.nonNull(aliPayVo)){
 
-            boolean flag = receiveMoney == null || (receiveMoney == 0); // 全部 支付宝 | 微信
+            boolean flag = receiveMoney == 3 || (receiveMoney == 1); // 全部 支付宝 | 微信
             ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
                     .appid(aliPayVo.getAppId())
                     .shopId(shopInfo.getId())
@@ -135,7 +135,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
             receivePaymentInfoMapper.insert(aliInfo);
 
         }else {
-            if (receiveMoney!=1){
+            if (receiveMoney!=2){
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
@@ -143,7 +143,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         WeChatReceiveVo wxPayVo = addVo.getWxPayVo();
         if (Objects.nonNull(wxPayVo)){
 
-            boolean flag = receiveMoney == null || (receiveMoney == 1); // 全部 微信 | 支付宝
+            boolean flag = receiveMoney == 3 || (receiveMoney == 2); // 全部 微信 | 支付宝
             ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
                     .appid(wxPayVo.getAppId())
                     .signtype("")
@@ -158,7 +158,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
             receivePaymentInfoMapper.insert(aliInfo);
         }else {
-            if (receiveMoney != 0){
+            if (receiveMoney != 1){
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
@@ -203,7 +203,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
         if (Objects.nonNull(aliPayVo)){
 
-            boolean flag = receiveMoney == null || (receiveMoney == 0); // 全部 支付宝 | 微信
+            boolean flag = receiveMoney == 3 || (receiveMoney == 1); // 全部 支付宝 | 微信
             if (Objects.nonNull(alipay)){
 
                 alipay.setAppid(aliPayVo.getAppId());
@@ -227,7 +227,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                 receivePaymentInfoMapper.insert(aliInfo);
             }
         }else {
-            if (1 != receiveMoney){
+            if (2 != receiveMoney){
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
@@ -235,7 +235,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         WeChatReceiveVo wxPayVo = vo.getWxPayVo();
         if (Objects.nonNull(wxPayVo)){
 
-            boolean flag = receiveMoney == null || (receiveMoney == 1); // 全部 微信 | 支付宝
+            boolean flag = receiveMoney == 3 || (receiveMoney == 2); // 全部 微信 | 支付宝
             if (Objects.nonNull(wechat)){
 
                 wechat.setAppid(wxPayVo.getAppId());
@@ -260,7 +260,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                 receivePaymentInfoMapper.insert(aliInfo);
             }
         }else {
-            if (0 != receiveMoney){
+            if (1 != receiveMoney){
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }

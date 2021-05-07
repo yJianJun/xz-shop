@@ -51,7 +51,8 @@ public class ShopInfoAddVo {
     @NotNull
     private BigDecimal fare;
 
-    @ApiModelProperty(value = "启用收款方式标识 null:全部 0:支付宝 1:微信支付", position = 10,allowEmptyValue = true,allowableValues = "null,0,1")
+    @ApiModelProperty(value = "启用收款方式标识 1:支付宝 2:微信支付 3:全部", position = 10,required = true,allowableValues = "1,2,3")
+    @NotNull
     private Integer receiveMoney;
 
     @ApiModelProperty(value = "退货信息", position = 11,required = true)
