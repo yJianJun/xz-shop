@@ -49,14 +49,9 @@ public class ShopInfoController {
 
     @WebApi
     @PostMapping("/batch/switch")
-    @IgnoreAuth
     @ApiOperation("店铺批量上下架")
     public ApiResponse<String> batchPutOnDown(@ApiParam(value = "店铺批量上下架参数", required = true)@RequestBody @Valid ShopSwitchStatusVO statusVO) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
         List<Long> list = statusVO.getList();
         Boolean flag = statusVO.getFlag();
 
@@ -70,20 +65,15 @@ public class ShopInfoController {
 
     @WebApi
     @PostMapping("/page")
-    @IgnoreAuth
     @ApiOperation("分页查询店铺列表")
     public ApiResponse<PageResultVO<ShopInfo>> page(@ApiParam(value = "店铺分页参数模型", required = true)@RequestBody @Valid ShopPageVo vo) {
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
+
         PageResultVO<ShopInfo> pageInfo = shopInfoService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getShopName(), vo.getStatus(), vo.getStart(), vo.getEnd());
         return ApiResponse.buildSuccessResponse(pageInfo);
     }
 
     @WebApi
     @PostMapping("/add")
-    @IgnoreAuth
     @ApiOperation("新建店铺-运营端")
     public ApiResponse add(@ApiParam(value = "店铺添加参数模型", required = true)@RequestBody @Valid ShopInfoAddVo addVo) {
 
@@ -97,14 +87,8 @@ public class ShopInfoController {
 
     @WebApi
     @GetMapping("/get")
-    @IgnoreAuth
     @ApiOperation("店铺详情-运营端")
     public ApiResponse<ShopInfoUpdateVO> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "店铺id", required = true) Long id ) {
-
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
 
         ShopInfo shopInfo = shopInfoService.getById(id);
         List<ReceivePaymentInfo> paymentInfos = receivePaymentInfoService.findAllByShopId(id);
@@ -172,14 +156,9 @@ public class ShopInfoController {
 
     @WebApi
     @PostMapping("/update")
-    @IgnoreAuth
     @ApiOperation("编辑店铺")
     public ApiResponse update(@ApiParam(value = "店铺编辑参数模型", required = true)@RequestBody @Valid ShopInfoUpdateVO vo ) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
         shopInfoService.update(vo);
         return CommonResult.buildSuccessResponse();
     }

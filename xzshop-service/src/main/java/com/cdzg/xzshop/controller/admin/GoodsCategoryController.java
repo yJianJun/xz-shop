@@ -59,14 +59,9 @@ public class GoodsCategoryController {
 
     @WebApi
     @PostMapping("/update")
-    @IgnoreAuth
     @ApiOperation("编辑商品分类")
     public ApiResponse update(@ApiParam(value = "商品分类编辑参数模型", required = true) @RequestBody @Valid GoodsCategoryUpdateVo updateVo) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
         GoodsCategory goodsCategory = goodsCategoryService.selectByPrimaryKey(updateVo.getId());
         if (Objects.nonNull(goodsCategory)){
 
@@ -85,13 +80,9 @@ public class GoodsCategoryController {
 
     @WebApi
     @PostMapping("/list")
-    @IgnoreAuth
     @ApiOperation("查询商品类别列表")
     public ApiResponse<List<GoodsCategoryTo>> list(@ApiParam(value = "商品类别参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
+
         List<GoodsCategoryTo> resultVO = goodsCategoryService.list(vo.getLevel(), vo.getName());
         return CommonResult.buildSuccessResponse(resultVO);
     }
@@ -99,42 +90,27 @@ public class GoodsCategoryController {
 
     @WebApi
     @PostMapping("/sub/page")
-    @IgnoreAuth
     @ApiOperation("分页查询二级分类列表")
     public ApiResponse<PageResultVO<GoodsCategory>> getSub(@ApiParam(value = "商品二级分类分页参数模型", required = true) @RequestBody @Valid GoodsCategorySubPageVo vo) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
         PageResultVO<GoodsCategory> resultVO = goodsCategoryService.pageSub(vo.getCurrentPage(), vo.getPageSize(), vo.getId(), 2);
         return CommonResult.buildSuccessResponse(resultVO);
     }
 
     @WebApi
     @GetMapping("/delete")
-    @IgnoreAuth
     @ApiOperation("商品分类删除")
     public ApiResponse delete(@Valid @RequestParam("id") @NotNull @ApiParam(value = "商品分类id", required = true) Long id) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
         int delete = goodsCategoryService.deleteByPrimaryKey(id);
         return CommonResult.buildSuccessResponse();
     }
 
     @WebApi
     @GetMapping("/get")
-    @IgnoreAuth
     @ApiOperation("商品分类详情")
     public ApiResponse<GoodsCategory> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "商品分类id", required = true) Long id) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
         GoodsCategory goodsCategory = goodsCategoryService.selectByPrimaryKey(id);
         return CommonResult.buildSuccessResponse(goodsCategory);
     }
@@ -142,14 +118,9 @@ public class GoodsCategoryController {
 
     @WebApi
     @PostMapping("/batch/switch")
-    @IgnoreAuth
     @ApiOperation("商品分类批量禁用启用")
     public ApiResponse batchPutOnDown(@ApiParam(value = "商品分类批量禁用启用参数", required = true) @RequestBody @Valid GoodsCategorySwitchStatusVo statusVO) {
 
-        //UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        //if (adminUser == null) {
-        //    return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        //}
         List<Long> list = statusVO.getList();
         Boolean flag = statusVO.getFlag();
 
