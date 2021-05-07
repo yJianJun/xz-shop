@@ -148,6 +148,7 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler({HttpMessageNotReadableException.class})
     public ApiResponse httpMessageNotReadableException(HttpMessageNotReadableException e, WebRequest wq){
+        e.printStackTrace();
         logger.error("控制器方法中@RequestBody类型参数数据类型转换异常！原因是:{}", Json.pretty(e.getSuppressed()));
         log.error("控制器方法中@RequestBody类型参数数据类型转换异常！原因是:{}", Json.pretty(e.getSuppressed()));
         return CommonResult.error(ResultCode.PARAMETER_ERROR,"参数数据类型转换异常,参数:"+e.getHttpInputMessage());
