@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +33,11 @@ public interface ShopInfoService extends IService<ShopInfo> {
     void add(ShopInfoAddVo addVo);
 
     void update(ShopInfoUpdateVO vo);
+
+
+
+	int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus,LocalDateTime updatedGmtPutOnTheShelf,Collection<Long> idCollection);
+
 }
 
 

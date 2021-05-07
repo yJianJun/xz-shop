@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.mapper;
+import java.util.Collection;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cdzg.xzshop.domain.ShopInfo;
@@ -22,6 +23,10 @@ public interface ShopInfoMapper extends BaseMapper<ShopInfo> {
 
 
     List<ShopInfo> findAllByShopNameLikeAndStatusAndGmtPutOnTheShelfBetweenEqual(@Param("likeShopName")String likeShopName,@Param("status")Boolean status,@Param("minGmtPutOnTheShelf") Date minGmtPutOnTheShelf, @Param("maxGmtPutOnTheShelf")Date maxGmtPutOnTheShelf);
+
+    int updateStatusByIdIn(@Param("updatedStatus")Boolean updatedStatus,@Param("idCollection")Collection<Long> idCollection);
+
+    int updateStatusAndGmtPutOnTheShelfByIdIn(@Param("updatedStatus")Boolean updatedStatus,@Param("updatedGmtPutOnTheShelf")LocalDateTime updatedGmtPutOnTheShelf,@Param("idCollection")Collection<Long> idCollection);
 
 
 

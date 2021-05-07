@@ -16,10 +16,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
 
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.mapper.ShopInfoMapper;
@@ -80,19 +79,10 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void batchPutOnDown(List<Long> list, Boolean flag) {
 
-        QueryWrapper<ShopInfo> queryWrapper = new QueryWrapper<>();
-        for (int i = 0; i < list.size(); i++) {
-
-            Long id = list.get(i);
-            ShopInfo shopInfo = baseMapper.selectOne(queryWrapper.eq("id",id));
-            if (Objects.nonNull(shopInfo)){
-                shopInfo.setStatus(flag);
-
-                if (flag){
-                    shopInfo.setGmtPutOnTheShelf(LocalDateTime.now());
-                }
-                updateById(shopInfo);
-            }
+        if (flag){
+            updateStatusAndGmtPutOnTheShelfByIdIn(flag,LocalDateTime.now(),list);
+        }else {
+            updateStatusAndGmtPutOnTheShelfByIdIn(flag,LocalDateTime.parse("1000-01-01T00:00:00"),list);
         }
     }
 
@@ -276,6 +266,14 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
             returnGoodsInfoMapper.insertOrUpdate(returnGoodsInfo);
         }
     }
+
+	@Override
+	public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus,LocalDateTime updatedGmtPutOnTheShelf,Collection<Long> idCollection){
+		 return shopInfoMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus,updatedGmtPutOnTheShelf,idCollection);
+	}
+
+
+
 }
 
 
