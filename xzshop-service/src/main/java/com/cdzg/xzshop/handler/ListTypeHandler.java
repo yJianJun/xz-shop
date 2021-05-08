@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @MappedTypes({List.class})
-@MappedJdbcTypes({JdbcType.VARCHAR})
+@MappedJdbcTypes({JdbcType.VARCHAR,JdbcType.LONGVARCHAR,JdbcType.NVARCHAR,JdbcType.LONGNVARCHAR})
 public class ListTypeHandler extends BaseTypeHandler<List<String>> {
 
 
