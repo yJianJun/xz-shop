@@ -1,5 +1,7 @@
 package com.cdzg.xzshop.service.Impl;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
@@ -8,12 +10,18 @@ import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper;
 import com.cdzg.xzshop.mapper.ReturnGoodsInfoMapper;
+import com.cdzg.xzshop.service.ReceivePaymentInfoService;
+import com.cdzg.xzshop.service.ReturnGoodsInfoService;
 import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.utils.PageUtil;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.util.*;
 import java.time.LocalDateTime;
@@ -32,6 +40,12 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
     @Resource
     private ReturnGoodsInfoMapper returnGoodsInfoMapper;
+
+    @Autowired
+    ReceivePaymentInfoService receivePaymentInfoService;
+
+    @Autowired
+    ReturnGoodsInfoService returnGoodsInfoService;
 
     @Resource
     private ReceivePaymentInfoMapper receivePaymentInfoMapper;
@@ -268,6 +282,82 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     @Override
     public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection) {
         return shopInfoMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus, updatedGmtPutOnTheShelf, idCollection);
+    }
+
+    @Override
+    public ShopInfo findOneByShopUnion(String shopUnion) {
+        return shopInfoMapper.findOneByShopUnion(shopUnion);
+    }
+
+    @Override
+    public ShopInfoUpdateVO get(Long id) {
+        ShopInfo shopInfo = getById(id);
+        List<ReceivePaymentInfo> paymentInfos = receivePaymentInfoService.findAllByShopId(id);
+        ReturnGoodsInfo returnGoodsInfo = returnGoodsInfoService.findOneByShopId(id);
+
+        if (Objects.nonNull(shopInfo) && Objects.nonNull(returnGoodsInfo)) {
+
+            ShopInfoUpdateVO updateVO = ShopInfoUpdateVO.builder().build();
+            BeanUtils.copyProperties(shopInfo, updateVO);
+            updateVO.setUnion(shopInfo.getShopUnion());
+            updateVO.setLogoUrl(shopInfo.getLogo());
+            updateVO.setPerson(shopInfo.getContactPerson());
+            updateVO.setContact(shopInfo.getPhone());
+            updateVO.setReceiveMoney(setReceiveMoney(paymentInfos));
+            setReceiveVo(paymentInfos, updateVO);
+            ReturnGoodsInfoVo infoVo = new ReturnGoodsInfoVo();
+            BeanUtils.copyProperties(returnGoodsInfo, infoVo);
+            updateVO.setReturnfoVo(infoVo);
+            return updateVO;
+        }
+        throw new BaseException(ResultCode.DATA_ERROR);
+    }
+
+    private void setReceiveVo(List<ReceivePaymentInfo> paymentInfos, ShopInfoUpdateVO updateVO) {
+
+        for (ReceivePaymentInfo paymentInfo : paymentInfos) {
+
+            if (paymentInfo.getType() == ReceivePaymentType.Alipay) {
+
+                AliPayReceiveVo aliPayReceiveVo = new AliPayReceiveVo();
+                aliPayReceiveVo.setAppId(paymentInfo.getAppid());
+                BeanUtils.copyProperties(paymentInfo, aliPayReceiveVo);
+                updateVO.setAliPayVo(aliPayReceiveVo);
+            }
+
+            if (paymentInfo.getType() == ReceivePaymentType.Wechat) {
+
+                WeChatReceiveVo chatReceiveVo = new WeChatReceiveVo();
+                chatReceiveVo.setAppId(paymentInfo.getAppid());
+                chatReceiveVo.setMchId(paymentInfo.getMchid());
+                BeanUtils.copyProperties(paymentInfo, chatReceiveVo);
+                updateVO.setWxPayVo(chatReceiveVo);
+            }
+        }
+    }
+
+    private int setReceiveMoney(List<ReceivePaymentInfo> paymentInfos) {
+
+        List<Integer> flag = new ArrayList<>();
+        for (ReceivePaymentInfo paymentInfo : paymentInfos) {
+            if (paymentInfo.getStatus()) {
+
+                if (ReceivePaymentType.Alipay == paymentInfo.getType()) {
+                    flag.add(1);
+                }
+                if (ReceivePaymentType.Wechat == paymentInfo.getType()) {
+                    flag.add(2);
+                }
+            }
+        }
+
+        if (flag.size() == 2) {
+            return 3;
+        } else if (flag.size() == 0) {
+            return 0;
+        } else {
+            return flag.get(0);
+        }
     }
 
 

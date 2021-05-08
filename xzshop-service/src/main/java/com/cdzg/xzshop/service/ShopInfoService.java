@@ -36,6 +36,12 @@ public interface ShopInfoService extends IService<ShopInfo> {
 
     int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection);
 
+
+
+	ShopInfo findOneByShopUnion(String shopUnion);
+
+
+    ShopInfoUpdateVO get(Long id);
 }
 
 

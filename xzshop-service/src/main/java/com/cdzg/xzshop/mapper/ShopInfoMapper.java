@@ -23,4 +23,6 @@ public interface ShopInfoMapper extends BaseMapper<ShopInfo> {
     int updateStatusByIdIn(@Param("updatedStatus") Boolean updatedStatus, @Param("idCollection") Collection<Long> idCollection);
 
     int updateStatusAndGmtPutOnTheShelfByIdIn(@Param("updatedStatus") Boolean updatedStatus, @Param("updatedGmtPutOnTheShelf") LocalDateTime updatedGmtPutOnTheShelf, @Param("idCollection") Collection<Long> idCollection);
+
+    ShopInfo findOneByShopUnion(@Param("shopUnion")String shopUnion);
 }
