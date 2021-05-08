@@ -77,10 +77,10 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void batchPutOnDown(List<Long> list, Boolean flag) {
 
-        if (flag){
-            updateStatusAndGmtPutOnTheShelfByIdIn(flag,LocalDateTime.now(),list);
-        }else {
-            updateStatusAndGmtPutOnTheShelfByIdIn(flag,LocalDateTime.parse("1000-01-01T00:00:00"),list);
+        if (flag) {
+            updateStatusAndGmtPutOnTheShelfByIdIn(flag, LocalDateTime.now(), list);
+        } else {
+            updateStatusAndGmtPutOnTheShelfByIdIn(flag, LocalDateTime.parse("1000-01-01T00:00:00"), list);
         }
     }
 
@@ -106,7 +106,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         Integer receiveMoney = addVo.getReceiveMoney();
 
         AliPayReceiveVo aliPayVo = addVo.getAliPayVo();
-        if (Objects.nonNull(aliPayVo)){
+        if (Objects.nonNull(aliPayVo)) {
 
             boolean flag = receiveMoney == 3 || (receiveMoney == 1); // 全部 支付宝 | 微信
             ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
@@ -122,14 +122,14 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                     .build();
             receivePaymentInfoMapper.insert(aliInfo);
 
-        }else {
-            if (receiveMoney!=2){
+        } else {
+            if (receiveMoney != 2) {
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
 
         WeChatReceiveVo wxPayVo = addVo.getWxPayVo();
-        if (Objects.nonNull(wxPayVo)){
+        if (Objects.nonNull(wxPayVo)) {
 
             boolean flag = receiveMoney == 3 || (receiveMoney == 2); // 全部 微信 | 支付宝
             ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
@@ -145,8 +145,8 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                     .build();
 
             receivePaymentInfoMapper.insert(aliInfo);
-        }else {
-            if (receiveMoney != 1){
+        } else {
+            if (receiveMoney != 1) {
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
@@ -166,8 +166,8 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void update(ShopInfoUpdateVO vo) {
 
-        ShopInfo shopInfo  = getById(vo.getId());
-        if (Objects.nonNull(shopInfo)){
+        ShopInfo shopInfo = getById(vo.getId());
+        if (Objects.nonNull(shopInfo)) {
 
             shopInfo.setShopName(vo.getShopName());
             shopInfo.setContactPerson(vo.getPerson());
@@ -179,7 +179,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
             shopInfo.setPhone(vo.getContact());
 
             saveOrUpdate(shopInfo);
-        }else {
+        } else {
             throw new BaseException(ResultCode.DATA_ERROR);
         }
 
@@ -189,10 +189,10 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         Integer receiveMoney = vo.getReceiveMoney();
         AliPayReceiveVo aliPayVo = vo.getAliPayVo();
 
-        if (Objects.nonNull(aliPayVo)){
+        if (Objects.nonNull(aliPayVo)) {
 
             boolean flag = receiveMoney == 3 || (receiveMoney == 1); // 全部 支付宝 | 微信
-            if (Objects.nonNull(alipay)){
+            if (Objects.nonNull(alipay)) {
 
                 alipay.setAppid(aliPayVo.getAppId());
                 alipay.setPrivateKey(aliPayVo.getPrivateKey());
@@ -200,7 +200,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                 alipay.setPublicKey(alipay.getPublicKey());
                 alipay.setSigntype(aliPayVo.getSigntype());
                 receivePaymentInfoMapper.insertOrUpdate(alipay);
-            }else {
+            } else {
                 ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
                         .appid(aliPayVo.getAppId())
                         .shopId(shopInfo.getId())
@@ -214,17 +214,17 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                         .build();
                 receivePaymentInfoMapper.insert(aliInfo);
             }
-        }else {
-            if (2 != receiveMoney){
+        } else {
+            if (2 != receiveMoney) {
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
 
         WeChatReceiveVo wxPayVo = vo.getWxPayVo();
-        if (Objects.nonNull(wxPayVo)){
+        if (Objects.nonNull(wxPayVo)) {
 
             boolean flag = receiveMoney == 3 || (receiveMoney == 2); // 全部 微信 | 支付宝
-            if (Objects.nonNull(wechat)){
+            if (Objects.nonNull(wechat)) {
 
                 wechat.setAppid(wxPayVo.getAppId());
                 wechat.setKeyPath(wxPayVo.getKeyPath());
@@ -233,7 +233,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                 wechat.setPrivateKey(wxPayVo.getPrivateKey());
 
                 receivePaymentInfoMapper.insertOrUpdate(wechat);
-            }else {
+            } else {
                 ReceivePaymentInfo aliInfo = ReceivePaymentInfo.builder()
                         .appid(wxPayVo.getAppId())
                         .signtype("")
@@ -247,15 +247,15 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                         .build();
                 receivePaymentInfoMapper.insert(aliInfo);
             }
-        }else {
-            if (1 != receiveMoney){
+        } else {
+            if (1 != receiveMoney) {
                 throw new BaseException(ResultCode.PARAMETER_ERROR);
             }
         }
         ReturnGoodsInfo returnGoodsInfo = returnGoodsInfoMapper.findOneByShopId(shopInfo.getId());
         ReturnGoodsInfoVo returnfoVo = vo.getReturnfoVo();
 
-        if (Objects.nonNull(returnGoodsInfo)){
+        if (Objects.nonNull(returnGoodsInfo)) {
 
             returnGoodsInfo.setPhone(returnfoVo.getPhone());
             returnGoodsInfo.setAddress(returnfoVo.getAddress());
@@ -265,14 +265,14 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         }
     }
 
-	@Override
-	public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus,LocalDateTime updatedGmtPutOnTheShelf,Collection<Long> idCollection){
-		 return shopInfoMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus,updatedGmtPutOnTheShelf,idCollection);
-	}
-
+    @Override
+    public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection) {
+        return shopInfoMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus, updatedGmtPutOnTheShelf, idCollection);
+    }
 
 
 }
+
 
 
 

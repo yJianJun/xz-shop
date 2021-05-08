@@ -18,10 +18,6 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         return goodsSpuMapper.updateBatch(list);
     }
 
-    @Override
-    public int updateBatchSelective(List<GoodsSpu> list) {
-        return goodsSpuMapper.updateBatchSelective(list);
-    }
 
     @Override
     public int batchInsert(List<GoodsSpu> list) {
@@ -39,33 +35,10 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     }
 
     @Override
-    public int deleteByPrimaryKey(Long id) {
-        return goodsSpuMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
     public int insert(GoodsSpu record) {
         return goodsSpuMapper.insert(record);
     }
 
-    @Override
-    public int insertSelective(GoodsSpu record) {
-        return goodsSpuMapper.insertSelective(record);
-    }
-
-    @Override
-    public GoodsSpu selectByPrimaryKey(Long id) {
-        return goodsSpuMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public int updateByPrimaryKeySelective(GoodsSpu record) {
-        return goodsSpuMapper.updateByPrimaryKeySelective(record);
-    }
-
-    @Override
-    public int updateByPrimaryKey(GoodsSpu record) {
-        return goodsSpuMapper.updateByPrimaryKey(record);
-    }
 }
+
 

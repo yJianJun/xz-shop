@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdzg.xzshop.mapper.GoodsSpuMapper">
   <resultMap id="BaseResultMap" type="com.cdzg.xzshop.domain.GoodsSpu">
-    <!--@mbg.generated-->
+    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
     <!--@Table goods_spu-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="spu_no" jdbcType="BIGINT" property="spuNo" />
@@ -13,241 +13,25 @@
     <result column="fraction_price" jdbcType="DECIMAL" property="fractionPrice" />
     <result column="category_id_level2" jdbcType="BIGINT" property="categoryIdLevel2" />
     <result column="category_id_level1" jdbcType="BIGINT" property="categoryIdLevel1" />
-    <result column="payment_method" jdbcType="TINYINT" property="paymentMethod" />
+    <result column="payment_method" jdbcType="VARCHAR" property="paymentMethod" />
     <result column="shop_id" jdbcType="BIGINT" property="shopId" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="stock" jdbcType="BIGINT" property="stock" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
-    <result column="description" jdbcType="LONGVARCHAR" property="description" />
     <result column="gmt_put_on_the_shelf" jdbcType="TIMESTAMP" property="gmtPutOnTheShelf" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    <result column="show_imgs" jdbcType="LONGVARCHAR" property="showImgs" />
+    <result column="desc_imgs" jdbcType="LONGVARCHAR" property="descImgs" />
   </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated-->
+    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
     id, spu_no, goods_name, ad_word, price, promotion_price, fraction_price, category_id_level2, 
-    category_id_level1, payment_method, shop_id, `status`, stock, create_user, description, 
-    gmt_put_on_the_shelf, gmt_create, gmt_update
+    category_id_level1, payment_method, shop_id, `status`, stock, create_user, gmt_put_on_the_shelf, 
+    gmt_create, gmt_update, show_imgs, desc_imgs
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
-    select 
-    <include refid="Base_Column_List" />
-    from goods_spu
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    <!--@mbg.generated-->
-    delete from goods_spu
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsSpu" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into goods_spu (spu_no, goods_name, ad_word, 
-      price, promotion_price, fraction_price, 
-      category_id_level2, category_id_level1, payment_method, 
-      shop_id, `status`, stock, 
-      create_user, description, gmt_put_on_the_shelf, 
-      gmt_create, gmt_update)
-    values (#{spuNo,jdbcType=BIGINT}, #{goodsName,jdbcType=VARCHAR}, #{adWord,jdbcType=VARCHAR}, 
-      #{price,jdbcType=DECIMAL}, #{promotionPrice,jdbcType=DECIMAL}, #{fractionPrice,jdbcType=DECIMAL}, 
-      #{categoryIdLevel2,jdbcType=BIGINT}, #{categoryIdLevel1,jdbcType=BIGINT}, #{paymentMethod,jdbcType=TINYINT}, 
-      #{shopId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{stock,jdbcType=BIGINT}, 
-      #{createUser,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{gmtPutOnTheShelf,jdbcType=TIMESTAMP}, 
-      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP})
-  </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsSpu" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into goods_spu
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="spuNo != null">
-        spu_no,
-      </if>
-      <if test="goodsName != null">
-        goods_name,
-      </if>
-      <if test="adWord != null">
-        ad_word,
-      </if>
-      <if test="price != null">
-        price,
-      </if>
-      <if test="promotionPrice != null">
-        promotion_price,
-      </if>
-      <if test="fractionPrice != null">
-        fraction_price,
-      </if>
-      <if test="categoryIdLevel2 != null">
-        category_id_level2,
-      </if>
-      <if test="categoryIdLevel1 != null">
-        category_id_level1,
-      </if>
-      <if test="paymentMethod != null">
-        payment_method,
-      </if>
-      <if test="shopId != null">
-        shop_id,
-      </if>
-      <if test="status != null">
-        `status`,
-      </if>
-      <if test="stock != null">
-        stock,
-      </if>
-      <if test="createUser != null">
-        create_user,
-      </if>
-      <if test="description != null">
-        description,
-      </if>
-      <if test="gmtPutOnTheShelf != null">
-        gmt_put_on_the_shelf,
-      </if>
-      <if test="gmtCreate != null">
-        gmt_create,
-      </if>
-      <if test="gmtUpdate != null">
-        gmt_update,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="spuNo != null">
-        #{spuNo,jdbcType=BIGINT},
-      </if>
-      <if test="goodsName != null">
-        #{goodsName,jdbcType=VARCHAR},
-      </if>
-      <if test="adWord != null">
-        #{adWord,jdbcType=VARCHAR},
-      </if>
-      <if test="price != null">
-        #{price,jdbcType=DECIMAL},
-      </if>
-      <if test="promotionPrice != null">
-        #{promotionPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="fractionPrice != null">
-        #{fractionPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="categoryIdLevel2 != null">
-        #{categoryIdLevel2,jdbcType=BIGINT},
-      </if>
-      <if test="categoryIdLevel1 != null">
-        #{categoryIdLevel1,jdbcType=BIGINT},
-      </if>
-      <if test="paymentMethod != null">
-        #{paymentMethod,jdbcType=TINYINT},
-      </if>
-      <if test="shopId != null">
-        #{shopId,jdbcType=BIGINT},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=TINYINT},
-      </if>
-      <if test="stock != null">
-        #{stock,jdbcType=BIGINT},
-      </if>
-      <if test="createUser != null">
-        #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null">
-        #{description,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="gmtPutOnTheShelf != null">
-        #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gmtCreate != null">
-        #{gmtCreate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gmtUpdate != null">
-        #{gmtUpdate,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cdzg.xzshop.domain.GoodsSpu">
-    <!--@mbg.generated-->
-    update goods_spu
-    <set>
-      <if test="spuNo != null">
-        spu_no = #{spuNo,jdbcType=BIGINT},
-      </if>
-      <if test="goodsName != null">
-        goods_name = #{goodsName,jdbcType=VARCHAR},
-      </if>
-      <if test="adWord != null">
-        ad_word = #{adWord,jdbcType=VARCHAR},
-      </if>
-      <if test="price != null">
-        price = #{price,jdbcType=DECIMAL},
-      </if>
-      <if test="promotionPrice != null">
-        promotion_price = #{promotionPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="fractionPrice != null">
-        fraction_price = #{fractionPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="categoryIdLevel2 != null">
-        category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
-      </if>
-      <if test="categoryIdLevel1 != null">
-        category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
-      </if>
-      <if test="paymentMethod != null">
-        payment_method = #{paymentMethod,jdbcType=TINYINT},
-      </if>
-      <if test="shopId != null">
-        shop_id = #{shopId,jdbcType=BIGINT},
-      </if>
-      <if test="status != null">
-        `status` = #{status,jdbcType=TINYINT},
-      </if>
-      <if test="stock != null">
-        stock = #{stock,jdbcType=BIGINT},
-      </if>
-      <if test="createUser != null">
-        create_user = #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null">
-        description = #{description,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="gmtPutOnTheShelf != null">
-        gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gmtUpdate != null">
-        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.cdzg.xzshop.domain.GoodsSpu">
-    <!--@mbg.generated-->
-    update goods_spu
-    set spu_no = #{spuNo,jdbcType=BIGINT},
-      goods_name = #{goodsName,jdbcType=VARCHAR},
-      ad_word = #{adWord,jdbcType=VARCHAR},
-      price = #{price,jdbcType=DECIMAL},
-      promotion_price = #{promotionPrice,jdbcType=DECIMAL},
-      fraction_price = #{fractionPrice,jdbcType=DECIMAL},
-      category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
-      category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
-      payment_method = #{paymentMethod,jdbcType=TINYINT},
-      shop_id = #{shopId,jdbcType=BIGINT},
-      `status` = #{status,jdbcType=TINYINT},
-      stock = #{stock,jdbcType=BIGINT},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      description = #{description,jdbcType=LONGVARCHAR},
-      gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
-      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
-      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
   <update id="updateBatch" parameterType="java.util.List">
-    <!--@mbg.generated-->
+    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
     update goods_spu
     <trim prefix="set" suffixOverrides=",">
       <trim prefix="spu_no = case" suffix="end,">
@@ -292,7 +76,7 @@
       </trim>
       <trim prefix="payment_method = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
-          when id = #{item.id,jdbcType=BIGINT} then #{item.paymentMethod,jdbcType=TINYINT}
+          when id = #{item.id,jdbcType=BIGINT} then #{item.paymentMethod,jdbcType=VARCHAR}
         </foreach>
       </trim>
       <trim prefix="shop_id = case" suffix="end,">
@@ -315,11 +99,6 @@
           when id = #{item.id,jdbcType=BIGINT} then #{item.createUser,jdbcType=VARCHAR}
         </foreach>
       </trim>
-      <trim prefix="description = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          when id = #{item.id,jdbcType=BIGINT} then #{item.description,jdbcType=LONGVARCHAR}
-        </foreach>
-      </trim>
       <trim prefix="gmt_put_on_the_shelf = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
           when id = #{item.id,jdbcType=BIGINT} then #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}
@@ -335,133 +114,14 @@
           when id = #{item.id,jdbcType=BIGINT} then #{item.gmtUpdate,jdbcType=TIMESTAMP}
         </foreach>
       </trim>
-    </trim>
-    where id in
-    <foreach close=")" collection="list" item="item" open="(" separator=", ">
-      #{item.id,jdbcType=BIGINT}
-    </foreach>
-  </update>
-  <update id="updateBatchSelective" parameterType="java.util.List">
-    <!--@mbg.generated-->
-    update goods_spu
-    <trim prefix="set" suffixOverrides=",">
-      <trim prefix="spu_no = case" suffix="end,">
+      <trim prefix="show_imgs = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
-          <if test="item.spuNo != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.spuNo,jdbcType=BIGINT}
-          </if>
+          when id = #{item.id,jdbcType=BIGINT} then #{item.showImgs,jdbcType=LONGVARCHAR}
         </foreach>
       </trim>
-      <trim prefix="goods_name = case" suffix="end,">
+      <trim prefix="desc_imgs = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
-          <if test="item.goodsName != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.goodsName,jdbcType=VARCHAR}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="ad_word = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.adWord != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.adWord,jdbcType=VARCHAR}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="price = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.price != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.price,jdbcType=DECIMAL}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="promotion_price = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.promotionPrice != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.promotionPrice,jdbcType=DECIMAL}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="fraction_price = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.fractionPrice != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.fractionPrice,jdbcType=DECIMAL}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="category_id_level2 = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.categoryIdLevel2 != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.categoryIdLevel2,jdbcType=BIGINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="category_id_level1 = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.categoryIdLevel1 != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.categoryIdLevel1,jdbcType=BIGINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="payment_method = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.paymentMethod != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.paymentMethod,jdbcType=TINYINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="shop_id = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.shopId != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.shopId,jdbcType=BIGINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="`status` = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.status != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=TINYINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="stock = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.stock != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.stock,jdbcType=BIGINT}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="create_user = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.createUser != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.createUser,jdbcType=VARCHAR}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="description = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.description != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.description,jdbcType=LONGVARCHAR}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="gmt_put_on_the_shelf = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.gmtPutOnTheShelf != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="gmt_create = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.gmtCreate != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.gmtCreate,jdbcType=TIMESTAMP}
-          </if>
-        </foreach>
-      </trim>
-      <trim prefix="gmt_update = case" suffix="end,">
-        <foreach collection="list" index="index" item="item">
-          <if test="item.gmtUpdate != null">
-            when id = #{item.id,jdbcType=BIGINT} then #{item.gmtUpdate,jdbcType=TIMESTAMP}
-          </if>
+          when id = #{item.id,jdbcType=BIGINT} then #{item.descImgs,jdbcType=LONGVARCHAR}
         </foreach>
       </trim>
     </trim>
@@ -471,24 +131,24 @@
     </foreach>
   </update>
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
-    <!--@mbg.generated-->
+    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
     insert into goods_spu
     (spu_no, goods_name, ad_word, price, promotion_price, fraction_price, category_id_level2, 
-      category_id_level1, payment_method, shop_id, `status`, stock, create_user, description, 
-      gmt_put_on_the_shelf, gmt_create, gmt_update)
+      category_id_level1, payment_method, shop_id, `status`, stock, create_user, gmt_put_on_the_shelf, 
+      gmt_create, gmt_update, show_imgs, desc_imgs)
     values
     <foreach collection="list" item="item" separator=",">
       (#{item.spuNo,jdbcType=BIGINT}, #{item.goodsName,jdbcType=VARCHAR}, #{item.adWord,jdbcType=VARCHAR}, 
         #{item.price,jdbcType=DECIMAL}, #{item.promotionPrice,jdbcType=DECIMAL}, #{item.fractionPrice,jdbcType=DECIMAL}, 
         #{item.categoryIdLevel2,jdbcType=BIGINT}, #{item.categoryIdLevel1,jdbcType=BIGINT}, 
-        #{item.paymentMethod,jdbcType=TINYINT}, #{item.shopId,jdbcType=BIGINT}, #{item.status,jdbcType=TINYINT}, 
-        #{item.stock,jdbcType=BIGINT}, #{item.createUser,jdbcType=VARCHAR}, #{item.description,jdbcType=LONGVARCHAR}, 
-        #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}, #{item.gmtCreate,jdbcType=TIMESTAMP}, 
-        #{item.gmtUpdate,jdbcType=TIMESTAMP})
+        #{item.paymentMethod,jdbcType=VARCHAR}, #{item.shopId,jdbcType=BIGINT}, #{item.status,jdbcType=TINYINT}, 
+        #{item.stock,jdbcType=BIGINT}, #{item.createUser,jdbcType=VARCHAR}, #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}, 
+        #{item.gmtCreate,jdbcType=TIMESTAMP}, #{item.gmtUpdate,jdbcType=TIMESTAMP}, #{item.showImgs,jdbcType=LONGVARCHAR}, 
+        #{item.descImgs,jdbcType=LONGVARCHAR})
     </foreach>
   </insert>
   <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsSpu" useGeneratedKeys="true">
-    <!--@mbg.generated-->
+    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
     insert into goods_spu
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -507,10 +167,11 @@
       `status`,
       stock,
       create_user,
-      description,
       gmt_put_on_the_shelf,
       gmt_create,
       gmt_update,
+      show_imgs,
+      desc_imgs,
     </trim>
     values
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -525,15 +186,16 @@
       #{fractionPrice,jdbcType=DECIMAL},
       #{categoryIdLevel2,jdbcType=BIGINT},
       #{categoryIdLevel1,jdbcType=BIGINT},
-      #{paymentMethod,jdbcType=TINYINT},
+      #{paymentMethod,jdbcType=VARCHAR},
       #{shopId,jdbcType=BIGINT},
       #{status,jdbcType=TINYINT},
       #{stock,jdbcType=BIGINT},
       #{createUser,jdbcType=VARCHAR},
-      #{description,jdbcType=LONGVARCHAR},
       #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
       #{gmtCreate,jdbcType=TIMESTAMP},
       #{gmtUpdate,jdbcType=TIMESTAMP},
+      #{showImgs,jdbcType=LONGVARCHAR},
+      #{descImgs,jdbcType=LONGVARCHAR},
     </trim>
     on duplicate key update 
     <trim suffixOverrides=",">
@@ -548,19 +210,20 @@
       fraction_price = #{fractionPrice,jdbcType=DECIMAL},
       category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
       category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
-      payment_method = #{paymentMethod,jdbcType=TINYINT},
+      payment_method = #{paymentMethod,jdbcType=VARCHAR},
       shop_id = #{shopId,jdbcType=BIGINT},
       `status` = #{status,jdbcType=TINYINT},
       stock = #{stock,jdbcType=BIGINT},
       create_user = #{createUser,jdbcType=VARCHAR},
-      description = #{description,jdbcType=LONGVARCHAR},
       gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      show_imgs = #{showImgs,jdbcType=LONGVARCHAR},
+      desc_imgs = #{descImgs,jdbcType=LONGVARCHAR},
     </trim>
   </insert>
   <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsSpu" useGeneratedKeys="true">
-    <!--@mbg.generated-->
+    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
     insert into goods_spu
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -569,10 +232,10 @@
       <if test="spuNo != null">
         spu_no,
       </if>
-      <if test="goodsName != null">
+      <if test="goodsName != null and goodsName != ''">
         goods_name,
       </if>
-      <if test="adWord != null">
+      <if test="adWord != null and adWord != ''">
         ad_word,
       </if>
       <if test="price != null">
@@ -590,7 +253,7 @@
       <if test="categoryIdLevel1 != null">
         category_id_level1,
       </if>
-      <if test="paymentMethod != null">
+      <if test="paymentMethod != null and paymentMethod != ''">
         payment_method,
       </if>
       <if test="shopId != null">
@@ -602,11 +265,8 @@
       <if test="stock != null">
         stock,
       </if>
-      <if test="createUser != null">
+      <if test="createUser != null and createUser != ''">
         create_user,
-      </if>
-      <if test="description != null">
-        description,
       </if>
       <if test="gmtPutOnTheShelf != null">
         gmt_put_on_the_shelf,
@@ -617,6 +277,12 @@
       <if test="gmtUpdate != null">
         gmt_update,
       </if>
+      <if test="showImgs != null and showImgs != ''">
+        show_imgs,
+      </if>
+      <if test="descImgs != null and descImgs != ''">
+        desc_imgs,
+      </if>
     </trim>
     values
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -626,10 +292,10 @@
       <if test="spuNo != null">
         #{spuNo,jdbcType=BIGINT},
       </if>
-      <if test="goodsName != null">
+      <if test="goodsName != null and goodsName != ''">
         #{goodsName,jdbcType=VARCHAR},
       </if>
-      <if test="adWord != null">
+      <if test="adWord != null and adWord != ''">
         #{adWord,jdbcType=VARCHAR},
       </if>
       <if test="price != null">
@@ -647,8 +313,8 @@
       <if test="categoryIdLevel1 != null">
         #{categoryIdLevel1,jdbcType=BIGINT},
       </if>
-      <if test="paymentMethod != null">
-        #{paymentMethod,jdbcType=TINYINT},
+      <if test="paymentMethod != null and paymentMethod != ''">
+        #{paymentMethod,jdbcType=VARCHAR},
       </if>
       <if test="shopId != null">
         #{shopId,jdbcType=BIGINT},
@@ -659,11 +325,8 @@
       <if test="stock != null">
         #{stock,jdbcType=BIGINT},
       </if>
-      <if test="createUser != null">
+      <if test="createUser != null and createUser != ''">
         #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null">
-        #{description,jdbcType=LONGVARCHAR},
       </if>
       <if test="gmtPutOnTheShelf != null">
         #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
@@ -674,6 +337,12 @@
       <if test="gmtUpdate != null">
         #{gmtUpdate,jdbcType=TIMESTAMP},
       </if>
+      <if test="showImgs != null and showImgs != ''">
+        #{showImgs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="descImgs != null and descImgs != ''">
+        #{descImgs,jdbcType=LONGVARCHAR},
+      </if>
     </trim>
     on duplicate key update 
     <trim suffixOverrides=",">
@@ -683,10 +352,10 @@
       <if test="spuNo != null">
         spu_no = #{spuNo,jdbcType=BIGINT},
       </if>
-      <if test="goodsName != null">
+      <if test="goodsName != null and goodsName != ''">
         goods_name = #{goodsName,jdbcType=VARCHAR},
       </if>
-      <if test="adWord != null">
+      <if test="adWord != null and adWord != ''">
         ad_word = #{adWord,jdbcType=VARCHAR},
       </if>
       <if test="price != null">
@@ -704,8 +373,8 @@
       <if test="categoryIdLevel1 != null">
         category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
       </if>
-      <if test="paymentMethod != null">
-        payment_method = #{paymentMethod,jdbcType=TINYINT},
+      <if test="paymentMethod != null and paymentMethod != ''">
+        payment_method = #{paymentMethod,jdbcType=VARCHAR},
       </if>
       <if test="shopId != null">
         shop_id = #{shopId,jdbcType=BIGINT},
@@ -716,11 +385,8 @@
       <if test="stock != null">
         stock = #{stock,jdbcType=BIGINT},
       </if>
-      <if test="createUser != null">
+      <if test="createUser != null and createUser != ''">
         create_user = #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null">
-        description = #{description,jdbcType=LONGVARCHAR},
       </if>
       <if test="gmtPutOnTheShelf != null">
         gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
@@ -730,6 +396,12 @@
       </if>
       <if test="gmtUpdate != null">
         gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="showImgs != null and showImgs != ''">
+        show_imgs = #{showImgs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="descImgs != null and descImgs != ''">
+        desc_imgs = #{descImgs,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>

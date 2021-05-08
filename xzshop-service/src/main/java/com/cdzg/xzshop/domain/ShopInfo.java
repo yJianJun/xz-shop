@@ -21,7 +21,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 /**
  * 店铺信息表
  */
-@ApiModel(value = "com-cdzg-xzshop-domain-ShopInfo")
+@ApiModel(value = "店铺信息表")
 @Data
 @Builder
 @Table(name = "shop_info")

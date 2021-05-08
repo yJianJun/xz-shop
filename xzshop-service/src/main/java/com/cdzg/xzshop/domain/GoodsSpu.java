@@ -1,6 +1,9 @@
 package com.cdzg.xzshop.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.cdzg.xzshop.constant.PaymentType;
+import com.cdzg.xzshop.handler.ListTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,9 +11,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
 
 /**
  * 商品spu
@@ -18,6 +26,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @ApiModel(value = "商品spu")
 @Data
 @Builder
+@TableName(autoResultMap = true)
 public class GoodsSpu implements Serializable {
     /**
      * id
@@ -104,34 +113,38 @@ public class GoodsSpu implements Serializable {
     private String createUser;
 
     /**
-     * 商品描述
-     */
-    @ApiModelProperty(value = "商品描述")
-    private String description;
-
-    /**
      * 商品上架时间
      */
     @ApiModelProperty(value = "商品上架时间")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtPutOnTheShelf;
 
     /**
      * gmtCreate
      */
     @ApiModelProperty(value = "gmtCreate")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
 
     /**
      * gmtUpdate
      */
     @ApiModelProperty(value = "gmtUpdate")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtUpdate;
+
+    /**
+     * showImgs
+     */
+    @Column(name = "show_imgs")
+    @ApiModelProperty(value = "showImgs")
+    @TableField(typeHandler = ListTypeHandler.class)
+    private List<String> showImgs;
+
+    /**
+     * descImgs
+     */
+    @Column(name = "desc_imgs")
+    @ApiModelProperty(value = "descImgs")
+    @TableField(typeHandler = ListTypeHandler.class)
+    private List<String> descImgs;
 
     private static final long serialVersionUID = 1L;
 }

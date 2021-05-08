@@ -34,10 +34,10 @@ public interface ShopInfoService extends IService<ShopInfo> {
     void update(ShopInfoUpdateVO vo);
 
 
-
-	int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus,LocalDateTime updatedGmtPutOnTheShelf,Collection<Long> idCollection);
+    int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection);
 
 }
+
 
 
 
