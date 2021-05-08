@@ -78,9 +78,6 @@ public class ShopInfoController {
     public ApiResponse add(@ApiParam(value = "店铺添加参数模型", required = true)@RequestBody @Valid ShopInfoAddVo addVo) {
 
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        if (adminUser == null) {
-            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        }
         shopInfoService.add(addVo,adminUser.getUserBaseInfo().getUserName());
         return CommonResult.buildSuccessResponse();
     }

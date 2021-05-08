@@ -50,9 +50,6 @@ public class GoodsCategoryController {
     public ApiResponse add(@ApiParam(value = "商品分类添加参数模型", required = true) @RequestBody @Valid GoodsCategoryAddVo addVo) {
 
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        if (adminUser == null) {
-            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
-        }
         goodsCategoryService.add(adminUser.getUserBaseInfo().getUserName(),addVo);
         return CommonResult.buildSuccessResponse();
     }
