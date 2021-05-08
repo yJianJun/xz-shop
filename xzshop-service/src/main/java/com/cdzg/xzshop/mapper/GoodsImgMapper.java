@@ -1,6 +1,5 @@
 package com.cdzg.xzshop.mapper;
 
-import com.cdzg.xzshop.domain.GoodsImg;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

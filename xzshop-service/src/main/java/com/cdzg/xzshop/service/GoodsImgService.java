@@ -1,6 +1,5 @@
 package com.cdzg.xzshop.service;
 
-import com.cdzg.xzshop.domain.GoodsImg;
 import java.util.List;
 public interface GoodsImgService{
 

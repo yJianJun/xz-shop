@@ -2,6 +2,8 @@ package com.cdzg.xzshop.domain;
 
 import com.cdzg.xzshop.constant.PaymentType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -22,6 +24,7 @@ public class GoodsPayHistory implements Serializable {
      * 主键
      */
     @ApiModelProperty(value = "主键")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**

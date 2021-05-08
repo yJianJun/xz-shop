@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdzg.xzshop.mapper.GoodsSpuMapper">
   <resultMap id="BaseResultMap" type="com.cdzg.xzshop.domain.GoodsSpu">
-    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
+    <!--@mbg.generated generated on Sat May 08 10:10:05 CST 2021.-->
     <!--@Table goods_spu-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="spu_no" jdbcType="BIGINT" property="spuNo" />
@@ -25,13 +25,13 @@
     <result column="desc_imgs" jdbcType="LONGVARCHAR" property="descImgs" />
   </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
+    <!--@mbg.generated generated on Sat May 08 10:10:05 CST 2021.-->
     id, spu_no, goods_name, ad_word, price, promotion_price, fraction_price, category_id_level2, 
     category_id_level1, payment_method, shop_id, `status`, stock, create_user, gmt_put_on_the_shelf, 
     gmt_create, gmt_update, show_imgs, desc_imgs
   </sql>
   <update id="updateBatch" parameterType="java.util.List">
-    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
+    <!--@mbg.generated generated on Sat May 08 10:10:05 CST 2021.-->
     update goods_spu
     <trim prefix="set" suffixOverrides=",">
       <trim prefix="spu_no = case" suffix="end,">
@@ -131,7 +131,7 @@
     </foreach>
   </update>
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
-    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
+    <!--@mbg.generated generated on Sat May 08 10:10:05 CST 2021.-->
     insert into goods_spu
     (spu_no, goods_name, ad_word, price, promotion_price, fraction_price, category_id_level2, 
       category_id_level1, payment_method, shop_id, `status`, stock, create_user, gmt_put_on_the_shelf, 
@@ -148,7 +148,7 @@
     </foreach>
   </insert>
   <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsSpu" useGeneratedKeys="true">
-    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
+    <!--@mbg.generated generated on Sat May 08 10:10:05 CST 2021.-->
     insert into goods_spu
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -223,7 +223,7 @@
     </trim>
   </insert>
   <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsSpu" useGeneratedKeys="true">
-    <!--@mbg.generated generated on Sat May 08 09:35:26 CST 2021.-->
+    <!--@mbg.generated generated on Sat May 08 10:10:05 CST 2021.-->
     insert into goods_spu
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

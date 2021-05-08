@@ -3,7 +3,7 @@ package com.cdzg.xzshop.service.Impl;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import com.cdzg.xzshop.mapper.GoodsImgMapper;
-import com.cdzg.xzshop.domain.GoodsImg;
+
 import java.util.List;
 import com.cdzg.xzshop.service.GoodsImgService;
 @Service

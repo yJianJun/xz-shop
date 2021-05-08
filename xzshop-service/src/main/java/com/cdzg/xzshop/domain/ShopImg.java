@@ -1,6 +1,8 @@
 package com.cdzg.xzshop.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -12,7 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 /**
     * 店铺图片
     */
-@ApiModel(value="com-cdzg-xzshop-domain-ShopImg")
+@ApiModel(value="店铺图片")
 @Data
 @Builder
 public class ShopImg implements Serializable {
@@ -20,6 +22,7 @@ public class ShopImg implements Serializable {
     * 主键（自增）
     */
     @ApiModelProperty(value="主键（自增）")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
