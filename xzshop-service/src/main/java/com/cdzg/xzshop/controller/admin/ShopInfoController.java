@@ -85,7 +85,6 @@ public class ShopInfoController {
     @WebApi
     @GetMapping("/get")
     @ApiOperation("店铺详情-运营端")
-    @IgnoreAuth
     public ApiResponse<ShopInfoUpdateVO> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "店铺id", required = true) Long id ) {
 
         ShopInfo shopInfo = shopInfoService.getById(id);
