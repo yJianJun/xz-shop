@@ -70,7 +70,7 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     public void add(GoodsSpuAddVo addVo, UserBaseInfoVo userBaseInfoVo) {
 
         GoodsSpu goodsSpu = GoodsSpu.builder().build();
-        BeanUtils.copyProperties(addVo,goodsSpu);
+        BeanUtils.copyProperties(addVo, goodsSpu);
 
         goodsSpu.setCreateUser(userBaseInfoVo.getUserName());
         goodsSpu.setSpuNo(snowflakeIdWorker.nextId());
@@ -78,8 +78,8 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         BigInteger organizationId = userBaseInfoVo.getOrganizationId();
         ShopInfo shopInfo = shopInfoService.findOneByShopUnion(organizationId + "");
 
-        if (Objects.isNull(shopInfo)){
-            throw new BaseException(ResultCode.DATA_ERROR.getCode(),"你所在的工会没有创建店铺！");
+        if (Objects.isNull(shopInfo)) {
+            throw new BaseException(ResultCode.DATA_ERROR.getCode(), "你所在的工会没有创建店铺！");
         }
 
         goodsSpu.setShopId(shopInfo.getId());
@@ -98,15 +98,15 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         }
     }
 
-	@Override
-	public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus,LocalDateTime updatedGmtPutOnTheShelf,Collection<Long> idCollection){
-		 return goodsSpuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus,updatedGmtPutOnTheShelf,idCollection);
-	}
+    @Override
+    public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection) {
+        return goodsSpuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus, updatedGmtPutOnTheShelf, idCollection);
+    }
 
-	@Override
-	public GoodsSpu findOneBySpuNo(Long spuNo){
-		 return goodsSpuMapper.findOneBySpuNo(spuNo);
-	}
+    @Override
+    public GoodsSpu findOneBySpuNo(Long spuNo) {
+        return goodsSpuMapper.findOneBySpuNo(spuNo);
+    }
 
     @Override
     public void update(GoodsSpuUpdateVO vo) {
@@ -114,11 +114,11 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         Long spuNo = vo.getSpuNo();
         GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNo(spuNo);
 
-        if (Objects.nonNull(goodsSpu)){
+        if (Objects.nonNull(goodsSpu)) {
 
-            BeanUtils.copyProperties(vo,goodsSpu,"spuNo");
+            BeanUtils.copyProperties(vo, goodsSpu, "spuNo");
             goodsSpuMapper.insertOrUpdate(goodsSpu);
-        }else {
+        } else {
             throw new BaseException(ResultCode.DATA_ERROR);
         }
     }
@@ -129,6 +129,10 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         return PageUtil.transform(new PageInfo(goodsSpuMapper.findByStatusAndGoodsNameAndGmtPutOnTheShelfBetweenEqualAndSpuNoAndCategoryIdLevel1AndCategoryIdLevel2(status, goodsName, minGmtPutOnTheShelf, maxGmtPutOnTheShelf, spuNo, categoryIdLevel1, categoryIdLevel2)));
     }
 }
+
+
+
+
 
 
 
