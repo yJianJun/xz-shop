@@ -85,6 +85,7 @@ public class ShopInfoController {
     @WebApi
     @GetMapping("/get")
     @ApiOperation("店铺详情-运营端")
+    @IgnoreAuth
     public ApiResponse<ShopInfoUpdateVO> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "店铺id", required = true) Long id ) {
 
         ShopInfo shopInfo = shopInfoService.getById(id);
@@ -146,6 +147,8 @@ public class ShopInfoController {
 
         if (flag.size() == 2){
             return 3;
+        }else if(flag.size() ==0){
+            return 0;
         }else {
             return flag.get(0);
         }
