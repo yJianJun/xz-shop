@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cdzg.xzshop.mapper.OrderItemMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cdzg.xzshop.domain.OrderItem" id="orderItemMap">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsCount" column="goods_count"/>
+        <result property="goodsUnitPrice" column="goods_unit_price"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+
+
+</mapper>
