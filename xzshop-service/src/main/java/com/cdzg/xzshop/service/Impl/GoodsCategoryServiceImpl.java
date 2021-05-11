@@ -187,6 +187,26 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
 
     }
 
+    @Override
+    public List<GoodsCategoryTo> listByStatus(Boolean status, Integer level) {
 
+        List<GoodsCategoryTo> categoryTos = new ArrayList<>();
+        List<GoodsCategory> parents = findByStatusAndLevel(status, level);
+
+        for (GoodsCategory parent : parents) {
+
+            GoodsCategoryTo categoryTo = new GoodsCategoryTo();
+            BeanUtils.copyProperties(parent, categoryTo);
+            List<GoodsCategory> subs = findByParentIdAndLevel(parent.getId(), 2);
+            categoryTo.setChildren(subs);
+            categoryTos.add(categoryTo);
+        }
+        return categoryTos;
+    }
+
+    @Override
+    public List<GoodsCategory> findByStatusAndLevel(Boolean status, Integer level) {
+        return goodsCategoryMapper.findByStatusAndLevel(status, level);
+    }
 }
 

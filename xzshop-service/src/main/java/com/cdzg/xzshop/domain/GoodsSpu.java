@@ -166,9 +166,9 @@ public class GoodsSpu implements Serializable {
     /**
      * 商品详情图片
      */
-    @TableField(value = "desc_imgs",typeHandler = ListTypeHandler.class)
+    @TableField(value = "desc_imgs")
     @ApiModelProperty(value = "商品详情图片")
-    private List<String> descImgs;
+    private String descImgs;
 
     private static final long serialVersionUID = 1L;
 }

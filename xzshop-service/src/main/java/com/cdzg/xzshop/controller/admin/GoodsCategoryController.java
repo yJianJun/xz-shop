@@ -50,7 +50,7 @@ public class GoodsCategoryController {
     public ApiResponse add(@ApiParam(value = "商品分类添加参数模型", required = true) @RequestBody @Valid GoodsCategoryAddVo addVo) {
 
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        goodsCategoryService.add(adminUser.getUserBaseInfo().getUserName(),addVo);
+        goodsCategoryService.add(adminUser.getUserBaseInfo().getUserName(), addVo);
         return CommonResult.buildSuccessResponse();
     }
 
@@ -60,7 +60,7 @@ public class GoodsCategoryController {
     public ApiResponse update(@ApiParam(value = "商品分类编辑参数模型", required = true) @RequestBody @Valid GoodsCategoryUpdateVo updateVo) {
 
         GoodsCategory goodsCategory = goodsCategoryService.selectByPrimaryKey(updateVo.getId());
-        if (Objects.nonNull(goodsCategory)){
+        if (Objects.nonNull(goodsCategory)) {
 
             goodsCategory.setCategoryName(updateVo.getName());
             goodsCategory.setGmtUpdate(LocalDateTime.now());
@@ -81,6 +81,16 @@ public class GoodsCategoryController {
     public ApiResponse<List<GoodsCategoryTo>> list(@ApiParam(value = "商品类别参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
 
         List<GoodsCategoryTo> resultVO = goodsCategoryService.list(vo.getLevel(), vo.getName());
+        return CommonResult.buildSuccessResponse(resultVO);
+    }
+
+    @WebApi
+    @GetMapping("/list/{status}/{level}")
+    @ApiOperation("根据是否启用查询商品类别列表")
+    public ApiResponse<List<GoodsCategoryTo>> listByStatus(@Valid @PathVariable("status") @NotNull @ApiParam(value = "分类状态", required = true, allowableValues = "true,false") Boolean status,
+                                                           @Valid @PathVariable("level") @NotNull @ApiParam(value = "分类等级", required = true, allowableValues = "1,2") Integer level) {
+
+        List<GoodsCategoryTo> resultVO = goodsCategoryService.listByStatus(status,level);
         return CommonResult.buildSuccessResponse(resultVO);
     }
 

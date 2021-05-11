@@ -78,7 +78,6 @@ public class GoodsSpuAddVo {
     private List<String> showImgs;
 
     @ApiModelProperty(value = "商品详情图片",position = 12,required = true)
-    @NotEmpty
-    @Size(max = 6)
-    private List<String> descImgs;
+    @NotBlank
+    private String descImgs;
 }
