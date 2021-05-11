@@ -22,7 +22,7 @@
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
     <result column="show_imgs" jdbcType="LONGVARCHAR" property="showImgs" typeHandler="com.cdzg.xzshop.handler.ListTypeHandler" />
-    <result column="desc_imgs" jdbcType="LONGVARCHAR" property="descImgs" typeHandler="com.cdzg.xzshop.handler.ListTypeHandler" />
+    <result column="desc_imgs" jdbcType="LONGVARCHAR" property="descImgs" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->

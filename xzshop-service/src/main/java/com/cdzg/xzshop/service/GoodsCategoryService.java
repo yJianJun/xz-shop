@@ -52,5 +52,19 @@ public interface GoodsCategoryService {
     void add(String adminUser, GoodsCategoryAddVo addVo);
 
     void batchPutOnDown(List<Long> list, Boolean flag);
+
+    List<GoodsCategoryTo> listByStatus(Boolean status, Integer level);
+
+    List<GoodsCategory> findByStatusAndLevel(Boolean status, Integer level);
+
+
+
+	List<GoodsCategory> findByParentIdAndStatusAndLevel(Long parentId,Boolean status,Integer level);
+
+
+
+	GoodsCategory findOneByIdAndLevelAndStatus(Long id,Integer level,Boolean status);
+
+
 }
 

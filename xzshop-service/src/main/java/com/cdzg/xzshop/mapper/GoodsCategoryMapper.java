@@ -69,9 +69,15 @@ public interface GoodsCategoryMapper {
 
     List<GoodsCategory> findByParentIdAndLevel(@Param("parentId")Long parentId,@Param("level")Integer level);
 
+    List<GoodsCategory> findByParentIdAndStatusAndLevel(@Param("parentId")Long parentId,@Param("status")Boolean status,@Param("level")Integer level);
+
     GoodsCategory findOneByIdAndLevel(@Param("id")Long id,@Param("level")Integer level);
 
+    GoodsCategory findOneByIdAndLevelAndStatus(@Param("id")Long id,@Param("level")Integer level,@Param("status")Boolean status);
 
+
+
+    List<GoodsCategory> findByStatusAndLevel(@Param("status")Boolean status,@Param("level")Integer level);
 
 
 }

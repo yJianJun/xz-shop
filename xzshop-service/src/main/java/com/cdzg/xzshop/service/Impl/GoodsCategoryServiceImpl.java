@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.service.Impl;
+import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
 import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
@@ -186,6 +187,71 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         }
 
     }
+
+    @Override
+    public List<GoodsCategoryTo> listByStatus(Boolean status, Integer level) {
+
+        List<GoodsCategory> data = goodsCategoryMapper.findByStatusAndLevel(status,level);
+        List<GoodsCategoryTo> categoryTos = new ArrayList<>();
+
+        Map<GoodsCategory, List<GoodsCategory>> map = new HashMap<>();
+
+        if (2 == level) {
+            List<GoodsCategory> sons = data;
+            for (GoodsCategory son : sons) {
+
+                GoodsCategory parent = findOneByIdAndLevelAndStatus(son.getParentId(), 1,status);
+                List<GoodsCategory> subs = map.get(parent);
+                if (CollectionUtils.isNotEmpty(subs)) {
+                    subs.add(son);
+                    map.put(parent, subs);
+                } else {
+                    map.put(parent, Lists.newArrayList(son));
+                }
+            }
+
+            for (Map.Entry<GoodsCategory, List<GoodsCategory>> entry : map.entrySet()) {
+
+                GoodsCategory goodsCategory = entry.getKey();
+                GoodsCategoryTo categoryTo = new GoodsCategoryTo();
+                BeanUtils.copyProperties(goodsCategory, categoryTo);
+                categoryTo.setChildren(entry.getValue());
+                categoryTos.add(categoryTo);
+            }
+
+        }else {
+
+            List<GoodsCategory> parents = data;
+            for (GoodsCategory parent : parents) {
+
+                GoodsCategoryTo categoryTo = new GoodsCategoryTo();
+                BeanUtils.copyProperties(parent, categoryTo);
+                List<GoodsCategory> subs = findByParentIdAndStatusAndLevel(parent.getId(), status, 2);
+                categoryTo.setChildren(subs);
+                categoryTos.add(categoryTo);
+            }
+        }
+        return categoryTos;
+    }
+
+    @Override
+    public List<GoodsCategory> findByStatusAndLevel(Boolean status, Integer level) {
+        return goodsCategoryMapper.findByStatusAndLevel(status, level);
+    }
+
+	@Override
+	public List<GoodsCategory> findByParentIdAndStatusAndLevel(Long parentId,Boolean status,Integer level){
+		 return goodsCategoryMapper.findByParentIdAndStatusAndLevel(parentId,status,level);
+	}
+
+	@Override
+	public GoodsCategory findOneByIdAndLevelAndStatus(Long id,Integer level,Boolean status){
+		 return goodsCategoryMapper.findOneByIdAndLevelAndStatus(id,level,status);
+	}
+
+
+
+
 
 
 }
