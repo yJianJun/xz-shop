@@ -49,5 +49,9 @@ public class OrderItem implements Serializable {
 	 * 逻辑删除标志 1-是 0-否
 	 */
 	private Integer deleted;
+	/**
+	 * 状态 0正常 1退款
+	 */
+	private Integer status;
 
 }
