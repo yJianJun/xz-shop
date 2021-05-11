@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
 import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.to.admin.GoodsSpuTo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
 import com.cdzg.xzshop.vo.common.PageResultVO;
@@ -34,7 +35,7 @@ public interface GoodsSpuService {
 
     void update(GoodsSpuUpdateVO vo);
 
-    PageResultVO<GoodsSpu> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2);
+    PageResultVO<GoodsSpuTo> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2);
 }
 
 
