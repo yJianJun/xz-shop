@@ -3,6 +3,8 @@ package com.cdzg.xzshop.controller.app.pay;
 
 import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.MobileApi;
+import com.cdzg.xzshop.constant.PaymentMethod;
+import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.service.pay.PayService;
 import com.cdzg.xzshop.vo.pay.PayParam;
 import com.cdzg.xzshop.vo.pay.RefundParam;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Slf4j
 @RequestMapping("app/pay")
@@ -38,17 +41,8 @@ public class PayController {
     @MobileApi
     @PostMapping("/{type}")
     @ApiOperation("支付")
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    paramType = "path",
-                    dataType = "String",
-                    name = "type",
-                    value = "支付方式",
-                    required = true,
-                    allowableValues = "wechat,ali"
-            )
-    })
-    public ApiResponse<String> pay(@Valid @PathVariable("type") @NotBlank String type, @ApiParam(value = "订单支付参数", required = true) @Valid @RequestBody PayParam payParam) throws Exception {
+    public ApiResponse<String> pay( @PathVariable("type") @Valid @NotNull @ApiParam(value = "支付方式", required = true, allowableValues = "1,2") PaymentMethod type,
+                                   @ApiParam(value = "订单支付参数", required = true) @Valid @RequestBody PayParam payParam) throws Exception {
 
         String orderId = payParam.getOrderID();
         //yjjtodo: 对订单号对应的订单数据 进行常规性校验 幂等
@@ -76,7 +70,7 @@ public class PayController {
 //            return CommonResult.failed("此商品过期下架", ResultCode.FAILED.getCode());
 //        }
         String body;
-        if ("wechat".equals(type)) {
+        if (PaymentMethod.Wechat == type) {
 
             String ip = payParam.getIp();
             body = wxPayService.pay(orderId, ip);
@@ -92,10 +86,10 @@ public class PayController {
     @GetMapping(value = "/{type}/query")
     public ApiResponse<String> query(@Valid @RequestParam("transactionId") @NotBlank @ApiParam(value = "微信/支付宝交易号", required = true) String transactionId,
                                      @Valid @RequestParam("outTradeNo") @NotBlank @ApiParam(value = "商品订单号", required = true) String outTradeNo,
-                                     @Valid @PathVariable("type") @NotBlank @ApiParam(value = "支付方式", required = true, allowableValues = "wechat,ali") String type) throws Exception {
+                                     @Valid @PathVariable("type") @NotNull @ApiParam(value = "支付方式", required = true, allowableValues = "1,2") PaymentMethod type) throws Exception {
 
         String body;
-        if ("wechat".equals(type)) {
+        if (PaymentMethod.Wechat == type) {
 
             body = query(wxPayService, transactionId, outTradeNo);
         } else {
@@ -114,7 +108,7 @@ public class PayController {
     @PostMapping("/{type}/refund")
     @ApiOperation("退款")
     public ApiResponse<String> refund(@Valid @RequestBody @ApiParam(value = "订单退款参数", required = true) RefundParam refundParam,
-                                      @Valid @PathVariable("type") @NotBlank @ApiParam(value = "支付方式", required = true, allowableValues = "wechat,ali") String type
+                                      @Valid @PathVariable("type") @NotNull @ApiParam(value = "支付方式", required = true, allowableValues = "1,2") PaymentMethod type
     ) throws Exception {
         String refundFee = refundParam.getRefundFee();
         String tradeno = refundParam.getTransactionId();
@@ -145,7 +139,7 @@ public class PayController {
 //            return CommonResult.failed("此商品过期下架", ResultCode.FAILED.getCode());
 //        }
         String body;
-        if ("wechat".equals(type)) {
+        if (PaymentMethod.Wechat == type) {
 
             body = refund(wxPayService, tradeno, orderno, refundFee);
         } else {
