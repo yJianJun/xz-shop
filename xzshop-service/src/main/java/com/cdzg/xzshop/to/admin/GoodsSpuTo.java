@@ -9,10 +9,8 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+
 @ApiModel(description = "商品To")
-@Builder
 public class GoodsSpuTo extends GoodsSpu {
 
 
@@ -22,4 +20,19 @@ public class GoodsSpuTo extends GoodsSpu {
     @ApiModelProperty(value = "销量", required = true)
     private Long sales;
 
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public Long getSales() {
+        return sales;
+    }
+
+    public void setSales(Long sales) {
+        this.sales = sales;
+    }
 }

@@ -134,7 +134,7 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         List<GoodsSpuTo> goodsSpuTos = new ArrayList<>();
         for (GoodsSpu goodsSpu : goodsSpus) {
 
-            GoodsSpuTo spuTo = GoodsSpuTo.builder().build();
+            GoodsSpuTo spuTo = new GoodsSpuTo();
             BeanUtils.copyProperties(goodsSpu,spuTo);
             ShopInfo shopInfo = shopInfoService.getById(goodsSpu.getShopId());
             spuTo.setShopName(shopInfo.getShopName());
