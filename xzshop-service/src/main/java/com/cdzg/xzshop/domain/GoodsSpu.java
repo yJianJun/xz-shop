@@ -16,8 +16,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -28,6 +30,8 @@ import javax.persistence.Column;
 @ApiModel(value = "商品spu")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName(value = "goods_spu",autoResultMap = true)
 public class GoodsSpu implements Serializable {
     /**
@@ -106,6 +110,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "shop_id")
     @ApiModelProperty(value = "商家id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long shopId;
 
     /**
