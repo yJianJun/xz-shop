@@ -56,5 +56,15 @@ public interface GoodsCategoryService {
     List<GoodsCategoryTo> listByStatus(Boolean status, Integer level);
 
     List<GoodsCategory> findByStatusAndLevel(Boolean status, Integer level);
+
+
+
+	List<GoodsCategory> findByParentIdAndStatusAndLevel(Long parentId,Boolean status,Integer level);
+
+
+
+	GoodsCategory findOneByIdAndLevelAndStatus(Long id,Integer level,Boolean status);
+
+
 }
 
