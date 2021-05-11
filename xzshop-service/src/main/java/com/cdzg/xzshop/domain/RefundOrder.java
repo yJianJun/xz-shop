@@ -56,6 +56,14 @@ public class RefundOrder {
     private BigDecimal orderAmount;
     /**
      * 状态
+     * 0撤销
+     * 1申请退款
+     * 2拒绝退货
+     * 3买家待发货
+     * 4卖家待收货
+     * 5收货拒绝
+     * 6拒绝退款
+     * 7退款成功
      */
     private Integer status;
     /**
@@ -63,10 +71,32 @@ public class RefundOrder {
      */
     private LocalDateTime createTime;
     /**
-     * 补充凭证和说明
+     * 补充凭证
      */
     private String img;
-
-
+    /**
+     * 组织架构id
+     */
+    private Long orgId;
+    /**
+     * 补充说明
+     */
+    private String returnExplain;
+    /**
+     * 退款原因
+     */
+    private String reason;
+    /**
+     * 退款记录id
+     */
+    private Long refundRecordId;
+    /**
+     * 物流公司
+     */
+    private String logisticsCompany;
+    /**
+     * 物流单号
+     */
+    private String logisticsNumber;
 
 }

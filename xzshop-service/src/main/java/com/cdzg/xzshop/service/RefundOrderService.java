@@ -5,6 +5,7 @@ import com.cdzg.xzshop.domain.RefundOrder;
 import com.cdzg.xzshop.vo.admin.RefundOrderListVO;
 import com.cdzg.xzshop.vo.admin.RefundOrderQueryVO;
 import com.cdzg.xzshop.vo.admin.RefundOrderStatisticVO;
+import com.cdzg.xzshop.vo.app.returnorder.ApplyRefundVO;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 
 public interface RefundOrderService extends IService<RefundOrder> {
@@ -17,10 +18,16 @@ public interface RefundOrderService extends IService<RefundOrder> {
     PageResultVO<RefundOrderListVO> getRefundOrderPage(RefundOrderQueryVO queryVO);
 
     /**
-     *
+     * 退货订单统计
      * @return
      */
     RefundOrderStatisticVO getRefundOrderStatistic();
 
+    /**
+     * 申请退款
+     * @param vo
+     * @return
+     */
+    String applyRefundOrder(ApplyRefundVO vo);
 
 }
