@@ -47,6 +47,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "spu_no")
     @ApiModelProperty(value = "商品编号，唯一")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long spuNo;
 
     /**
