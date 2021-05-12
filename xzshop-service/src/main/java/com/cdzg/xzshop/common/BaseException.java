@@ -29,16 +29,16 @@ public class BaseException extends RuntimeException {
         this(errorInfoInterface,null);
     }
 
-    public BaseException(ResultCode errorInfoInterface, Throwable cause) {
-        this(errorInfoInterface.getCode(),errorInfoInterface.getMessage(),cause);
-    }
-
     public BaseException(String errorMsg) {
         this(ResultCode.FAILED.getCode(),errorMsg);
     }
 
     public BaseException(Integer errorCode, String errorMsg) {
         this(errorCode,errorMsg,null);
+    }
+
+    public BaseException(ResultCode errorInfoInterface, Throwable cause) {
+        this(errorInfoInterface.getCode(),errorInfoInterface.getMessage(),cause);
     }
 
     public BaseException(Integer errorCode, String errorMsg, Throwable cause) {
