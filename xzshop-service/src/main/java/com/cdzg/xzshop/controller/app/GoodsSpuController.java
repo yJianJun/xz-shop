@@ -35,7 +35,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("app/goods")
 @Validated
-@Api(tags = "app_商城相关")
+@Api(tags = "app_商品相关")
 public class GoodsSpuController {
 
     @Autowired
