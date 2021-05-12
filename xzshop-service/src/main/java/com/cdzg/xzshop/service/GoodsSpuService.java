@@ -45,6 +45,10 @@ public interface GoodsSpuService {
     List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod);
 
     PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort);
+
+    PageResultVO<GoodsSpuHomePageTo> spuWithSalesByPage(PageResultVO<GoodsSpu> pageResultVO);
+
+    GoodsSpuHomePageTo spuWithSales(GoodsSpu spu);
 }
 
 

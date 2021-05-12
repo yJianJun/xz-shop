@@ -8,9 +8,12 @@ import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
 import com.cdzg.xzshop.constant.PaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.GoodsSpuService;
+import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
+import com.cdzg.xzshop.to.app.GoodsSpuDescriptionTo;
 import com.cdzg.xzshop.to.app.GoodsSpuHomePageTo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuPageVo;
@@ -41,19 +44,37 @@ public class GoodsSpuController {
     @Autowired
     GoodsSpuService goodsSpuService;
 
+    @Autowired
+    ShopInfoService shopInfoService;
+
 
     @MobileApi
     @PostMapping("/homePage")
     @ApiOperation("商城首页商品列表")
-    public ApiResponse<PageResultVO<GoodsSpuHomePageTo>> homePage(@ApiParam(value = "商品分页参数模型", required = true)@RequestBody @Valid GoodsSpuHomePageVo vo) {
+    public ApiResponse<PageResultVO<GoodsSpuHomePageTo>> homePage(@ApiParam(value = "商品分页参数模型", required = true) @RequestBody @Valid GoodsSpuHomePageVo vo) {
 
         PaymentType paymentType = vo.getPaymentType();
         Boolean sort = vo.getSort();
-        PageResultVO<GoodsSpuHomePageTo> resultVO = goodsSpuService.homePage(vo.getCurrentPage(), vo.getPageSize(),paymentType,sort);
+        PageResultVO<GoodsSpuHomePageTo> resultVO = goodsSpuService.homePage(vo.getCurrentPage(), vo.getPageSize(), paymentType, sort);
         return CommonResult.buildSuccessResponse(resultVO);
     }
 
+    @MobileApi
+    @GetMapping("/detail/{spu}")
+    @ApiOperation("商品详情")
+    public ApiResponse<GoodsSpuDescriptionTo> detail(@ApiParam(value = "商品编号", required = true) @PathVariable("spu") @Valid @NotNull Long spu) {
 
+        GoodsSpu spuNo = goodsSpuService.findOneBySpuNo(spu);
+        GoodsSpuHomePageTo to = goodsSpuService.spuWithSales(spuNo);
+
+        ShopInfo shopInfo = shopInfoService.getById(spuNo.getShopId());
+
+        GoodsSpuDescriptionTo description = new GoodsSpuDescriptionTo();
+        description.setSpu(to);
+        description.setShopInfo(shopInfo);
+
+        return CommonResult.buildSuccessResponse(description);
+    }
 
 
 }
