@@ -9,6 +9,7 @@
     <result column="payment_method" jdbcType="INTEGER" property="paymentMethod" />
     <result column="spu_amount" jdbcType="DECIMAL" property="spuAmount" />
     <result column="number" jdbcType="BIGINT" property="number" />
+    <result column="order_no" jdbcType="BIGINT" property="orderNo" />
     <result column="the_total_amount_of_orders" jdbcType="DECIMAL" property="theTotalAmountOfOrders" />
     <result column="pay_json" jdbcType="LONGVARCHAR" property="payJson" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
@@ -17,142 +18,9 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, spu_no, payment_method, spu_amount, `number`, the_total_amount_of_orders, pay_json, 
-    gmt_create, gmt_update, remark
+    id, spu_no, payment_method, spu_amount, `number`, order_no, the_total_amount_of_orders, 
+    pay_json, gmt_create, gmt_update, remark
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
-    select 
-    <include refid="Base_Column_List" />
-    from goods_pay_history
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    <!--@mbg.generated-->
-    delete from goods_pay_history
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsPayHistory" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into goods_pay_history (spu_no, payment_method, spu_amount, 
-      `number`, the_total_amount_of_orders, pay_json, 
-      gmt_create, gmt_update, remark
-      )
-    values (#{spuNo,jdbcType=BIGINT}, #{paymentMethod,jdbcType=INTEGER}, #{spuAmount,jdbcType=DECIMAL}, 
-      #{number,jdbcType=BIGINT}, #{theTotalAmountOfOrders,jdbcType=DECIMAL}, #{payJson,jdbcType=LONGVARCHAR}, 
-      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
-      )
-  </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsPayHistory" useGeneratedKeys="true">
-    <!--@mbg.generated-->
-    insert into goods_pay_history
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="spuNo != null">
-        spu_no,
-      </if>
-      <if test="paymentMethod != null">
-        payment_method,
-      </if>
-      <if test="spuAmount != null">
-        spu_amount,
-      </if>
-      <if test="number != null">
-        `number`,
-      </if>
-      <if test="theTotalAmountOfOrders != null">
-        the_total_amount_of_orders,
-      </if>
-      <if test="payJson != null">
-        pay_json,
-      </if>
-      <if test="gmtCreate != null">
-        gmt_create,
-      </if>
-      <if test="gmtUpdate != null">
-        gmt_update,
-      </if>
-      <if test="remark != null">
-        remark,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="spuNo != null">
-        #{spuNo,jdbcType=BIGINT},
-      </if>
-      <if test="paymentMethod != null">
-        #{paymentMethod,jdbcType=INTEGER},
-      </if>
-      <if test="spuAmount != null">
-        #{spuAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="number != null">
-        #{number,jdbcType=BIGINT},
-      </if>
-      <if test="theTotalAmountOfOrders != null">
-        #{theTotalAmountOfOrders,jdbcType=DECIMAL},
-      </if>
-      <if test="payJson != null">
-        #{payJson,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="gmtCreate != null">
-        #{gmtCreate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gmtUpdate != null">
-        #{gmtUpdate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="remark != null">
-        #{remark,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cdzg.xzshop.domain.GoodsPayHistory">
-    <!--@mbg.generated-->
-    update goods_pay_history
-    <set>
-      <if test="spuNo != null">
-        spu_no = #{spuNo,jdbcType=BIGINT},
-      </if>
-      <if test="paymentMethod != null">
-        payment_method = #{paymentMethod,jdbcType=INTEGER},
-      </if>
-      <if test="spuAmount != null">
-        spu_amount = #{spuAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="number != null">
-        `number` = #{number,jdbcType=BIGINT},
-      </if>
-      <if test="theTotalAmountOfOrders != null">
-        the_total_amount_of_orders = #{theTotalAmountOfOrders,jdbcType=DECIMAL},
-      </if>
-      <if test="payJson != null">
-        pay_json = #{payJson,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="gmtUpdate != null">
-        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="remark != null">
-        remark = #{remark,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.cdzg.xzshop.domain.GoodsPayHistory">
-    <!--@mbg.generated-->
-    update goods_pay_history
-    set spu_no = #{spuNo,jdbcType=BIGINT},
-      payment_method = #{paymentMethod,jdbcType=INTEGER},
-      spu_amount = #{spuAmount,jdbcType=DECIMAL},
-      `number` = #{number,jdbcType=BIGINT},
-      the_total_amount_of_orders = #{theTotalAmountOfOrders,jdbcType=DECIMAL},
-      pay_json = #{payJson,jdbcType=LONGVARCHAR},
-      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
-      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
-      remark = #{remark,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
   <update id="updateBatch" parameterType="java.util.List">
     <!--@mbg.generated-->
     update goods_pay_history
@@ -175,6 +43,11 @@
       <trim prefix="`number` = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
           when id = #{item.id,jdbcType=BIGINT} then #{item.number,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="order_no = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.orderNo,jdbcType=BIGINT}
         </foreach>
       </trim>
       <trim prefix="the_total_amount_of_orders = case" suffix="end,">
@@ -240,6 +113,13 @@
           </if>
         </foreach>
       </trim>
+      <trim prefix="order_no = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.orderNo != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.orderNo,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
       <trim prefix="the_total_amount_of_orders = case" suffix="end,">
         <foreach collection="list" index="index" item="item">
           <if test="item.theTotalAmountOfOrders != null">
@@ -284,12 +164,12 @@
   <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into goods_pay_history
-    (spu_no, payment_method, spu_amount, `number`, the_total_amount_of_orders, pay_json, 
-      gmt_create, gmt_update, remark)
+    (spu_no, payment_method, spu_amount, `number`, order_no, the_total_amount_of_orders, 
+      pay_json, gmt_create, gmt_update, remark)
     values
     <foreach collection="list" item="item" separator=",">
       (#{item.spuNo,jdbcType=BIGINT}, #{item.paymentMethod,jdbcType=INTEGER}, #{item.spuAmount,jdbcType=DECIMAL}, 
-        #{item.number,jdbcType=BIGINT}, #{item.theTotalAmountOfOrders,jdbcType=DECIMAL}, 
+        #{item.number,jdbcType=BIGINT}, #{item.orderNo,jdbcType=BIGINT}, #{item.theTotalAmountOfOrders,jdbcType=DECIMAL}, 
         #{item.payJson,jdbcType=LONGVARCHAR}, #{item.gmtCreate,jdbcType=TIMESTAMP}, #{item.gmtUpdate,jdbcType=TIMESTAMP}, 
         #{item.remark,jdbcType=VARCHAR})
     </foreach>
@@ -305,6 +185,7 @@
       payment_method,
       spu_amount,
       `number`,
+      order_no,
       the_total_amount_of_orders,
       pay_json,
       gmt_create,
@@ -320,6 +201,7 @@
       #{paymentMethod,jdbcType=INTEGER},
       #{spuAmount,jdbcType=DECIMAL},
       #{number,jdbcType=BIGINT},
+      #{orderNo,jdbcType=BIGINT},
       #{theTotalAmountOfOrders,jdbcType=DECIMAL},
       #{payJson,jdbcType=LONGVARCHAR},
       #{gmtCreate,jdbcType=TIMESTAMP},
@@ -335,6 +217,7 @@
       payment_method = #{paymentMethod,jdbcType=INTEGER},
       spu_amount = #{spuAmount,jdbcType=DECIMAL},
       `number` = #{number,jdbcType=BIGINT},
+      order_no = #{orderNo,jdbcType=BIGINT},
       the_total_amount_of_orders = #{theTotalAmountOfOrders,jdbcType=DECIMAL},
       pay_json = #{payJson,jdbcType=LONGVARCHAR},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -361,10 +244,13 @@
       <if test="number != null">
         `number`,
       </if>
+      <if test="orderNo != null">
+        order_no,
+      </if>
       <if test="theTotalAmountOfOrders != null">
         the_total_amount_of_orders,
       </if>
-      <if test="payJson != null">
+      <if test="payJson != null and payJson != ''">
         pay_json,
       </if>
       <if test="gmtCreate != null">
@@ -373,7 +259,7 @@
       <if test="gmtUpdate != null">
         gmt_update,
       </if>
-      <if test="remark != null">
+      <if test="remark != null and remark != ''">
         remark,
       </if>
     </trim>
@@ -394,10 +280,13 @@
       <if test="number != null">
         #{number,jdbcType=BIGINT},
       </if>
+      <if test="orderNo != null">
+        #{orderNo,jdbcType=BIGINT},
+      </if>
       <if test="theTotalAmountOfOrders != null">
         #{theTotalAmountOfOrders,jdbcType=DECIMAL},
       </if>
-      <if test="payJson != null">
+      <if test="payJson != null and payJson != ''">
         #{payJson,jdbcType=LONGVARCHAR},
       </if>
       <if test="gmtCreate != null">
@@ -406,7 +295,7 @@
       <if test="gmtUpdate != null">
         #{gmtUpdate,jdbcType=TIMESTAMP},
       </if>
-      <if test="remark != null">
+      <if test="remark != null and remark != ''">
         #{remark,jdbcType=VARCHAR},
       </if>
     </trim>
@@ -427,10 +316,13 @@
       <if test="number != null">
         `number` = #{number,jdbcType=BIGINT},
       </if>
+      <if test="orderNo != null">
+        order_no = #{orderNo,jdbcType=BIGINT},
+      </if>
       <if test="theTotalAmountOfOrders != null">
         the_total_amount_of_orders = #{theTotalAmountOfOrders,jdbcType=DECIMAL},
       </if>
-      <if test="payJson != null">
+      <if test="payJson != null and payJson != ''">
         pay_json = #{payJson,jdbcType=LONGVARCHAR},
       </if>
       <if test="gmtCreate != null">
@@ -439,7 +331,7 @@
       <if test="gmtUpdate != null">
         gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
       </if>
-      <if test="remark != null">
+      <if test="remark != null and remark != ''">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
     </trim>

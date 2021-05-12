@@ -2,7 +2,8 @@ package com.cdzg.xzshop.service;
 
 import java.util.List;
 import com.cdzg.xzshop.domain.GoodsPayHistory;
-public interface GoodsPayHistoryService{
+
+public interface GoodsPayHistoryService {
 
 
     int deleteByPrimaryKey(Long id);
@@ -28,3 +29,4 @@ public interface GoodsPayHistoryService{
     int batchInsert(List<GoodsPayHistory> list);
 
 }
+

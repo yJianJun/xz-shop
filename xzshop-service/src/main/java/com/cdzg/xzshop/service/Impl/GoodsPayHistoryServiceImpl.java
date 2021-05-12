@@ -6,8 +6,9 @@ import java.util.List;
 import com.cdzg.xzshop.mapper.GoodsPayHistoryMapper;
 import com.cdzg.xzshop.domain.GoodsPayHistory;
 import com.cdzg.xzshop.service.GoodsPayHistoryService;
+
 @Service
-public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService{
+public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService {
 
     @Resource
     private GoodsPayHistoryMapper goodsPayHistoryMapper;
@@ -68,3 +69,4 @@ public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService{
     }
 
 }
+

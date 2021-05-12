@@ -1,12 +1,16 @@
 package com.cdzg.xzshop.service.Impl;
+import com.cdzg.xzshop.constant.PaymentType;
 
 import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
+import com.cdzg.xzshop.domain.GoodsSpuSales;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.mapper.GoodsSpuSalesMapper;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
+import com.cdzg.xzshop.to.app.GoodsSpuHomePageTo;
 import com.cdzg.xzshop.utils.PageUtil;
 import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
@@ -35,6 +39,9 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
 
     @Resource
     private GoodsSpuMapper goodsSpuMapper;
+
+    @Resource
+    private GoodsSpuSalesMapper salesMapper;
 
     @Resource
     private SnowflakeIdWorker snowflakeIdWorker;
@@ -145,6 +152,49 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         BeanUtils.copyProperties(resultVO,pageResultVO);
         pageResultVO.setData(goodsSpuTos);
         return pageResultVO;
+    }
+
+	@Override
+	public List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod){
+		 return goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod);
+	}
+
+	@Override
+    public List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod) {
+        return goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod);
+    }
+
+    @Override
+    public PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort) {
+
+        if (sort){
+            PageHelper.startPage(page, pageSize);
+            PageResultVO<GoodsSpu> pageResultVO = PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod)));
+            return spuWithSales(pageResultVO);
+        }else {
+
+            PageHelper.startPage(page, pageSize);
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod)));
+        }
+    }
+
+    private PageResultVO<GoodsSpuHomePageTo> spuWithSales(PageResultVO<GoodsSpu> pageResultVO) {
+
+        List<GoodsSpu> data = pageResultVO.getData();
+        List<GoodsSpuHomePageTo> homePageTos = new ArrayList<>();
+        for (GoodsSpu spu : data) {
+
+            GoodsSpuHomePageTo to = new GoodsSpuHomePageTo();
+            GoodsSpuSales spuSales = salesMapper.findOneBySpuNo(spu.getSpuNo());
+            BeanUtils.copyProperties(spu,to);
+            to.setSales((spuSales != null) ? spuSales.getSales() : null);
+            homePageTos.add(to);
+        }
+
+        PageResultVO<GoodsSpuHomePageTo> resultVO = new PageResultVO<>();
+        BeanUtils.copyProperties(pageResultVO,resultVO);
+        resultVO.setData(homePageTos);
+        return resultVO;
     }
 }
 
