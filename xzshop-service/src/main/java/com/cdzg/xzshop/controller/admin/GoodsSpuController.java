@@ -89,7 +89,7 @@ public class GoodsSpuController {
     @ApiOperation("分页查询商品列表")
     public ApiResponse<PageResultVO<GoodsSpuTo>> page(@ApiParam(value = "商品分页参数模型", required = true)@RequestBody @Valid GoodsSpuPageVo vo) {
 
-        PageResultVO<GoodsSpuTo> page = goodsSpuService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getStatus(), vo.getGoodsName(), vo.getStart(), vo.getEnd(), vo.getSpuNo(), vo.getCategoryIdLevel1(), vo.getCategoryIdLevel2());
+        PageResultVO<GoodsSpuTo> page = goodsSpuService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getStatus(), vo.getGoodsName(), vo.getStart(), vo.getEnd(), vo.getSpuNo(), vo.getCategoryIdLevel1(), vo.getCategoryIdLevel2(),vo.getShopName());
         return ApiResponse.buildSuccessResponse(page);
     }
 
