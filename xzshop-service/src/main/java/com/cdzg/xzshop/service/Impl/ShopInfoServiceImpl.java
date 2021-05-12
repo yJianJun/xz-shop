@@ -106,7 +106,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
         shopInfo = findOneByShopUnion(addVo.getUnion());
         if (Objects.nonNull(shopInfo)){
-            throw new BaseException(ResultCode.PARAMETER_ERROR);
+            throw new BaseException("该工会下已存在店铺,不能重复添加");
         }
         shopInfo = ShopInfo.builder()
                 .shopName(addVo.getShopName())

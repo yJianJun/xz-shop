@@ -26,26 +26,19 @@ public class BaseException extends RuntimeException {
     }
 
     public BaseException(ResultCode errorInfoInterface) {
-        super(errorInfoInterface.getMessage());
-        this.errorCode = errorInfoInterface.getCode();
-        this.errorMsg = errorInfoInterface.getMessage();
+        this(errorInfoInterface,null);
     }
 
     public BaseException(ResultCode errorInfoInterface, Throwable cause) {
-        super(errorInfoInterface.getMessage(), cause);
-        this.errorCode = errorInfoInterface.getCode();
-        this.errorMsg = errorInfoInterface.getMessage();
+        this(errorInfoInterface.getCode(),errorInfoInterface.getMessage(),cause);
     }
 
     public BaseException(String errorMsg) {
-        super(errorMsg);
-        this.errorMsg = errorMsg;
+        this(ResultCode.FAILED.getCode(),errorMsg);
     }
 
     public BaseException(Integer errorCode, String errorMsg) {
-        super(errorMsg);
-        this.errorCode = errorCode;
-        this.errorMsg = errorMsg;
+        this(errorCode,errorMsg,null);
     }
 
     public BaseException(Integer errorCode, String errorMsg, Throwable cause) {
