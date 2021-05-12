@@ -14,11 +14,6 @@ public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService {
     private GoodsPayHistoryMapper goodsPayHistoryMapper;
 
     @Override
-    public int deleteByPrimaryKey(Long id) {
-        return goodsPayHistoryMapper.deleteByPrimaryKey(id);
-    }
-
-    @Override
     public int insert(GoodsPayHistory record) {
         return goodsPayHistoryMapper.insert(record);
     }
@@ -31,26 +26,6 @@ public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService {
     @Override
     public int insertOrUpdateSelective(GoodsPayHistory record) {
         return goodsPayHistoryMapper.insertOrUpdateSelective(record);
-    }
-
-    @Override
-    public int insertSelective(GoodsPayHistory record) {
-        return goodsPayHistoryMapper.insertSelective(record);
-    }
-
-    @Override
-    public GoodsPayHistory selectByPrimaryKey(Long id) {
-        return goodsPayHistoryMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public int updateByPrimaryKeySelective(GoodsPayHistory record) {
-        return goodsPayHistoryMapper.updateByPrimaryKeySelective(record);
-    }
-
-    @Override
-    public int updateByPrimaryKey(GoodsPayHistory record) {
-        return goodsPayHistoryMapper.updateByPrimaryKey(record);
     }
 
     @Override

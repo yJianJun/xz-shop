@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-@RestController
+@RestController("app_goodsSpuController")
 @RequestMapping("app/goods")
 @Validated
 @Api(tags = "app_商品相关")
