@@ -40,9 +40,9 @@ public class GoodsPayHistory implements Serializable {
     private PaymentType paymentMethod;
 
     /**
-     * 商品支付金额
+     * 订单支付金额
      */
-    @ApiModelProperty(value = "商品支付金额")
+    @ApiModelProperty(value = "订单支付金额")
     private BigDecimal spuAmount;
 
     /**
@@ -56,6 +56,12 @@ public class GoodsPayHistory implements Serializable {
      */
     @ApiModelProperty(value = "订单总金额")
     private BigDecimal theTotalAmountOfOrders;
+
+    /**
+     * 订单编号
+     */
+    @ApiModelProperty(value = "订单编号")
+    private Long orderNo;
 
     /**
      * 第三方支付平台参数信息
