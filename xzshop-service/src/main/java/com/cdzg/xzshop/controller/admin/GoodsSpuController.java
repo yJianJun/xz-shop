@@ -65,7 +65,7 @@ public class GoodsSpuController {
     @ApiOperation("商品详情-运营端")
     public ApiResponse<GoodsSpuUpdateVO> get(@Valid @RequestParam("spuNo") @NotNull @ApiParam(value = "商品编号", required = true) Long spuNo ) {
 
-        GoodsSpu goodsSpu = goodsSpuService.findOneBySpuNo(spuNo);
+        GoodsSpu goodsSpu = goodsSpuService.findOneBySpuNoAndIsDeleteFalse(spuNo);
 
         if (Objects.nonNull(goodsSpu)){
             GoodsSpuUpdateVO updateVO = new GoodsSpuUpdateVO();

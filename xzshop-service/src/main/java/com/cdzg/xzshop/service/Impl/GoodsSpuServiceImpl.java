@@ -113,15 +113,10 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     }
 
     @Override
-    public GoodsSpu findOneBySpuNo(Long spuNo) {
-        return goodsSpuMapper.findOneBySpuNo(spuNo);
-    }
-
-    @Override
     public void update(GoodsSpuUpdateVO vo) {
 
         Long spuNo = vo.getSpuNo();
-        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNo(spuNo);
+        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
 
         if (Objects.nonNull(goodsSpu)) {
 
@@ -133,33 +128,33 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     }
 
     @Override
-    public PageResultVO<GoodsSpuTo> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2,String shopName) {
+    public PageResultVO<GoodsSpuTo> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2, String shopName) {
         PageHelper.startPage(page, pageSize);
-        PageResultVO<GoodsSpu> resultVO = PageUtil.transform(new PageInfo(goodsSpuMapper.findByStatusAndGoodsNameAndGmtPutOnTheShelfBetweenEqualAndSpuNoAndCategoryIdLevel1AndCategoryIdLevel2(status, goodsName, minGmtPutOnTheShelf, maxGmtPutOnTheShelf, spuNo, categoryIdLevel1, categoryIdLevel2,shopName)));
+        PageResultVO<GoodsSpu> resultVO = PageUtil.transform(new PageInfo(goodsSpuMapper.findByStatusAndGoodsNameAndGmtPutOnTheShelfBetweenEqualAndSpuNoAndCategoryIdLevel1AndCategoryIdLevel2AndIsDeleteFalse(status, goodsName, minGmtPutOnTheShelf, maxGmtPutOnTheShelf, spuNo, categoryIdLevel1, categoryIdLevel2, shopName)));
 
         List<GoodsSpu> goodsSpus = resultVO.getData();
         List<GoodsSpuTo> goodsSpuTos = new ArrayList<>();
         for (GoodsSpu goodsSpu : goodsSpus) {
 
             GoodsSpuTo spuTo = new GoodsSpuTo();
-            BeanUtils.copyProperties(goodsSpu,spuTo);
+            BeanUtils.copyProperties(goodsSpu, spuTo);
             ShopInfo shopInfo = shopInfoService.getById(goodsSpu.getShopId());
             spuTo.setShopName(shopInfo.getShopName());
             goodsSpuTos.add(spuTo);
         }
 
         PageResultVO<GoodsSpuTo> pageResultVO = new PageResultVO<>();
-        BeanUtils.copyProperties(resultVO,pageResultVO);
+        BeanUtils.copyProperties(resultVO, pageResultVO);
         pageResultVO.setData(goodsSpuTos);
         return pageResultVO;
     }
 
-	@Override
-	public List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod){
-		 return goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod);
-	}
+    @Override
+    public List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod) {
+        return goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod);
+    }
 
-	@Override
+    @Override
     public List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod) {
         return goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod);
     }
@@ -167,11 +162,11 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     @Override
     public PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort) {
 
-        if (sort){
+        if (sort) {
             PageHelper.startPage(page, pageSize);
             PageResultVO<GoodsSpu> pageResultVO = PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod)));
             return spuWithSalesByPage(pageResultVO);
-        }else {
+        } else {
 
             PageHelper.startPage(page, pageSize);
             return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod)));
@@ -190,7 +185,7 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         }
 
         PageResultVO<GoodsSpuHomePageTo> resultVO = new PageResultVO<>();
-        BeanUtils.copyProperties(pageResultVO,resultVO);
+        BeanUtils.copyProperties(pageResultVO, resultVO);
         resultVO.setData(homePageTos);
         return resultVO;
     }
@@ -199,11 +194,18 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     public GoodsSpuHomePageTo spuWithSales(GoodsSpu spu) {
         GoodsSpuHomePageTo to = new GoodsSpuHomePageTo();
         GoodsSpuSales spuSales = salesMapper.findOneBySpuNo(spu.getSpuNo());
-        BeanUtils.copyProperties(spu,to);
+        BeanUtils.copyProperties(spu, to);
         to.setSales((spuSales != null) ? spuSales.getSales() : null);
         return to;
     }
+
+	@Override
+	public GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo){
+		 return goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
+	}
 }
+
+
 
 
 

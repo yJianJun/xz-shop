@@ -64,7 +64,7 @@ public class GoodsSpuController {
     @ApiOperation("商品详情")
     public ApiResponse<GoodsSpuDescriptionTo> detail(@ApiParam(value = "商品编号", required = true) @PathVariable("spu") @Valid @NotNull Long spu) {
 
-        GoodsSpu spuNo = goodsSpuService.findOneBySpuNo(spu);
+        GoodsSpu spuNo = goodsSpuService.findOneBySpuNoAndIsDeleteFalse(spu);
         GoodsSpuHomePageTo to = goodsSpuService.spuWithSales(spuNo);
 
         ShopInfo shopInfo = shopInfoService.getById(spuNo.getShopId());

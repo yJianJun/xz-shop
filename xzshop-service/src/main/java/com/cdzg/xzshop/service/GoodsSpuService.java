@@ -34,13 +34,11 @@ public interface GoodsSpuService {
 
     int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection);
 
-    GoodsSpu findOneBySpuNo(Long spuNo);
-
     void update(GoodsSpuUpdateVO vo);
 
-    PageResultVO<GoodsSpuTo> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2,String shopName);
+    PageResultVO<GoodsSpuTo> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2, String shopName);
 
-	List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod);
+    List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod);
 
     List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod);
 
@@ -49,7 +47,11 @@ public interface GoodsSpuService {
     PageResultVO<GoodsSpuHomePageTo> spuWithSalesByPage(PageResultVO<GoodsSpu> pageResultVO);
 
     GoodsSpuHomePageTo spuWithSales(GoodsSpu spu);
+
+	GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo);
 }
+
+
 
 
 

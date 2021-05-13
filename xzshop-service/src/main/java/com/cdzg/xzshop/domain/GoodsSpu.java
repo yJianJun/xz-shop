@@ -122,6 +122,13 @@ public class GoodsSpu implements Serializable {
     private Boolean status;
 
     /**
+     * 数据是否删除
+     */
+    @TableField(value = "is_delete")
+    @ApiModelProperty(value = "数据是否删除")
+    private Boolean isDelete;
+
+    /**
      * 商品库存
      */
     @TableField(value = "stock")
