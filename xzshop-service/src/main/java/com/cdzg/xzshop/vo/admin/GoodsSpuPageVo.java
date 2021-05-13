@@ -43,4 +43,7 @@ public class GoodsSpuPageVo extends BasePageRequest {
     @ApiModelProperty(value = "二级分类id",position = 9,allowEmptyValue = true)
     private Long categoryIdLevel2;
 
+    @ApiModelProperty(value = "店铺名字",position = 10,allowEmptyValue = true)
+    private String shopName;
+
 }

@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.service;
+import com.cdzg.xzshop.constant.PaymentType;
 import java.time.LocalDateTime;
 
 import java.util.Collection;
@@ -6,9 +7,12 @@ import java.util.List;
 
 import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
 import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.to.admin.GoodsSpuTo;
+import com.cdzg.xzshop.to.app.GoodsSpuHomePageTo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
 import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.framework.utils.core.api.ApiResponse;
 import com.github.pagehelper.PageInfo;
 
 public interface GoodsSpuService {
@@ -30,12 +34,24 @@ public interface GoodsSpuService {
 
     int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection);
 
-    GoodsSpu findOneBySpuNo(Long spuNo);
-
     void update(GoodsSpuUpdateVO vo);
 
-    PageResultVO<GoodsSpu> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2);
+    PageResultVO<GoodsSpuTo> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2, String shopName);
+
+    List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod);
+
+    List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod);
+
+    PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort);
+
+    PageResultVO<GoodsSpuHomePageTo> spuWithSalesByPage(PageResultVO<GoodsSpu> pageResultVO);
+
+    GoodsSpuHomePageTo spuWithSales(GoodsSpu spu);
+
+	GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo);
 }
+
+
 
 
 

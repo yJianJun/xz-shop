@@ -11,6 +11,7 @@ import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.GoodsSpuService;
+import com.cdzg.xzshop.to.admin.GoodsSpuTo;
 import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
@@ -64,7 +65,7 @@ public class GoodsSpuController {
     @ApiOperation("商品详情-运营端")
     public ApiResponse<GoodsSpuUpdateVO> get(@Valid @RequestParam("spuNo") @NotNull @ApiParam(value = "商品编号", required = true) Long spuNo ) {
 
-        GoodsSpu goodsSpu = goodsSpuService.findOneBySpuNo(spuNo);
+        GoodsSpu goodsSpu = goodsSpuService.findOneBySpuNoAndIsDeleteFalse(spuNo);
 
         if (Objects.nonNull(goodsSpu)){
             GoodsSpuUpdateVO updateVO = new GoodsSpuUpdateVO();
@@ -86,9 +87,9 @@ public class GoodsSpuController {
     @WebApi
     @PostMapping("/page")
     @ApiOperation("分页查询商品列表")
-    public ApiResponse<PageResultVO<GoodsSpu>> page(@ApiParam(value = "商品分页参数模型", required = true)@RequestBody @Valid GoodsSpuPageVo vo) {
+    public ApiResponse<PageResultVO<GoodsSpuTo>> page(@ApiParam(value = "商品分页参数模型", required = true)@RequestBody @Valid GoodsSpuPageVo vo) {
 
-        PageResultVO<GoodsSpu> page = goodsSpuService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getStatus(), vo.getGoodsName(), vo.getStart(), vo.getEnd(), vo.getSpuNo(), vo.getCategoryIdLevel1(), vo.getCategoryIdLevel2());
+        PageResultVO<GoodsSpuTo> page = goodsSpuService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getStatus(), vo.getGoodsName(), vo.getStart(), vo.getEnd(), vo.getSpuNo(), vo.getCategoryIdLevel1(), vo.getCategoryIdLevel2(),vo.getShopName());
         return ApiResponse.buildSuccessResponse(page);
     }
 

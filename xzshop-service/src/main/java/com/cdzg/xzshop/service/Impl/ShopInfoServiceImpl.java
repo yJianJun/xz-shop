@@ -102,7 +102,13 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void add(ShopInfoAddVo addVo, String adminUser) {
 
-        ShopInfo shopInfo = ShopInfo.builder()
+        ShopInfo shopInfo;
+
+        shopInfo = findOneByShopUnion(addVo.getUnion());
+        if (Objects.nonNull(shopInfo)){
+            throw new BaseException("该工会下已存在店铺,不能重复添加");
+        }
+        shopInfo = ShopInfo.builder()
                 .shopName(addVo.getShopName())
                 .createUser(adminUser)
                 .contactPerson(addVo.getPerson())

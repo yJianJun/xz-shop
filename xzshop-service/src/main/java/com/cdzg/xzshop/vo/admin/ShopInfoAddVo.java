@@ -41,12 +41,12 @@ public class ShopInfoAddVo {
     @NotEmpty
     private String contact;
 
-    @ApiModelProperty(value = "支付宝收款信息", position = 7, allowEmptyValue = true)
-    @Valid
+   // @Valid yjjtodo 添加级联校验 字段会是必传
+   @ApiModelProperty(value = "支付宝收款信息", position = 7, allowEmptyValue = true)
     private AliPayReceiveVo aliPayVo;
 
+    //@Valid
     @ApiModelProperty(value = "微信收款信息", position = 8, allowEmptyValue = true)
-    @Valid
     private WeChatReceiveVo wxPayVo;
 
 

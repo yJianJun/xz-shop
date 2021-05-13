@@ -16,8 +16,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -28,6 +30,8 @@ import javax.persistence.Column;
 @ApiModel(value = "商品spu")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName(value = "goods_spu",autoResultMap = true)
 public class GoodsSpu implements Serializable {
     /**
@@ -43,6 +47,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "spu_no")
     @ApiModelProperty(value = "商品编号，唯一")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long spuNo;
 
     /**
@@ -106,6 +111,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "shop_id")
     @ApiModelProperty(value = "商家id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long shopId;
 
     /**
@@ -114,6 +120,13 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "`status`")
     @ApiModelProperty(value = "商品是否上架")
     private Boolean status;
+
+    /**
+     * 数据是否删除
+     */
+    @TableField(value = "is_delete")
+    @ApiModelProperty(value = "数据是否删除")
+    private Boolean isDelete;
 
     /**
      * 商品库存

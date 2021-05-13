@@ -6,16 +6,12 @@ import java.util.List;
 import com.cdzg.xzshop.mapper.GoodsPayHistoryMapper;
 import com.cdzg.xzshop.domain.GoodsPayHistory;
 import com.cdzg.xzshop.service.GoodsPayHistoryService;
+
 @Service
-public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService{
+public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService {
 
     @Resource
     private GoodsPayHistoryMapper goodsPayHistoryMapper;
-
-    @Override
-    public int deleteByPrimaryKey(Long id) {
-        return goodsPayHistoryMapper.deleteByPrimaryKey(id);
-    }
 
     @Override
     public int insert(GoodsPayHistory record) {
@@ -30,26 +26,6 @@ public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService{
     @Override
     public int insertOrUpdateSelective(GoodsPayHistory record) {
         return goodsPayHistoryMapper.insertOrUpdateSelective(record);
-    }
-
-    @Override
-    public int insertSelective(GoodsPayHistory record) {
-        return goodsPayHistoryMapper.insertSelective(record);
-    }
-
-    @Override
-    public GoodsPayHistory selectByPrimaryKey(Long id) {
-        return goodsPayHistoryMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public int updateByPrimaryKeySelective(GoodsPayHistory record) {
-        return goodsPayHistoryMapper.updateByPrimaryKeySelective(record);
-    }
-
-    @Override
-    public int updateByPrimaryKey(GoodsPayHistory record) {
-        return goodsPayHistoryMapper.updateByPrimaryKey(record);
     }
 
     @Override
@@ -68,3 +44,4 @@ public class GoodsPayHistoryServiceImpl implements GoodsPayHistoryService{
     }
 
 }
+

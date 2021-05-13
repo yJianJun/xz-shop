@@ -1,11 +1,16 @@
 package com.cdzg.xzshop.service.Impl;
+import com.cdzg.xzshop.constant.PaymentType;
 
 import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
+import com.cdzg.xzshop.domain.GoodsSpuSales;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.mapper.GoodsSpuSalesMapper;
 import com.cdzg.xzshop.service.ShopInfoService;
+import com.cdzg.xzshop.to.admin.GoodsSpuTo;
+import com.cdzg.xzshop.to.app.GoodsSpuHomePageTo;
 import com.cdzg.xzshop.utils.PageUtil;
 import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
@@ -19,6 +24,7 @@ import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +39,9 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
 
     @Resource
     private GoodsSpuMapper goodsSpuMapper;
+
+    @Resource
+    private GoodsSpuSalesMapper salesMapper;
 
     @Resource
     private SnowflakeIdWorker snowflakeIdWorker;
@@ -104,15 +113,10 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     }
 
     @Override
-    public GoodsSpu findOneBySpuNo(Long spuNo) {
-        return goodsSpuMapper.findOneBySpuNo(spuNo);
-    }
-
-    @Override
     public void update(GoodsSpuUpdateVO vo) {
 
         Long spuNo = vo.getSpuNo();
-        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNo(spuNo);
+        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
 
         if (Objects.nonNull(goodsSpu)) {
 
@@ -124,11 +128,84 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     }
 
     @Override
-    public PageResultVO<GoodsSpu> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2) {
+    public PageResultVO<GoodsSpuTo> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2, String shopName) {
         PageHelper.startPage(page, pageSize);
-        return PageUtil.transform(new PageInfo(goodsSpuMapper.findByStatusAndGoodsNameAndGmtPutOnTheShelfBetweenEqualAndSpuNoAndCategoryIdLevel1AndCategoryIdLevel2(status, goodsName, minGmtPutOnTheShelf, maxGmtPutOnTheShelf, spuNo, categoryIdLevel1, categoryIdLevel2)));
+        PageResultVO<GoodsSpu> resultVO = PageUtil.transform(new PageInfo(goodsSpuMapper.findByStatusAndGoodsNameAndGmtPutOnTheShelfBetweenEqualAndSpuNoAndCategoryIdLevel1AndCategoryIdLevel2AndIsDeleteFalse(status, goodsName, minGmtPutOnTheShelf, maxGmtPutOnTheShelf, spuNo, categoryIdLevel1, categoryIdLevel2, shopName)));
+
+        List<GoodsSpu> goodsSpus = resultVO.getData();
+        List<GoodsSpuTo> goodsSpuTos = new ArrayList<>();
+        for (GoodsSpu goodsSpu : goodsSpus) {
+
+            GoodsSpuTo spuTo = new GoodsSpuTo();
+            BeanUtils.copyProperties(goodsSpu, spuTo);
+            ShopInfo shopInfo = shopInfoService.getById(goodsSpu.getShopId());
+            spuTo.setShopName(shopInfo.getShopName());
+            goodsSpuTos.add(spuTo);
+        }
+
+        PageResultVO<GoodsSpuTo> pageResultVO = new PageResultVO<>();
+        BeanUtils.copyProperties(resultVO, pageResultVO);
+        pageResultVO.setData(goodsSpuTos);
+        return pageResultVO;
     }
+
+    @Override
+    public List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod) {
+        return goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod);
+    }
+
+    @Override
+    public List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod) {
+        return goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod);
+    }
+
+    @Override
+    public PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort) {
+
+        if (sort) {
+            PageHelper.startPage(page, pageSize);
+            PageResultVO<GoodsSpu> pageResultVO = PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod)));
+            return spuWithSalesByPage(pageResultVO);
+        } else {
+
+            PageHelper.startPage(page, pageSize);
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod)));
+        }
+    }
+
+    @Override
+    public PageResultVO<GoodsSpuHomePageTo> spuWithSalesByPage(PageResultVO<GoodsSpu> pageResultVO) {
+
+        List<GoodsSpu> data = pageResultVO.getData();
+        List<GoodsSpuHomePageTo> homePageTos = new ArrayList<>();
+        for (GoodsSpu spu : data) {
+
+            GoodsSpuHomePageTo to = spuWithSales(spu);
+            homePageTos.add(to);
+        }
+
+        PageResultVO<GoodsSpuHomePageTo> resultVO = new PageResultVO<>();
+        BeanUtils.copyProperties(pageResultVO, resultVO);
+        resultVO.setData(homePageTos);
+        return resultVO;
+    }
+
+    @Override
+    public GoodsSpuHomePageTo spuWithSales(GoodsSpu spu) {
+        GoodsSpuHomePageTo to = new GoodsSpuHomePageTo();
+        GoodsSpuSales spuSales = salesMapper.findOneBySpuNo(spu.getSpuNo());
+        BeanUtils.copyProperties(spu, to);
+        to.setSales((spuSales != null) ? spuSales.getSales() : null);
+        return to;
+    }
+
+	@Override
+	public GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo){
+		 return goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
+	}
 }
+
+
 
 
 
