@@ -51,32 +51,38 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     private ReceivePaymentInfoMapper receivePaymentInfoMapper;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insert(ShopInfo record) {
         return shopInfoMapper.insert(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insertOrUpdate(ShopInfo record) {
         return shopInfoMapper.insertOrUpdate(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insertOrUpdateSelective(ShopInfo record) {
         return shopInfoMapper.insertOrUpdateSelective(record);
     }
 
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateBatch(List<ShopInfo> list) {
         return shopInfoMapper.updateBatch(list);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateBatchSelective(List<ShopInfo> list) {
         return shopInfoMapper.updateBatchSelective(list);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int batchInsert(List<ShopInfo> list) {
         return shopInfoMapper.batchInsert(list);
     }
@@ -286,6 +292,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection) {
         return shopInfoMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus, updatedGmtPutOnTheShelf, idCollection);
     }

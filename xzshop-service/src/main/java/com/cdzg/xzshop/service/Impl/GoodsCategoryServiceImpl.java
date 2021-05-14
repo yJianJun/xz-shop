@@ -31,26 +31,31 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     private GoodsCategoryMapper goodsCategoryMapper;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int deleteByPrimaryKey(Long id) {
         return goodsCategoryMapper.deleteByPrimaryKey(id);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insert(GoodsCategory record) {
         return goodsCategoryMapper.insert(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insertOrUpdate(GoodsCategory record) {
         return goodsCategoryMapper.insertOrUpdate(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insertOrUpdateSelective(GoodsCategory record) {
         return goodsCategoryMapper.insertOrUpdateSelective(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insertSelective(GoodsCategory record) {
         return goodsCategoryMapper.insertSelective(record);
     }
@@ -61,26 +66,31 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateByPrimaryKeySelective(GoodsCategory record) {
         return goodsCategoryMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateByPrimaryKey(GoodsCategory record) {
         return goodsCategoryMapper.updateByPrimaryKey(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateBatch(List<GoodsCategory> list) {
         return goodsCategoryMapper.updateBatch(list);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateBatchSelective(List<GoodsCategory> list) {
         return goodsCategoryMapper.updateBatchSelective(list);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int batchInsert(List<GoodsCategory> list) {
         return goodsCategoryMapper.batchInsert(list);
     }

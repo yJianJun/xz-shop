@@ -50,32 +50,38 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     private ShopInfoService shopInfoService;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateBatch(List<GoodsSpu> list) {
         return goodsSpuMapper.updateBatch(list);
     }
 
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int batchInsert(List<GoodsSpu> list) {
         return goodsSpuMapper.batchInsert(list);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insertOrUpdate(GoodsSpu record) {
         return goodsSpuMapper.insertOrUpdate(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insertOrUpdateSelective(GoodsSpu record) {
         return goodsSpuMapper.insertOrUpdateSelective(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insert(GoodsSpu record) {
         return goodsSpuMapper.insert(record);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void add(GoodsSpuAddVo addVo, UserBaseInfoVo userBaseInfoVo) {
 
         GoodsSpu goodsSpu = GoodsSpu.builder().build();
@@ -108,11 +114,13 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection) {
         return goodsSpuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus, updatedGmtPutOnTheShelf, idCollection);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void update(GoodsSpuUpdateVO vo) {
 
         Long spuNo = vo.getSpuNo();
