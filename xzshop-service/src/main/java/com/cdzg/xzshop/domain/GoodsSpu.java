@@ -32,7 +32,7 @@ import javax.persistence.Column;
 @ApiModel(value = "商品spu")
 @Data
 @Builder
-@Document(indexName = "goods_spu")
+@Document(indexName = "goods_spu",type = "xz_shop")
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "goods_spu",autoResultMap = true)
