@@ -21,7 +21,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -59,6 +62,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "goods_name")
     @ApiModelProperty(value = "商品名称")
+    @Field(type = FieldType.Text,searchAnalyzer = "ik_max_word",analyzer = "ik_max_word")
     private String goodsName;
 
     /**
@@ -66,6 +70,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "ad_word")
     @ApiModelProperty(value = "商品广告词")
+    @Field(type = FieldType.Text,searchAnalyzer = "ik_max_word",analyzer = "ik_max_word")
     private String adWord;
 
     /**
@@ -152,6 +157,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_put_on_the_shelf")
     @ApiModelProperty(value = "商品上架时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Field(type = FieldType.Date,format = DateFormat.custom, pattern ="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtPutOnTheShelf;
 
@@ -161,6 +167,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_create")
     @ApiModelProperty(value = "数据产生时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Field(type = FieldType.Date,format = DateFormat.custom, pattern ="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
 
@@ -170,6 +177,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_update")
     @ApiModelProperty(value = "数据修改时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Field(type = FieldType.Date,format = DateFormat.custom, pattern ="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtUpdate;
 
