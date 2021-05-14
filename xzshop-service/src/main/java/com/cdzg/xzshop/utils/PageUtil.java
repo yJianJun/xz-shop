@@ -1,8 +1,12 @@
 package com.cdzg.xzshop.utils;
 
+import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,5 +47,16 @@ public class PageUtil {
 
     }
 
+    public static  PageResultVO<T> transform(Page<T> pageInfo) {
+
+        PageResultVO<T> pageResultVO = new PageResultVO<>();
+        pageResultVO.setCurrentPage(pageInfo.getPageable().getPageNumber());
+        pageResultVO.setPageSize(pageInfo.getSize());
+        pageResultVO.setData(pageInfo.getContent());
+        pageResultVO.setTotalPage(pageInfo.getTotalPages());
+        pageResultVO.setTotalNum(pageInfo.getNumberOfElements());
+        return pageResultVO;
+
+    }
 
 }

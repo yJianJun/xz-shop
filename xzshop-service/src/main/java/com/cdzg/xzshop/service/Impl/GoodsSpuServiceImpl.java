@@ -8,16 +8,28 @@ import com.cdzg.xzshop.componet.SnowflakeIdWorker;
 import com.cdzg.xzshop.domain.GoodsSpuSales;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.mapper.GoodsSpuSalesMapper;
+import com.cdzg.xzshop.repository.GoodsSpuRepository;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
 import com.cdzg.xzshop.to.app.GoodsSpuHomePageTo;
 import com.cdzg.xzshop.utils.PageUtil;
 import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
+import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import com.cdzg.xzshop.mapper.GoodsSpuMapper;
@@ -39,6 +51,12 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
 
     @Resource
     private GoodsSpuMapper goodsSpuMapper;
+
+    @Resource
+    ElasticsearchTemplate template;
+
+    @Resource
+    private GoodsSpuRepository goodsSpuRepository;
 
     @Resource
     private GoodsSpuSalesMapper salesMapper;
@@ -211,6 +229,24 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
 	public GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo){
 		 return goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
 	}
+
+    @Override
+    public PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo) {
+
+        PageRequest pageRequest = PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize());
+        Page goodsSpus = goodsSpuRepository.search(vo.getKeyWord(), pageRequest);
+        return PageUtil.transform(goodsSpus);
+
+        //String keyWord = vo.getKeyWord();
+        //NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withFilter(QueryBuilders.boolQuery().filter(
+        //        QueryBuilders.boolQuery()
+        //                .should(QueryBuilders.matchQuery("adWord", keyWord))
+        //                .should(QueryBuilders.matchQuery("goodsName", keyWord))
+        //                .should(QueryBuilders.termQuery("goodsName.keyword", keyWord))
+        //)).withPageable(PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize())).build();
+        //AggregatedPage goodsSpus = template.queryForPage(searchQuery, GoodsSpu.class);
+        //return PageUtil.transform(goodsSpus);
+    }
 }
 
 

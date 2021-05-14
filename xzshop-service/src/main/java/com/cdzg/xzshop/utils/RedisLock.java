@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
-import redis.clients.jedis.JedisCommands;
+import redis.clients.jedis.commands.JedisCommands;
+import redis.clients.jedis.params.SetParams;
 
 import javax.annotation.Resource;
 import java.util.Collections;
@@ -53,7 +54,7 @@ public class RedisLock {
                 JedisCommands commands = (JedisCommands) connection.getNativeConnection();
                 String uuid = UUID.randomUUID().toString();
                 localCacheOflockValue.set(uuid);
-                return commands.set(key, uuid, "NX", "PX", expire);
+                return commands.set(key, uuid, SetParams.setParams().nx().px(expire));
             };
             String result = redisTemplate.execute(callback);
             return !StringUtils.isEmpty(result);

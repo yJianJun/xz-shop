@@ -11,6 +11,7 @@ import com.cdzg.xzshop.to.admin.GoodsSpuTo;
 import com.cdzg.xzshop.to.app.GoodsSpuHomePageTo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
+import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
 import com.github.pagehelper.PageInfo;
@@ -49,6 +50,8 @@ public interface GoodsSpuService {
     GoodsSpuHomePageTo spuWithSales(GoodsSpu spu);
 
 	GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo);
+
+    PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo);
 }
 
 

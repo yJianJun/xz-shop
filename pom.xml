@@ -3,10 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
+        <relativePath/> <!-- lookup parent from repository -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.6.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.2.0.RELEASE</version>
     </parent>
     <groupId>com.cdzg.xzshop</groupId>
     <artifactId>xzshop-parent</artifactId>
@@ -19,8 +20,8 @@
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
-        <elasticsearch.version>6.2.2</elasticsearch.version>
-        <spring.data.elasticsearch.version>3.1.0.RELEASE</spring.data.elasticsearch.version>
+        <elasticsearch.version>6.8.12</elasticsearch.version>
+        <spring.data.elasticsearch.version>3.2.0.RELEASE</spring.data.elasticsearch.version>
     </properties>
 
     <dependencyManagement>
@@ -40,6 +41,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.2.0.RELEASE</version>
             </plugin>
         </plugins>
     </build>

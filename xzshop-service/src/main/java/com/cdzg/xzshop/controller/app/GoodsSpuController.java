@@ -4,6 +4,7 @@ import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.common.ResultCode;
+import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
 import com.cdzg.xzshop.constant.PaymentType;
@@ -19,6 +20,7 @@ import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuPageVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuSwitchStatusVO;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
+import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.app.homepage.GoodsSpuHomePageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
@@ -31,6 +33,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
@@ -50,6 +53,7 @@ public class GoodsSpuController {
 
     @MobileApi
     @PostMapping("/homePage")
+    @IgnoreAuth
     @ApiOperation("商城首页商品列表")
     public ApiResponse<PageResultVO<GoodsSpuHomePageTo>> homePage(@ApiParam(value = "商品分页参数模型", required = true) @RequestBody @Valid GoodsSpuHomePageVo vo) {
 
@@ -61,6 +65,7 @@ public class GoodsSpuController {
 
     @MobileApi
     @GetMapping("/detail/{spu}")
+    @IgnoreAuth
     @ApiOperation("商品详情")
     public ApiResponse<GoodsSpuDescriptionTo> detail(@ApiParam(value = "商品编号", required = true) @PathVariable("spu") @Valid @NotNull Long spu) {
 
@@ -74,6 +79,15 @@ public class GoodsSpuController {
         description.setShopInfo(shopInfo);
 
         return CommonResult.buildSuccessResponse(description);
+    }
+
+    @MobileApi
+    @PostMapping("/search")
+    @IgnoreAuth
+    @ApiOperation("商城首页商品列表")
+    public ApiResponse<PageResultVO<GoodsSpu>> search(@ApiParam(value = "商品搜索列表分页模型", required = true) @RequestBody @Valid GoodsSpuSearchPageVo vo) {
+
+       return CommonResult.buildSuccessResponse(goodsSpuService.search(vo));
     }
 
 
