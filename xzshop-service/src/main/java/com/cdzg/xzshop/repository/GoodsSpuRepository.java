@@ -15,6 +15,6 @@ import java.awt.print.Book;
 public interface GoodsSpuRepository extends ElasticsearchRepository<GoodsSpu,Long> {
 
 
-    @Query("{\"bool\": {\"should\": [{\"match\": {\"adWord\": \"?0\"}},{\"match\": {\"goodsName\": \"?0\"}},{\"term\": {\"goodsName.keyword\": \"?0\"}}]}}")
+    @Query("{\"bool\": {\"should\": [{\"match\": {\"ad_word\": \"?0\"}},{\"match\": {\"goods_name\": \"?0\"}},{\"term\": {\"goods_name.keyword\": \"?0\"}}]}}")
     Page<GoodsSpu> search(String name, Pageable pageable);
 }

@@ -84,7 +84,7 @@ public class GoodsSpuController {
     @MobileApi
     @PostMapping("/search")
     @IgnoreAuth
-    @ApiOperation("商城首页商品列表")
+    @ApiOperation("商城搜索商品列表")
     public ApiResponse<PageResultVO<GoodsSpu>> search(@ApiParam(value = "商品搜索列表分页模型", required = true) @RequestBody @Valid GoodsSpuSearchPageVo vo) {
 
        return CommonResult.buildSuccessResponse(goodsSpuService.search(vo));

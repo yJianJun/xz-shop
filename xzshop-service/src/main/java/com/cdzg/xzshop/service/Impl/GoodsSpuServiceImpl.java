@@ -235,19 +235,19 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     @Override
     public PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo) {
 
-        //PageRequest pageRequest = PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize());
-        //Page goodsSpus = goodsSpuRepository.search(vo.getKeyWord(), pageRequest);
-        //return PageUtil.transform(goodsSpus);
-
-        String keyWord = vo.getKeyWord();
-        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withFilter(QueryBuilders.boolQuery().filter(
-                QueryBuilders.boolQuery()
-                        .should(QueryBuilders.matchQuery("adWord", keyWord))
-                        .should(QueryBuilders.matchQuery("goodsName", keyWord))
-                        .should(QueryBuilders.termQuery("goodsName.keyword", keyWord))
-        )).withPageable(PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize())).build();
-        AggregatedPage goodsSpus = template.queryForPage(searchQuery, GoodsSpu.class);
+        PageRequest pageRequest = PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize());
+        Page goodsSpus = goodsSpuRepository.search(vo.getKeyWord(), pageRequest);
         return PageUtil.transform(goodsSpus);
+
+        //String keyWord = vo.getKeyWord();
+        //NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withFilter(QueryBuilders.boolQuery().filter(
+        //        QueryBuilders.boolQuery()
+        //                .should(QueryBuilders.matchQuery("ad_word", keyWord))
+        //                .should(QueryBuilders.matchQuery("goods_name", keyWord))
+        //                .should(QueryBuilders.termQuery("goods_name.keyword", keyWord))
+        //)).withPageable(PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize())).build();
+        //AggregatedPage goodsSpus = template.queryForPage(searchQuery, GoodsSpu.class);
+        //return PageUtil.transform(goodsSpus);
     }
 }
 
