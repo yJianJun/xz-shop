@@ -55,7 +55,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "spu_no")
     @ApiModelProperty(value = "商品编号，唯一")
-    @Field(name = "spu_no")
+    @Field(name = "spu_no",type = FieldType.Long)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long spuNo;
 
@@ -80,7 +80,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "price")
     @ApiModelProperty(value = "原价")
-    @Field("price")
+    @Field(value = "price",type = FieldType.Keyword)
     private BigDecimal price;
 
     /**
@@ -88,7 +88,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "promotion_price")
     @ApiModelProperty(value = "售价")
-    @Field("promotion_price")
+    @Field(value = "promotion_price",type = FieldType.Keyword)
     private BigDecimal promotionPrice;
 
     /**
@@ -96,14 +96,14 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "fraction_price")
     @ApiModelProperty(value = "积分售价")
-    @Field("fraction_price")
+    @Field(value = "fraction_price",type = FieldType.Keyword)
     private BigDecimal fractionPrice;
 
     /**
      * 二级分类id
      */
     @TableField(value = "category_id_level2")
-    @Field("category_id_level2")
+    @Field(value = "category_id_level2",type = FieldType.Long)
     @ApiModelProperty(value = "二级分类id")
     private Long categoryIdLevel2;
 
@@ -112,7 +112,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "category_id_level1")
     @ApiModelProperty(value = "一级分类id")
-    @Field("category_id_level1")
+    @Field(name = "category_id_level1",type = FieldType.Long)
     private Long categoryIdLevel1;
 
     /**
@@ -128,7 +128,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "shop_id")
     @ApiModelProperty(value = "商家id")
-    @Field("shop_id")
+    @Field(name = "shop_id",type = FieldType.Long)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long shopId;
 
@@ -152,7 +152,7 @@ public class GoodsSpu implements Serializable {
      * 商品库存
      */
     @TableField(value = "stock")
-    @Field("stock")
+    @Field(name = "stock",type = FieldType.Long)
     @ApiModelProperty(value = "商品库存")
     private Long stock;
 
@@ -160,7 +160,7 @@ public class GoodsSpu implements Serializable {
      * 创建人用户ID
      */
     @TableField(value = "create_user")
-    @Field("create_user")
+    @Field(name = "create_user",type = FieldType.Keyword)
     @ApiModelProperty(value = "创建人用户ID")
     private String createUser;
 
@@ -170,7 +170,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_put_on_the_shelf")
     @ApiModelProperty(value = "商品上架时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "uuuu-MM-dd HH:mm:ss",name = "gmt_put_on_the_shelf")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss",name = "gmt_put_on_the_shelf")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtPutOnTheShelf;
 
@@ -180,7 +180,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_create")
     @ApiModelProperty(value = "数据产生时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "uuuu-MM-dd HH:mm:ss",name = "gmt_create")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss",name = "gmt_create")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
 
@@ -190,7 +190,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_update")
     @ApiModelProperty(value = "数据修改时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "uuuu-MM-dd HH:mm:ss",name = "gmt_update")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss",name = "gmt_update")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtUpdate;
 
@@ -207,7 +207,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "desc_imgs")
     @ApiModelProperty(value = "商品详情图片")
-    @Field("desc_imgs")
+    @Field(name = "desc_imgs",type = FieldType.Keyword)
     private String descImgs;
 
     private static final long serialVersionUID = 1L;

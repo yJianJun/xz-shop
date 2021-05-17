@@ -44,6 +44,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiResponse bindExceptionHandler(MethodArgumentNotValidException ex) {
+        ex.printStackTrace();
         logger.error("发生参数异常！原因是：{}", Json.pretty(ex.getSuppressed()));
         log.error("发生参数异常！原因是：{}", Json.pretty(ex.getSuppressed()));
         BindingResult bindingResult = ex.getBindingResult();
@@ -135,6 +136,7 @@ public class ExceptionControllerAdvice {
 //getParameterName() 缺少的参数名称
     @ExceptionHandler({MissingServletRequestParameterException.class})
     public ApiResponse requestMissingServletRequest(MissingServletRequestParameterException ex) {
+        ex.printStackTrace();
         logger.error("缺少参数！原因是:{}", Json.pretty(ex.getSuppressed()));
         log.error("缺少参数！原因是:{}", Json.pretty(ex.getSuppressed()));
         return CommonResult.error(ResultCode.PARAMETER_ERROR, "缺少必要参数,参数名称为" + ex.getParameterName());
@@ -180,6 +182,7 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(value = {ConstraintViolationException.class})
     public ApiResponse urlParametersExceptionHandle(ConstraintViolationException e) {
+        e.printStackTrace();
         logger.error("【请求参数异常】:{}", Json.pretty(e.getSuppressed()));
         log.error("【请求参数异常】:{}", Json.pretty(e.getSuppressed()));
         //收集所有错误信息

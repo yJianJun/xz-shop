@@ -19,6 +19,7 @@ import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.compress.utils.Lists;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -233,19 +235,19 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
     @Override
     public PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo) {
 
-        PageRequest pageRequest = PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize());
-        Page goodsSpus = goodsSpuRepository.search(vo.getKeyWord(), pageRequest);
-        return PageUtil.transform(goodsSpus);
-
-        //String keyWord = vo.getKeyWord();
-        //NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withFilter(QueryBuilders.boolQuery().filter(
-        //        QueryBuilders.boolQuery()
-        //                .should(QueryBuilders.matchQuery("adWord", keyWord))
-        //                .should(QueryBuilders.matchQuery("goodsName", keyWord))
-        //                .should(QueryBuilders.termQuery("goodsName.keyword", keyWord))
-        //)).withPageable(PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize())).build();
-        //AggregatedPage goodsSpus = template.queryForPage(searchQuery, GoodsSpu.class);
+        //PageRequest pageRequest = PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize());
+        //Page goodsSpus = goodsSpuRepository.search(vo.getKeyWord(), pageRequest);
         //return PageUtil.transform(goodsSpus);
+
+        String keyWord = vo.getKeyWord();
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withFilter(QueryBuilders.boolQuery().filter(
+                QueryBuilders.boolQuery()
+                        .should(QueryBuilders.matchQuery("adWord", keyWord))
+                        .should(QueryBuilders.matchQuery("goodsName", keyWord))
+                        .should(QueryBuilders.termQuery("goodsName.keyword", keyWord))
+        )).withPageable(PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize())).build();
+        AggregatedPage goodsSpus = template.queryForPage(searchQuery, GoodsSpu.class);
+        return PageUtil.transform(goodsSpus);
     }
 }
 
