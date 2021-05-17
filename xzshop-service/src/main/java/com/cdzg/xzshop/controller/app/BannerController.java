@@ -45,7 +45,7 @@ public class BannerController {
 
     @MobileApi
     @PostMapping("/homePage")
-    @ApiOperation("74001-app职工培训首页")
+    @ApiOperation("商城首页轮播图")
     public ApiResponse<List<CmsAppBannerResponse>> homePage(@RequestBody @Valid AppTrainingHomePageReqVO request) {
 
         String token = LoginSessionUtils.getAppUser().getTicketString();
