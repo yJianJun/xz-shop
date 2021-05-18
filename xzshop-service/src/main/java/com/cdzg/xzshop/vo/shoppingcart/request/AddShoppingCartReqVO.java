@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -30,7 +31,7 @@ public class AddShoppingCartReqVO implements Serializable {
      * 商品购买数量
      */
     @ApiModelProperty(value = "商品数量",required = true)
-    @NotBlank(message = "goodsNumber cannot be null")
+    @NotNull(message = "goodsNumber cannot be null")
     @Min(value = 1,message = "goodsNumber must be greater than 1")
     private Integer goodsNumber;
 
