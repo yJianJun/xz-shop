@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.service.Impl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.constant.PaymentType;
 
 import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
@@ -49,7 +50,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class GoodsSpuServiceImpl implements GoodsSpuService {
+public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> implements GoodsSpuService {
 
     @Resource
     private GoodsSpuMapper goodsSpuMapper;
