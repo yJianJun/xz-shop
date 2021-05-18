@@ -51,19 +51,24 @@ public class RefundOrder {
      */
     private Integer payType;
     /**
+     * 退款类型 1退款 2退货退款
+     */
+    private Integer refundType;
+    /**
      * 订单总金额
      */
     private BigDecimal orderAmount;
     /**
      * 状态
      * 0撤销
-     * 1申请退款
+     * 1申请退货
      * 2拒绝退货
      * 3买家待发货
      * 4卖家待收货
      * 5收货拒绝
-     * 6拒绝退款
-     * 7退款成功
+     * 6申请退款
+     * 7拒绝退款
+     * 8退款成功
      */
     private Integer status;
     /**
@@ -86,6 +91,14 @@ public class RefundOrder {
      * 退款原因
      */
     private String reason;
+    /**
+     * 拒绝退货/退款原因
+     */
+    private String refuseReason;
+    /**
+     * 卖家拒绝收货原因
+     */
+    private String refuseReceiptReason;
     /**
      * 退款记录id
      */
