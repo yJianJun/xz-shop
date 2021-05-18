@@ -80,7 +80,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "price")
     @ApiModelProperty(value = "原价")
-    @Field(value = "price",type = FieldType.Keyword)
+    @Field(value = "price",type = FieldType.Double)
     private BigDecimal price;
 
     /**
@@ -88,7 +88,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "promotion_price")
     @ApiModelProperty(value = "售价")
-    @Field(value = "promotion_price",type = FieldType.Keyword)
+    @Field(value = "promotion_price",type = FieldType.Double)
     private BigDecimal promotionPrice;
 
     /**
@@ -96,7 +96,7 @@ public class GoodsSpu implements Serializable {
      */
     @TableField(value = "fraction_price")
     @ApiModelProperty(value = "积分售价")
-    @Field(value = "fraction_price",type = FieldType.Keyword)
+    @Field(value = "fraction_price",type = FieldType.Double)
     private BigDecimal fractionPrice;
 
     /**
@@ -136,7 +136,7 @@ public class GoodsSpu implements Serializable {
      * 商品是否上架
      */
     @TableField(value = "`status`")
-    @Field(name = "`status`",type = FieldType.Boolean)
+    @Field(name = "`status`",type = FieldType.Byte)
     @ApiModelProperty(value = "商品是否上架")
     private Boolean status;
 
@@ -144,7 +144,7 @@ public class GoodsSpu implements Serializable {
      * 数据是否删除
      */
     @TableField(value = "is_delete")
-    @Field(name = "is_delete",type = FieldType.Boolean)
+    @Field(name = "is_delete",type = FieldType.Byte)
     @ApiModelProperty(value = "数据是否删除")
     private Boolean isDelete;
 
