@@ -5,8 +5,8 @@ package com.cdzg.xzshop.enums;
  */
 public enum RefundTypeEnum {
 
-    REFUND(0, "退款"),
-    RETURN(1, "退货退款");
+    REFUND(1, "退款"),
+    RETURN(2, "退货退款");
 
 
     private Integer code;
