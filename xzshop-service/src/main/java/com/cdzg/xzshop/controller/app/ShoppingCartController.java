@@ -104,13 +104,13 @@ public class ShoppingCartController {
 
     @ApiOperation(value = "30003-删除购物车商品")
     @RequestMapping(value = "/deleteShoppingCart", method = RequestMethod.POST)
-    public ApiResponse deleteShoppingCart(@RequestBody AppDeleteShoppingCartReqVO reqVO) {
+    public ApiResponse<String> deleteShoppingCart(@RequestBody AppDeleteShoppingCartReqVO reqVO) {
         CustomerBaseInfoVo appUserInfo = getAppUserInfo();
         if (!Optional.ofNullable(appUserInfo).isPresent()) {
             return ApiResponse.buildCommonErrorResponse("登录过期，请重新登录");
         }
         LambdaUpdateWrapper<ShoppingCart> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(ShoppingCart::getAppUserId, appUserInfo.getId()).in(ShoppingCart::getId, reqVO.getShoppingCartIds());
+        updateWrapper.set(ShoppingCart::getDeleted, 1).set(ShoppingCart::getUpdateBy, appUserInfo.getId() + "").set(ShoppingCart::getUpdateTime, new Date()).eq(ShoppingCart::getAppUserId, appUserInfo.getId()).in(ShoppingCart::getId, reqVO.getShoppingCartIds());
         if (shoppingCartService.update(updateWrapper)) {
             return ApiResponse.buildResponse(ApiConst.Code.CODE_SUCCESS, "操作成功");
         }
