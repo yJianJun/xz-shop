@@ -170,7 +170,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_put_on_the_shelf")
     @ApiModelProperty(value = "商品上架时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss",name = "gmt_put_on_the_shelf")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "date_optional_time||yyyy-MM-dd'T'HH:mm:ss||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss.SSSZ||epoch_millis",name = "gmt_put_on_the_shelf")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtPutOnTheShelf;
 
@@ -180,7 +180,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_create")
     @ApiModelProperty(value = "数据产生时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss",name = "gmt_create")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "date_optional_time||yyyy-MM-dd'T'HH:mm:ss||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss.SSSZ||epoch_millis",name = "gmt_create")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
 
@@ -190,7 +190,7 @@ public class GoodsSpu implements Serializable {
     @TableField(value = "gmt_update")
     @ApiModelProperty(value = "数据修改时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss",name = "gmt_update")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "date_optional_time||yyyy-MM-dd'T'HH:mm:ss||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss.SSSZ||epoch_millis",name = "gmt_update")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime gmtUpdate;
 
