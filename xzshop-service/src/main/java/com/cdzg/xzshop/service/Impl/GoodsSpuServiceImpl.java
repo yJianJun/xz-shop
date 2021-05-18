@@ -249,6 +249,22 @@ public class GoodsSpuServiceImpl implements GoodsSpuService {
         //AggregatedPage goodsSpus = template.queryForPage(searchQuery, GoodsSpu.class);
         //return PageUtil.transform(goodsSpus);
     }
+
+	@Override
+	public List<GoodsSpu> findByShopIdIn(Collection<Long> shopIdCollection){
+		 return goodsSpuMapper.findByShopIdIn(shopIdCollection);
+	}
+
+	@Override
+	public List<Long> findIdByShopIdIn(Collection<Long> shopIdCollection){
+		 return goodsSpuMapper.findIdByShopIdIn(shopIdCollection);
+	}
+
+
+
+
+
+
 }
 
 

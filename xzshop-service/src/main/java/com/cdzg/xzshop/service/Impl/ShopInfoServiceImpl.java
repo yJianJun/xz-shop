@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ReturnGoodsInfo;
+import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 import com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper;
 import com.cdzg.xzshop.mapper.ReturnGoodsInfoMapper;
 import com.cdzg.xzshop.service.ReceivePaymentInfoService;
@@ -46,6 +48,9 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
 
     @Autowired
     ReturnGoodsInfoService returnGoodsInfoService;
+
+    @Resource
+    GoodsSpuMapper spuMapper;
 
     @Resource
     private ReceivePaymentInfoMapper receivePaymentInfoMapper;
@@ -101,6 +106,8 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
             updateStatusAndGmtPutOnTheShelfByIdIn(flag, LocalDateTime.now(), list);
         } else {
             updateStatusAndGmtPutOnTheShelfByIdIn(flag, LocalDateTime.parse("1000-01-01T00:00:00"), list);
+            List<Long> ids = spuMapper.findIdByShopIdIn(list);
+            spuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(flag,LocalDateTime.parse("1000-01-01T00:00:00"), ids);
         }
     }
 

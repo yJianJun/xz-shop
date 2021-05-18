@@ -52,6 +52,16 @@ public interface GoodsSpuService {
 	GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo);
 
     PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo);
+
+
+
+	List<GoodsSpu> findByShopIdIn(Collection<Long> shopIdCollection);
+
+
+
+	List<Long> findIdByShopIdIn(Collection<Long> shopIdCollection);
+
+
 }
 
 
