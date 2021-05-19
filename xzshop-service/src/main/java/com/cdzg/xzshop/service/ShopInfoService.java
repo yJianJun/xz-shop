@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.time.LocalDateTime;
@@ -42,6 +43,8 @@ public interface ShopInfoService extends IService<ShopInfo> {
 
 
     ShopInfoUpdateVO get(Long id);
+
+    ShopInfoUpdateVO get(BigInteger organizationId);
 }
 
 

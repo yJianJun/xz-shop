@@ -15,6 +15,39 @@ import java.awt.print.Book;
 public interface GoodsSpuRepository extends ElasticsearchRepository<GoodsSpu,Long> {
 
 
-    @Query("{\"bool\": {\"should\": [{\"match\": {\"ad_word\": \"?0\"}},{\"match\": {\"goods_name\": \"?0\"}},{\"term\": {\"goods_name.keyword\": \"?0\"}}]}}")
+    @Query("{\n" +
+            "    \"bool\":{\n" +
+            "\t    \"filter\": [\n" +
+            "              {\n" +
+            "                  \"term\" : { \n" +
+            "                       \"status\" : 1 \n" +
+            "                    }\n" +
+            "               },\n" +
+            "\t      {\n" +
+            "                  \"term\" : { \n" +
+            "                       \"is_delete\" : 0 \n" +
+            "                    }\n" +
+            "              }\n" +
+            "      ],\n" +
+            "        \"should\":[\n" +
+            "            {\n" +
+            "                \"match\":{\n" +
+            "                    \"ad_word\":\"?0\"\n" +
+            "                }\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"match\":{\n" +
+            "                    \"goods_name\":\"?0\"\n" +
+            "                }\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"term\":{\n" +
+            "                    \"goods_name.keyword\":\"?0\"\n" +
+            "                }\n" +
+            "            }\n" +
+            "        ],\n" +
+            "\t\"minimum_should_match\": 1\n" +
+            "    }\n" +
+            "}")
     Page<GoodsSpu> search(String name, Pageable pageable);
 }

@@ -11,6 +11,7 @@ import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.GoodsSpuService;
+import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
 import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.vo.common.PageResultVO;
@@ -39,9 +40,12 @@ public class GoodsSpuController {
     @Autowired
     GoodsSpuService goodsSpuService;
 
+    @Autowired
+    ShopInfoService shopInfoService;
+
     @WebApi
     @PostMapping("/add")
-    @ApiOperation("新建商品-运营端")
+    @ApiOperation("新建商品")
     public ApiResponse add(@ApiParam(value = "商品添加参数模型", required = true) @RequestBody @Valid GoodsSpuAddVo addVo) {
 
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
@@ -62,7 +66,7 @@ public class GoodsSpuController {
 
     @WebApi
     @GetMapping("/get")
-    @ApiOperation("商品详情-运营端")
+    @ApiOperation("商品详情")
     public ApiResponse<GoodsSpuUpdateVO> get(@Valid @RequestParam("spuNo") @NotNull @ApiParam(value = "商品编号", required = true) Long spuNo ) {
 
         GoodsSpu goodsSpu = goodsSpuService.findOneBySpuNoAndIsDeleteFalse(spuNo);
@@ -89,7 +93,17 @@ public class GoodsSpuController {
     @ApiOperation("分页查询商品列表")
     public ApiResponse<PageResultVO<GoodsSpuTo>> page(@ApiParam(value = "商品分页参数模型", required = true)@RequestBody @Valid GoodsSpuPageVo vo) {
 
-        PageResultVO<GoodsSpuTo> page = goodsSpuService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getStatus(), vo.getGoodsName(), vo.getStart(), vo.getEnd(), vo.getSpuNo(), vo.getCategoryIdLevel1(), vo.getCategoryIdLevel2(),vo.getShopName());
+        PageResultVO<GoodsSpuTo> page;
+        if (!LoginSessionUtils.isAdmin()){
+
+            ShopInfo shopInfo = shopInfoService.findOneByShopUnion(LoginSessionUtils.getAdminUser().getUserBaseInfo().getOrganizationId() + "");
+            if (Objects.isNull(shopInfo)) {
+                throw new BaseException(ResultCode.DATA_ERROR.getCode(), "你所在的工会没有创建店铺！");
+            }
+            page = goodsSpuService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getStatus(), vo.getGoodsName(), vo.getStart(), vo.getEnd(), vo.getSpuNo(), vo.getCategoryIdLevel1(), vo.getCategoryIdLevel2(),shopInfo.getShopName());
+        }else {
+            page = goodsSpuService.page(vo.getCurrentPage(), vo.getPageSize(), vo.getStatus(), vo.getGoodsName(), vo.getStart(), vo.getEnd(), vo.getSpuNo(), vo.getCategoryIdLevel1(), vo.getCategoryIdLevel2(),vo.getShopName());
+        }
         return ApiResponse.buildSuccessResponse(page);
     }
 

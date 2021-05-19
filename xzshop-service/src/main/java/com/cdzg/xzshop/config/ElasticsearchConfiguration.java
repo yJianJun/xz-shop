@@ -22,11 +22,9 @@ import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomCo
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +56,9 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
         converters.add(PaymentTypeToIntConverter.INSTANCE);
         converters.add(IntToPaymentTypeConverter.INSTANCE);
 
+        //Boolean
+        converters.add(IntToBoolean.INSTANCE);
+
         return new ElasticsearchCustomConversions(converters);
     }
 
@@ -81,6 +82,25 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
         public LocalDateTime convert(Date date) {
             Instant instant = date.toInstant();
             return instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+    }
+
+    @ReadingConverter
+    enum IntToBoolean implements Converter<Integer, Boolean> {
+
+        INSTANCE;
+
+        @Override
+        public Boolean convert(Integer source) {
+            if (Objects.nonNull(source)){
+
+                if (1==source){
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+            throw new RuntimeException("boolean is null");
         }
     }
 
@@ -183,9 +203,9 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
         INSTANCE;
 
         @Override
-        public java.time.LocalDateTime convert(String source) {
-            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            return LocalDateTime.parse(source, df);
+        public LocalDateTime convert(String source) {
+            ZonedDateTime zdt = ZonedDateTime.parse(source);
+            return zdt.toLocalDateTime();
         }
     }
 

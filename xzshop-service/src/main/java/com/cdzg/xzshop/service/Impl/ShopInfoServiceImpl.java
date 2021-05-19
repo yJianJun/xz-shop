@@ -1,12 +1,12 @@
 package com.cdzg.xzshop.service.Impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
-import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.mapper.GoodsSpuMapper;
@@ -16,6 +16,7 @@ import com.cdzg.xzshop.service.ReceivePaymentInfoService;
 import com.cdzg.xzshop.service.ReturnGoodsInfoService;
 import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.utils.PageUtil;
+import com.cdzg.xzshop.vo.admin.ReturnGoodsInfoVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -107,7 +108,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         } else {
             updateStatusAndGmtPutOnTheShelfByIdIn(flag, LocalDateTime.parse("1000-01-01T00:00:00"), list);
             List<Long> ids = spuMapper.findIdByShopIdIn(list);
-            spuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(flag,LocalDateTime.parse("1000-01-01T00:00:00"), ids);
+            spuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(flag, LocalDateTime.parse("1000-01-01T00:00:00"), ids);
         }
     }
 
@@ -118,7 +119,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         ShopInfo shopInfo;
 
         shopInfo = findOneByShopUnion(addVo.getUnion());
-        if (Objects.nonNull(shopInfo)){
+        if (Objects.nonNull(shopInfo)) {
             throw new BaseException("该工会下已存在店铺,不能重复添加");
         }
         shopInfo = ShopInfo.builder()
@@ -315,7 +316,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         List<ReceivePaymentInfo> paymentInfos = receivePaymentInfoService.findAllByShopId(id);
         ReturnGoodsInfo returnGoodsInfo = returnGoodsInfoService.findOneByShopId(id);
 
-        if (Objects.nonNull(shopInfo) && Objects.nonNull(returnGoodsInfo)) {
+        if (Objects.nonNull(shopInfo) && Objects.nonNull(returnGoodsInfo) && CollectionUtils.isNotEmpty(paymentInfos)) {
 
             ShopInfoUpdateVO updateVO = ShopInfoUpdateVO.builder().build();
             BeanUtils.copyProperties(shopInfo, updateVO);
@@ -323,6 +324,37 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
             updateVO.setLogoUrl(shopInfo.getLogo());
             updateVO.setPerson(shopInfo.getContactPerson());
             updateVO.setContact(shopInfo.getPhone());
+            updateVO.setReceiveMoney(setReceiveMoney(paymentInfos));
+            setReceiveVo(paymentInfos, updateVO);
+            ReturnGoodsInfoVo infoVo = new ReturnGoodsInfoVo();
+            BeanUtils.copyProperties(returnGoodsInfo, infoVo);
+            updateVO.setReturnfoVo(infoVo);
+            return updateVO;
+        }
+        throw new BaseException(ResultCode.DATA_ERROR);
+    }
+
+    @Override
+    public ShopInfoUpdateVO get(BigInteger organizationId) {
+
+        ShopInfo shopInfo = findOneByShopUnion(organizationId + "");
+
+        if (Objects.isNull(shopInfo)) {
+            throw new BaseException(ResultCode.DATA_ERROR.getCode(), "你所在的工会没有创建店铺！");
+        }
+
+        List<ReceivePaymentInfo> paymentInfos = receivePaymentInfoService.findAllByShopId(shopInfo.getId());
+        ReturnGoodsInfo returnGoodsInfo = returnGoodsInfoService.findOneByShopId(shopInfo.getId());
+
+        ShopInfoUpdateVO updateVO = ShopInfoUpdateVO.builder().build();
+        BeanUtils.copyProperties(shopInfo, updateVO);
+        updateVO.setUnion(shopInfo.getShopUnion());
+        updateVO.setLogoUrl(shopInfo.getLogo());
+        updateVO.setPerson(shopInfo.getContactPerson());
+        updateVO.setContact(shopInfo.getPhone());
+
+        if (Objects.nonNull(returnGoodsInfo) && CollectionUtils.isNotEmpty(paymentInfos)) {
+
             updateVO.setReceiveMoney(setReceiveMoney(paymentInfos));
             setReceiveVo(paymentInfos, updateVO);
             ReturnGoodsInfoVo infoVo = new ReturnGoodsInfoVo();

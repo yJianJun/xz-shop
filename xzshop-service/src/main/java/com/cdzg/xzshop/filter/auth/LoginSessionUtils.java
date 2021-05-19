@@ -7,6 +7,8 @@ import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.common.ResultCode;
 import com.framework.utils.core.api.ApiResponse;
 
+import java.util.Objects;
+
 /**
  * 登录工具类
  * @version 1.0.0
@@ -18,7 +20,11 @@ public class LoginSessionUtils {
      * @return 
      */
     public static CustomerLoginResponse getAppUser() {
-        return (CustomerLoginResponse) SpringSessionUtils.getSession(LoginConstants.Session.WEBAPI_SESSION_USER);
+        Object session = SpringSessionUtils.getSession(LoginConstants.Session.WEBAPI_SESSION_USER);
+        if (Objects.isNull(session)){
+            throw new BaseException(ResultCode.UNAUTHORIZED);
+        }
+        return (CustomerLoginResponse) session;
     }
 
     /**
@@ -32,4 +38,14 @@ public class LoginSessionUtils {
         }
         return (UserLoginResponse) session;
     }
+
+    /**
+     * 判断是否超管
+     * @return
+     */
+    public static boolean isAdmin() {
+        return getAdminUser().getIsAdmin();
+    }
+
+
 }

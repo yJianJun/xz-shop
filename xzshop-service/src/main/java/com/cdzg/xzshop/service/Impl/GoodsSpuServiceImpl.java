@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.service.Impl;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.constant.PaymentType;
 
@@ -7,8 +8,10 @@ import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
 import com.cdzg.xzshop.domain.GoodsSpuSales;
+import com.cdzg.xzshop.domain.SearchHistory;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.mapper.GoodsSpuSalesMapper;
+import com.cdzg.xzshop.mapper.SearchHistoryMapper;
 import com.cdzg.xzshop.repository.GoodsSpuRepository;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
@@ -20,23 +23,17 @@ import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.compress.utils.Lists;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
+
 import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -48,6 +45,7 @@ import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.service.GoodsSpuService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> implements GoodsSpuService {
@@ -57,6 +55,9 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
     @Resource
     ElasticsearchTemplate template;
+
+    @Resource
+    private SearchHistoryMapper historyMapper;
 
     @Resource
     private GoodsSpuRepository goodsSpuRepository;
@@ -228,16 +229,35 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         return to;
     }
 
-	@Override
-	public GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo){
-		 return goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
-	}
+    @Override
+    public GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo) {
+        return goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
+    }
 
     @Override
-    public PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo) {
+    public PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo, String customerId) {
 
+        String keyWord = vo.getKeyWord();
         PageRequest pageRequest = PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize());
-        Page goodsSpus = goodsSpuRepository.search(vo.getKeyWord(), pageRequest);
+        Page goodsSpus = goodsSpuRepository.search(keyWord, pageRequest);
+
+        if (!CollectionUtils.isEmpty(goodsSpus.getContent())) {
+            if (StringUtils.isNotBlank(keyWord)) {
+
+                SearchHistory history = historyMapper.findOneByKeyWordAndUserId(keyWord,Long.parseLong(customerId));
+                if (Objects.nonNull(history)) {
+
+                    history.setCount(history.getCount() + 1);
+                } else {
+                    history = SearchHistory.builder()
+                            .keyWord(keyWord)
+                            .userId(Long.parseLong(customerId))
+                            .count(1L)
+                            .build();
+                }
+                historyMapper.insertOrUpdate(history);
+            }
+        }
         return PageUtil.transform(goodsSpus);
 
         //String keyWord = vo.getKeyWord();
@@ -251,19 +271,15 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         //return PageUtil.transform(goodsSpus);
     }
 
-	@Override
-	public List<GoodsSpu> findByShopIdIn(Collection<Long> shopIdCollection){
-		 return goodsSpuMapper.findByShopIdIn(shopIdCollection);
-	}
+    @Override
+    public List<GoodsSpu> findByShopIdIn(Collection<Long> shopIdCollection) {
+        return goodsSpuMapper.findByShopIdIn(shopIdCollection);
+    }
 
-	@Override
-	public List<Long> findIdByShopIdIn(Collection<Long> shopIdCollection){
-		 return goodsSpuMapper.findIdByShopIdIn(shopIdCollection);
-	}
-
-
-
-
+    @Override
+    public List<Long> findIdByShopIdIn(Collection<Long> shopIdCollection) {
+        return goodsSpuMapper.findIdByShopIdIn(shopIdCollection);
+    }
 
 
 }
