@@ -50,7 +50,7 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 
 	GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo);
 
-    PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo);
+    PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo, String customerId);
 
 
 
