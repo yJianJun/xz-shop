@@ -1,25 +1,34 @@
 package com.cdzg.xzshop.controller.app;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cdzg.customer.vo.response.CustomerBaseInfoVo;
 import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.domain.ShoppingCart;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.GoodsSpuService;
+import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.service.ShoppingCartService;
 import com.cdzg.xzshop.vo.shoppingcart.request.AddShoppingCartReqVO;
 import com.cdzg.xzshop.vo.shoppingcart.request.AppDeleteShoppingCartReqVO;
+import com.cdzg.xzshop.vo.shoppingcart.response.AppShoppingCartGoodsRespVO;
 import com.cdzg.xzshop.vo.shoppingcart.response.AppShoppingCartListRespVO;
 import com.framework.utils.core.api.ApiConst;
 import com.framework.utils.core.api.ApiResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -43,18 +52,77 @@ public class ShoppingCartController {
     @Autowired
     private GoodsSpuService goodsSpuService;
 
+    @Autowired
+    private ShopInfoService shopInfoService;
+
 
     @MobileApi
-    @PostMapping("/list")
+    @GetMapping("/list")
     @ApiOperation("30001-我的购物车")
-    public ApiResponse<AppShoppingCartListRespVO> list() {
-        //TODO
+    public ApiResponse<List<AppShoppingCartListRespVO>> list() {
         CustomerBaseInfoVo appUserInfo = getAppUserInfo();
         if (!Optional.ofNullable(appUserInfo).isPresent()) {
             return ApiResponse.buildCommonErrorResponse("登录过期，请重新登录");
         }
-
-        return null;
+        List<AppShoppingCartListRespVO> resultList = new ArrayList<>();
+        //查询用户所有购物车
+        LambdaQueryWrapper<ShoppingCart> shoppingCartWrapper = new LambdaQueryWrapper<>();
+        shoppingCartWrapper.eq(ShoppingCart::getAppUserId, appUserInfo.getId()).eq(ShoppingCart::getDeleted, 0).orderByDesc(ShoppingCart::getCreateTime);
+        List<ShoppingCart> shoppingCartList = shoppingCartService.list(shoppingCartWrapper);
+        if (CollectionUtils.isEmpty(shoppingCartList)) {
+            return ApiResponse.buildResponse(ApiConst.Code.CODE_SUCCESS.code(), resultList, "购物车暂无商品");
+        }
+        List<Long> goodsIdList = shoppingCartList.stream().map(ShoppingCart::getGoodsId).collect(Collectors.toList());
+        List<Long> shopIdList = shoppingCartList.stream().map(ShoppingCart::getShopId).distinct().collect(Collectors.toList());
+        //商品信息
+        LambdaQueryWrapper<GoodsSpu> goodsWrapper = new LambdaQueryWrapper<>();
+        goodsWrapper.in(GoodsSpu::getId, goodsIdList);
+        List<GoodsSpu> goodsSpuList = goodsSpuService.list(goodsWrapper);
+        //店铺信息
+        LambdaQueryWrapper<ShopInfo> shopInfoWrapper = new LambdaQueryWrapper<>();
+        shopInfoWrapper.in(ShopInfo::getId, shopIdList);
+        List<ShopInfo> shopInfoList = shopInfoService.list(shopInfoWrapper);
+        if (CollectionUtils.isEmpty(goodsSpuList) || CollectionUtils.isEmpty(shopInfoList)) {
+            return ApiResponse.buildResponse(ApiConst.Code.CODE_SUCCESS.code(), resultList, "购物车暂无商品");
+        }
+        //封装返回值
+        shopInfoList.forEach(s -> {
+            AppShoppingCartListRespVO appShoppingCartListRespVO = new AppShoppingCartListRespVO();
+            appShoppingCartListRespVO.setShopId(s.getId() + "");
+            appShoppingCartListRespVO.setShopName(s.getShopName());
+            resultList.add(appShoppingCartListRespVO);
+        });
+        resultList.forEach(r -> {
+            List<ShoppingCart> shopAndGoodsIdList = shoppingCartList.stream().filter(s -> (s.getShopId() + "").equals(r.getShopId())).collect(Collectors.toList());
+            shopAndGoodsIdList.forEach(s -> goodsSpuList.forEach(g -> {
+                if (s.getGoodsId().equals(g.getId())) {
+                    AppShoppingCartGoodsRespVO shoppingCartGoods = new AppShoppingCartGoodsRespVO();
+                    BeanUtils.copyProperties(g, shoppingCartGoods);
+                    BeanUtils.copyProperties(s, shoppingCartGoods);
+                    shoppingCartGoods.setGoodsId(s.getGoodsId() + "");
+                    shoppingCartGoods.setGoodsImg(CollectionUtils.isEmpty(g.getShowImgs()) ? null : g.getShowImgs().get(0));
+                    //默认正常 商品当前状态 0-正常 1-库存不足 2-已下架或已删除
+                    shoppingCartGoods.setGoodsStatus(0);
+                    if (s.getGoodsNumber() > g.getStock()) {
+                        shoppingCartGoods.setGoodsStatus(1);
+                    }
+                    if (!g.getStatus() || g.getIsDelete()) {
+                        shoppingCartGoods.setGoodsStatus(2);
+                    }
+                    r.getGoodsList().add(shoppingCartGoods);
+                }
+            }));
+        });
+        //处理空数据
+        for (int i = resultList.size(); i > 0; i--) {
+            if (resultList.get(i - 1).getGoodsList().size() == 0) {
+                resultList.remove(i - 1);
+            }
+        }
+        if (resultList.size() == 0) {
+            return ApiResponse.buildResponse(ApiConst.Code.CODE_SUCCESS.code(), resultList, "购物车暂无数据");
+        }
+        return ApiResponse.buildResponse(ApiConst.Code.CODE_SUCCESS.code(), resultList, "成功");
     }
 
     @MobileApi
