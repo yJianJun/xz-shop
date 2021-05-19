@@ -32,4 +32,14 @@ public class LoginSessionUtils {
         }
         return (UserLoginResponse) session;
     }
+
+    /**
+     * 判断是否超管
+     * @return
+     */
+    public static boolean isAdmin() {
+        return getAdminUser().getIsAdmin();
+    }
+
+
 }
