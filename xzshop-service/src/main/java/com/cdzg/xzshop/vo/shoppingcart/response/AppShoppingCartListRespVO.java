@@ -1,9 +1,11 @@
 package com.cdzg.xzshop.vo.shoppingcart.response;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @ClassName : AppShoppingCartListRespVO
@@ -18,6 +20,19 @@ public class AppShoppingCartListRespVO implements Serializable {
 
     private static final long serialVersionUID = -966449272391195185L;
 
+    /**
+     * 商铺名字
+     */
+    @ApiModelProperty(value = "商铺名字")
+    private String shopName;
 
+    /**
+     * 商铺ID
+     */
+    @ApiModelProperty(value = "商铺ID")
+    private String shopId;
+
+    @ApiModelProperty(value = "购物车商品信息")
+    private List<AppShoppingCartGoodsRespVO> goodsList;
 
 }
