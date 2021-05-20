@@ -19,6 +19,7 @@ import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.service.ShoppingCartService;
 import com.cdzg.xzshop.vo.shoppingcart.request.AddShoppingCartReqVO;
 import com.cdzg.xzshop.vo.shoppingcart.request.AppDeleteShoppingCartReqVO;
+import com.cdzg.xzshop.vo.shoppingcart.request.AppUpdateShoppingCartGoodsNumReqVO;
 import com.cdzg.xzshop.vo.shoppingcart.response.AppShoppingCartGoodsRespVO;
 import com.cdzg.xzshop.vo.shoppingcart.response.AppShoppingCartListRespVO;
 import com.framework.utils.core.api.ApiConst;
@@ -43,7 +44,7 @@ import javax.validation.Valid;
  */
 @RestController
 @Api(tags = "30_app_购物车管理")
-@RequestMapping("app/shoppingcart")
+@RequestMapping("app/shoppingCart")
 public class ShoppingCartController {
 
     @Autowired
@@ -183,6 +184,29 @@ public class ShoppingCartController {
             return ApiResponse.buildResponse(ApiConst.Code.CODE_SUCCESS, "操作成功");
         }
         return ApiResponse.buildResponse(ApiConst.Code.CODE_SERVER_ERROR, "操作失败");
+    }
+
+    @ApiOperation(value = "30004-修改购物车商品数量")
+    @RequestMapping(value = "/updateGoodsNum", method = RequestMethod.POST)
+    public ApiResponse<String> updateGoodsNum(@RequestBody @Valid AppUpdateShoppingCartGoodsNumReqVO reqVO) {
+        GoodsSpu goodsSpu = goodsSpuService.getById(reqVO.getGoodsId());
+        if (goodsSpu.getIsDelete() || !goodsSpu.getStatus()) {
+            return ApiResponse.buildCommonErrorResponse("该商品已经下架了");
+        }
+        if (reqVO.getUpdateNum() > goodsSpu.getStock()) {
+            return ApiResponse.buildCommonErrorResponse("商品库存不足");
+        }
+        //修改购物车
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setId(Long.valueOf(reqVO.getShoppingCartId()));
+        shoppingCart.setUpdateBy(getAppUserInfo().getId() + "");
+        shoppingCart.setUpdateTime(new Date());
+        shoppingCart.setGoodsNumber(reqVO.getUpdateNum());
+        boolean b = shoppingCartService.updateById(shoppingCart);
+        if (b) {
+            return ApiResponse.buildSuccessResponse("修改成功");
+        }
+        return ApiResponse.buildCommonErrorResponse("修改失败");
     }
 
 
