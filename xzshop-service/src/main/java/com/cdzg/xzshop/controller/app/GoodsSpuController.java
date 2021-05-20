@@ -55,12 +55,12 @@ public class GoodsSpuController {
     @PostMapping("/homePage")
     @IgnoreAuth
     @ApiOperation("商城首页商品列表")
-    public ApiResponse<PageResultVO<GoodsSpuHomePageTo>> homePage(@ApiParam(value = "商品分页参数模型", required = true) @RequestBody @Valid GoodsSpuHomePageVo vo) {
+    public ApiResponse<PageResultVO<GoodsSpu>> homePage(@ApiParam(value = "商品分页参数模型", required = true) @RequestBody @Valid GoodsSpuHomePageVo vo) {
 
         PaymentType paymentType = vo.getPaymentType();
         Boolean sort = vo.getSort();
         Boolean type = vo.getType();
-        PageResultVO<GoodsSpuHomePageTo> resultVO = goodsSpuService.homePage(vo.getCurrentPage(), vo.getPageSize(), paymentType, sort,type);
+        PageResultVO<GoodsSpu> resultVO = goodsSpuService.homePage(vo.getCurrentPage(), vo.getPageSize(), paymentType, sort,type);
         return CommonResult.buildSuccessResponse(resultVO);
     }
 
