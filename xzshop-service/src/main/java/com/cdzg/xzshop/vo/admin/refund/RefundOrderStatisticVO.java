@@ -15,24 +15,24 @@ public class RefundOrderStatisticVO {
      * 全部订单
      */
     @ApiModelProperty(value = "全部订单")
-    private Long total;
+    private Integer total;
 
     /**
      * 退货待处理
      */
     @ApiModelProperty(value = "退货待处理")
-    private Long returnToDo;
+    private Integer returnToDo;
 
     /**
      * 退款待处理
      */
     @ApiModelProperty(value = "退款待处理")
-    private Long refundToDo;
+    private Integer refundToDo;
 
     /**
      * 退款成功
      */
     @ApiModelProperty(value = "退款成功")
-    private Long refundSuccess;
+    private Integer refundSuccess;
 
 }

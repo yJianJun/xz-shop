@@ -45,7 +45,7 @@ public class RefundOrder {
     /**
      * 商品数量
      */
-    private Integer goodsNumber;
+    private String goodsNumber;
     /**
      * 支付方式 1:支付宝 2:微信
      */
@@ -65,10 +65,11 @@ public class RefundOrder {
      * 2拒绝退货
      * 3买家待发货
      * 4卖家待收货
-     * 5收货拒绝
-     * 6申请退款
-     * 7拒绝退款
-     * 8退款成功
+     * 5拒绝签收
+     * 6未收到货
+     * 7退款处理中
+     * 8拒绝退款
+     * 9退款成功
      */
     private Integer status;
     /**

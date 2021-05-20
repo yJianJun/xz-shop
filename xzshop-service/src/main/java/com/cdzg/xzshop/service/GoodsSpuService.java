@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
 import com.cdzg.xzshop.domain.GoodsSpu;
@@ -60,6 +61,7 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 
 	List<Long> findIdByShopIdIn(Collection<Long> shopIdCollection);
 
+	Map<Long, GoodsSpu> getMapByIds(List<Long> ids);
 
 }
 

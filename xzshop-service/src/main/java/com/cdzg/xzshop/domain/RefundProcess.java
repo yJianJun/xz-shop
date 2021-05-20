@@ -20,6 +20,10 @@ public class RefundProcess {
      */
     private String content;
     /**
+     * 状态
+     */
+    private Integer status;
+    /**
      * 操作时间
      */
     private LocalDateTime createTime;
