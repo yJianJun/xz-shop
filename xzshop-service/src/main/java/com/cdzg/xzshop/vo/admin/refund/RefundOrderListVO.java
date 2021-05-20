@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @ApiModel("退款订单列表")
@@ -59,12 +58,12 @@ public class RefundOrderListVO {
     /**
      * 状态
      */
-    @ApiModelProperty(value = "状态")
+    @ApiModelProperty(value = "状态 1申请退货 2拒绝退货 3买家待发货 4卖家待收货 5收货拒绝 6未收到货 7申请退款 8拒绝退款 9退款成功")
     private Integer status;
     /**
      * 申请退货时间
      */
     @ApiModelProperty(value = "申请退货时间")
-    private LocalDateTime createTime;
+    private String createTime;
 
 }

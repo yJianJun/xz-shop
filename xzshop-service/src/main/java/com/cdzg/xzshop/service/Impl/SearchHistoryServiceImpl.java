@@ -49,11 +49,5 @@ public class SearchHistoryServiceImpl extends ServiceImpl<SearchHistoryMapper, S
 	public List<String> findKeyWordByUserIdOrderByCountDesc(Long userId){
 		 return searchHistoryMapper.findKeyWordByUserIdOrderByCountDesc(userId);
 	}
-
-	@Override
-    public PageResultVO<String> searchHistorywithPage(int page, int pageSize, Long userId) {
-        PageHelper.startPage(page, pageSize);
-        return PageUtil.transform(new PageInfo(searchHistoryMapper.findKeyWordByUserIdOrderByCountDesc(userId)));
-    }
 }
 

@@ -1,18 +1,20 @@
 package com.cdzg.xzshop.service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cdzg.xzshop.constant.PaymentType;
-
 import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
+import com.cdzg.xzshop.constant.PaymentType;
+import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.GoodsSpuSales;
 import com.cdzg.xzshop.domain.SearchHistory;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 import com.cdzg.xzshop.mapper.GoodsSpuSalesMapper;
 import com.cdzg.xzshop.mapper.SearchHistoryMapper;
 import com.cdzg.xzshop.repository.GoodsSpuRepository;
+import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
 import com.cdzg.xzshop.to.app.GoodsSpuHomePageTo;
@@ -23,29 +25,21 @@ import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-
-import com.cdzg.xzshop.mapper.GoodsSpuMapper;
-
-import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
-import com.cdzg.xzshop.domain.GoodsSpu;
-import com.cdzg.xzshop.service.GoodsSpuService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> implements GoodsSpuService {
@@ -179,27 +173,22 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         return pageResultVO;
     }
 
-    @Override
-    public List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod) {
-        return goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod);
-    }
 
     @Override
-    public List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod) {
-        return goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod);
-    }
+    public PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort, Boolean type) {
 
-    @Override
-    public PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort) {
+        if (!type) {
+            if (PaymentType.Integral == paymentMethod) {
 
-        if (sort) {
+                PageHelper.startPage(page, pageSize);
+                return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod, sort)));
+            }
             PageHelper.startPage(page, pageSize);
-            PageResultVO<GoodsSpu> pageResultVO = PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod)));
-            return spuWithSalesByPage(pageResultVO);
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod, sort)));
+
         } else {
-
             PageHelper.startPage(page, pageSize);
-            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod)));
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByGmtPutOnTheShelf(paymentMethod, sort)));
         }
     }
 
@@ -244,7 +233,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         if (!CollectionUtils.isEmpty(goodsSpus.getContent())) {
             if (StringUtils.isNotBlank(keyWord)) {
 
-                SearchHistory history = historyMapper.findOneByKeyWordAndUserId(keyWord,Long.parseLong(customerId));
+                SearchHistory history = historyMapper.findOneByKeyWordAndUserId(keyWord, Long.parseLong(customerId));
                 if (Objects.nonNull(history)) {
 
                     history.setCount(history.getCount() + 1);
@@ -281,7 +270,17 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         return goodsSpuMapper.findIdByShopIdIn(shopIdCollection);
     }
 
-
+    @Override
+    public Map<Long, GoodsSpu> getMapByIds(List<Long> ids) {
+        Map<Long, GoodsSpu> map = Maps.newHashMap();
+        if (!CollectionUtils.isEmpty(ids)) {
+            List<GoodsSpu> list = this.listByIds(ids);
+            for (GoodsSpu goods : list) {
+                map.put(goods.getId(), goods);
+            }
+        }
+        return map;
+    }
 }
 
 

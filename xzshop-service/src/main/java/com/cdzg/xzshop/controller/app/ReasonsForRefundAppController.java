@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @Api(tags = "04_app_退款原因")
 @RequestMapping("app/reasonsForRefund")
-public class ReasonsForRefundController {
+public class ReasonsForRefundAppController {
 
     @Autowired
     private ReasonsForRefundService reasonsForRefundService;

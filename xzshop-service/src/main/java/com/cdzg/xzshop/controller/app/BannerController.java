@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -44,16 +45,16 @@ public class BannerController {
     }
 
     @MobileApi
-    @PostMapping("/homePage")
+    @GetMapping("/homePage")
     @ApiOperation("商城首页轮播图")
-    public ApiResponse<List<CmsAppBannerResponse>> homePage(@RequestBody @Valid AppTrainingHomePageReqVO request) {
+    public ApiResponse<List<CmsAppBannerResponse>> homePage() {
 
         String token = LoginSessionUtils.getAppUser().getTicketString();
         //banner信息
         CmsAppBannerRequest bannerReq = new CmsAppBannerRequest();
         bannerReq.setBannerGroupId("800");
         List<CmsAppBannerResponse> bannerConfigList = bannerClient.getBannerConfigList(bannerReq, token);
-        return ApiResponse.buildSuccessResponse(bannerConfigList);
+        return ApiResponse.buildSuccessResponse((!CollectionUtils.isEmpty(bannerConfigList))?(bannerConfigList.size() > 10 ? bannerConfigList.subList(0,10):bannerConfigList):null);
     }
 
 }

@@ -1,12 +1,13 @@
 package com.cdzg.xzshop.vo.admin.refund;
 
+import com.cdzg.xzshop.vo.common.BasePageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 @ApiModel("退款订单查询")
-public class RefundOrderQueryVO {
+public class RefundOrderQueryVO extends BasePageRequest {
     /**
      * 订单编号
      */

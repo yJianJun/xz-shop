@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("admin/systemTimeConfig")
 @Api(tags = "03_admin_商城配置项")
-public class SystemTimeConfigController {
+public class SystemTimeConfigAdminController {
 
     @Autowired
     private SystemTimeConfigService systemTimeConfigService;
@@ -23,7 +23,7 @@ public class SystemTimeConfigController {
     @GetMapping("/getSystemTimeConfig")
     @ApiOperation("03001-查询配置")
     public ApiResponse<SystemTimeConfigVO> getSystemTimeConfig(){
-        log.info("SystemTimeConfigController-getSystemTimeConfig");
+        log.info("SystemTimeConfigAdminController-getSystemTimeConfig");
         return ApiResponse.buildSuccessResponse(systemTimeConfigService.getSystemTimeConfig());
     }
 
@@ -31,7 +31,7 @@ public class SystemTimeConfigController {
     @PostMapping("/updateSystemTimeConfig")
     @ApiOperation("03002-修改配置")
     public ApiResponse<String> updateSystemTimeConfig(@RequestBody SystemTimeConfigVO vo){
-        log.info("SystemTimeConfigController-updateSystemTimeConfig vo:{}", vo);
+        log.info("SystemTimeConfigAdminController-updateSystemTimeConfig vo:{}", vo);
         return ApiResponse.buildSuccessResponse(systemTimeConfigService.updateConfig(vo));
     }
 
