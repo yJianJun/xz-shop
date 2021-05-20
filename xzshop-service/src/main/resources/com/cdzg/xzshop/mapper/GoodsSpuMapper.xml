@@ -139,20 +139,20 @@
     <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
         <!--@mbg.generated-->
         insert into goods_spu
-                (spu_no, goods_name, ad_word, price, promotion_price, fraction_price, category_id_level2,
-                 category_id_level1, payment_method, shop_id, `status`, is_delete, stock, create_user,
-                 gmt_put_on_the_shelf, gmt_create, gmt_update, show_imgs, desc_imgs)
-                values
+        (spu_no, goods_name, ad_word, price, promotion_price, fraction_price, category_id_level2,
+        category_id_level1, payment_method, shop_id, `status`, is_delete, stock, create_user,
+        gmt_put_on_the_shelf, gmt_create, gmt_update, show_imgs, desc_imgs)
+        values
         <foreach collection="list" item="item" separator=",">
             (#{item.spuNo,jdbcType=BIGINT}, #{item.goodsName,jdbcType=VARCHAR}, #{item.adWord,jdbcType=VARCHAR},
-             #{item.price,jdbcType=DECIMAL}, #{item.promotionPrice,jdbcType=DECIMAL},
-             #{item.fractionPrice,jdbcType=DECIMAL},
-             #{item.categoryIdLevel2,jdbcType=BIGINT}, #{item.categoryIdLevel1,jdbcType=BIGINT},
-             #{item.paymentMethod,jdbcType=INTEGER}, #{item.shopId,jdbcType=BIGINT}, #{item.status,jdbcType=TINYINT},
-             #{item.isDelete,jdbcType=TINYINT}, #{item.stock,jdbcType=BIGINT}, #{item.createUser,jdbcType=VARCHAR},
-             #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}, #{item.gmtCreate,jdbcType=TIMESTAMP},
-             #{item.gmtUpdate,jdbcType=TIMESTAMP}, #{item.showImgs,jdbcType=LONGVARCHAR},
-             #{item.descImgs,jdbcType=LONGVARCHAR})
+            #{item.price,jdbcType=DECIMAL}, #{item.promotionPrice,jdbcType=DECIMAL},
+            #{item.fractionPrice,jdbcType=DECIMAL},
+            #{item.categoryIdLevel2,jdbcType=BIGINT}, #{item.categoryIdLevel1,jdbcType=BIGINT},
+            #{item.paymentMethod,jdbcType=INTEGER}, #{item.shopId,jdbcType=BIGINT}, #{item.status,jdbcType=TINYINT},
+            #{item.isDelete,jdbcType=TINYINT}, #{item.stock,jdbcType=BIGINT}, #{item.createUser,jdbcType=VARCHAR},
+            #{item.gmtPutOnTheShelf,jdbcType=TIMESTAMP}, #{item.gmtCreate,jdbcType=TIMESTAMP},
+            #{item.gmtUpdate,jdbcType=TIMESTAMP}, #{item.showImgs,jdbcType=LONGVARCHAR},
+            #{item.descImgs,jdbcType=LONGVARCHAR})
         </foreach>
     </insert>
     <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsSpu"
@@ -213,25 +213,25 @@
             <if test="id != null">
                 id = #{id,jdbcType=BIGINT},
             </if>
-            spu_no               = #{spuNo,jdbcType=BIGINT},
-            goods_name           = #{goodsName,jdbcType=VARCHAR},
-            ad_word              = #{adWord,jdbcType=VARCHAR},
-            price                = #{price,jdbcType=DECIMAL},
-            promotion_price      = #{promotionPrice,jdbcType=DECIMAL},
-            fraction_price       = #{fractionPrice,jdbcType=DECIMAL},
-            category_id_level2   = #{categoryIdLevel2,jdbcType=BIGINT},
-            category_id_level1   = #{categoryIdLevel1,jdbcType=BIGINT},
-            payment_method       = #{paymentMethod,jdbcType=INTEGER},
-            shop_id              = #{shopId,jdbcType=BIGINT},
-            `status`             = #{status,jdbcType=TINYINT},
-            is_delete            = #{isDelete,jdbcType=TINYINT},
-            stock                = #{stock,jdbcType=BIGINT},
-            create_user          = #{createUser,jdbcType=VARCHAR},
+            spu_no = #{spuNo,jdbcType=BIGINT},
+            goods_name = #{goodsName,jdbcType=VARCHAR},
+            ad_word = #{adWord,jdbcType=VARCHAR},
+            price = #{price,jdbcType=DECIMAL},
+            promotion_price = #{promotionPrice,jdbcType=DECIMAL},
+            fraction_price = #{fractionPrice,jdbcType=DECIMAL},
+            category_id_level2 = #{categoryIdLevel2,jdbcType=BIGINT},
+            category_id_level1 = #{categoryIdLevel1,jdbcType=BIGINT},
+            payment_method = #{paymentMethod,jdbcType=INTEGER},
+            shop_id = #{shopId,jdbcType=BIGINT},
+            `status` = #{status,jdbcType=TINYINT},
+            is_delete = #{isDelete,jdbcType=TINYINT},
+            stock = #{stock,jdbcType=BIGINT},
+            create_user = #{createUser,jdbcType=VARCHAR},
             gmt_put_on_the_shelf = #{gmtPutOnTheShelf,jdbcType=TIMESTAMP},
-            gmt_create           = #{gmtCreate,jdbcType=TIMESTAMP},
-            gmt_update           = #{gmtUpdate,jdbcType=TIMESTAMP},
-            show_imgs            = #{showImgs,jdbcType=LONGVARCHAR},
-            desc_imgs            = #{descImgs,jdbcType=LONGVARCHAR},
+            gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+            gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+            show_imgs = #{showImgs,jdbcType=LONGVARCHAR},
+            desc_imgs = #{descImgs,jdbcType=LONGVARCHAR},
         </trim>
     </insert>
     <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.GoodsSpu"
@@ -432,7 +432,7 @@
     <update id="updateStatusAndGmtPutOnTheShelfByIdIn">
         update goods_spu
         set `status`=#{updatedStatus,jdbcType=TINYINT},
-            gmt_put_on_the_shelf=#{updatedGmtPutOnTheShelf,jdbcType=TIMESTAMP}
+        gmt_put_on_the_shelf=#{updatedGmtPutOnTheShelf,jdbcType=TIMESTAMP}
         <where>
             <if test="idCollection != null and idCollection.size() &gt; 0">
                 and id in
@@ -443,29 +443,27 @@
         </where>
     </update>
 
-    <select id="findByPaymentMethodOrderByFractionPrice" resultType="com.cdzg.xzshop.to.app.GoodsSpuHomePageTo">
-        select t1.*,
-        gss.sales
+    <select id="findByPaymentMethodOrderByFractionPrice" resultMap="BaseResultMap">
+        select t1.*
         from goods_spu t1
-        join goods_spu_sales gss on t1.spu_no = gss.spu_no
+        left join goods_spu_sales gss on t1.spu_no = gss.spu_no
         where t1.payment_method = #{paymentMethod,jdbcType=VARCHAR}
         and t1.is_delete = false
         and t1.status = true
-                order by t1.fraction_price
+        order by t1.fraction_price
         <if test="sort != null and sort == false">
             desc
         </if>
     </select>
 
-    <select id="findByPaymentMethodOrderBySales" resultType="com.cdzg.xzshop.to.app.GoodsSpuHomePageTo">
-        select t1.*,
-               gss.sales
+    <select id="findByPaymentMethodOrderBySales" resultMap="BaseResultMap">
+        select t1.*
         from goods_spu t1
-                     join goods_spu_sales gss on t1.spu_no = gss.spu_no
+        left join goods_spu_sales gss on t1.spu_no = gss.spu_no
         where t1.payment_method = #{paymentMethod,jdbcType=VARCHAR}
-          and t1.is_delete = false
-          and t1.status = true
-                order by gss.sales
+        and t1.is_delete = false
+        and t1.status = true
+        order by gss.sales
         <if test="sort != null and sort == false">
             desc
         </if>
@@ -477,8 +475,8 @@
         <include refid="Base_Column_List"/>
         from goods_spu
         where spu_no = #{spuNo,jdbcType=BIGINT}
-          and is_delete = false
-          and status = true
+        and is_delete = false
+        and status = true
     </select>
 
     <!--auto generated by MybatisCodeHelper on 2021-05-13-->
@@ -486,7 +484,7 @@
             resultMap="BaseResultMap">
         select t1.*
         from goods_spu t1
-                     inner join shop_info t2 on t1.shop_id = t2.id
+        inner join shop_info t2 on t1.shop_id = t2.id
         <where>
             <if test="status != null">
                 and t1.status = #{status,jdbcType=TINYINT}
@@ -521,7 +519,7 @@
         select
         <include refid="Base_Column_List"/>
         from goods_spu
-                where shop_id in
+        where shop_id in
         <foreach item="item" index="index" collection="shopIdCollection"
                  open="(" separator="," close=")">
             #{item,jdbcType=BIGINT}
@@ -532,7 +530,7 @@
     <select id="findIdByShopIdIn" resultType="java.lang.Long">
         select id
         from goods_spu
-                where shop_id in
+        where shop_id in
         <foreach item="item" index="index" collection="shopIdCollection"
                  open="(" separator="," close=")">
             #{item,jdbcType=BIGINT}
@@ -540,14 +538,13 @@
     </select>
 
     <!--auto generated by MybatisCodeHelper on 2021-05-20-->
-    <select id="findByPaymentMethodOrderByGmtPutOnTheShelf" resultType="com.cdzg.xzshop.to.app.GoodsSpuHomePageTo">
-        select t1.*,
-               gss.sales
+    <select id="findByPaymentMethodOrderByGmtPutOnTheShelf" resultMap="BaseResultMap">
+        select t1.*
         from goods_spu t1
-                     join goods_spu_sales gss on t1.spu_no = gss.spu_no
+        left join goods_spu_sales gss on t1.spu_no = gss.spu_no
         where t1.payment_method = #{paymentMethod,jdbcType=VARCHAR}
-          and t1.is_delete = false
-          and t1.status = true order by t1.gmt_put_on_the_shelf
+        and t1.is_delete = false
+        and t1.status = true order by t1.gmt_put_on_the_shelf
         <if test="sort != null and sort == false">
             desc
         </if>
