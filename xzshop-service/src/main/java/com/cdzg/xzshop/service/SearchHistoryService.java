@@ -24,7 +24,5 @@ public interface SearchHistoryService extends IService<SearchHistory> {
 
 	List<String> findKeyWordByUserIdOrderByCountDesc(Long userId);
 
-
-    PageResultVO<String> searchHistorywithPage(int page, int pageSize, Long userId);
 }
 

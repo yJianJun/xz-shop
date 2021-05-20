@@ -16,6 +16,7 @@ import com.framework.utils.core.api.ApiResponse;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,14 +45,14 @@ public class SearchController {
     /**
      * 热门搜索列表
      */
-    @RequestMapping(value = "/history", method = RequestMethod.POST)
+    @RequestMapping(value = "/history", method = RequestMethod.GET)
     @ApiOperation(value = "搜索历史关键词列表")
     @MobileApi
-    public ApiResponse<List<String>> getSearchHistory(@ApiParam(value = "分页参数模型", required = true) @RequestBody @Valid BasePageRequest pageRequest) {
+    public ApiResponse<List<String>> getSearchHistory() {
 
         String customerId = LoginSessionUtils.getAppUser().getCustomerId();
-        PageResultVO<String> page = searchHistoryService.searchHistorywithPage(pageRequest.getCurrentPage(), pageRequest.getPageSize(), Long.parseLong(customerId));
-        return CommonResult.buildSuccessResponse(page.getData());
+        List<String> data = searchHistoryService.findKeyWordByUserIdOrderByCountDesc(Long.parseLong(customerId));
+        return CommonResult.buildSuccessResponse((!CollectionUtils.isEmpty(data)) ?(data.size() > 10 ? data.subList(0, 10) : data):null);
     }
 
     @MobileApi
@@ -60,7 +61,7 @@ public class SearchController {
     public ApiResponse<PageResultVO<GoodsSpu>> search(@ApiParam(value = "商品搜索列表分页模型", required = true) @RequestBody @Valid GoodsSpuSearchPageVo vo) {
 
         String customerId = LoginSessionUtils.getAppUser().getCustomerId();
-        return CommonResult.buildSuccessResponse(goodsSpuService.search(vo,customerId));
+        return CommonResult.buildSuccessResponse(goodsSpuService.search(vo, customerId));
     }
 
 

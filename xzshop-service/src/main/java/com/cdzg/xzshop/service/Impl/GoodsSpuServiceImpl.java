@@ -179,27 +179,22 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         return pageResultVO;
     }
 
-    @Override
-    public List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod) {
-        return goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod);
-    }
 
     @Override
-    public List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod) {
-        return goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod);
-    }
+    public PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort, Boolean type) {
 
-    @Override
-    public PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort) {
+        if (!type) {
+            if (PaymentType.Integral == paymentMethod) {
 
-        if (sort) {
+                PageHelper.startPage(page, pageSize);
+                return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod, sort)));
+            }
             PageHelper.startPage(page, pageSize);
-            PageResultVO<GoodsSpu> pageResultVO = PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod)));
-            return spuWithSalesByPage(pageResultVO);
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod, sort)));
+
         } else {
-
             PageHelper.startPage(page, pageSize);
-            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod)));
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByGmtPutOnTheShelf(paymentMethod, sort)));
         }
     }
 
@@ -244,7 +239,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         if (!CollectionUtils.isEmpty(goodsSpus.getContent())) {
             if (StringUtils.isNotBlank(keyWord)) {
 
-                SearchHistory history = historyMapper.findOneByKeyWordAndUserId(keyWord,Long.parseLong(customerId));
+                SearchHistory history = historyMapper.findOneByKeyWordAndUserId(keyWord, Long.parseLong(customerId));
                 if (Objects.nonNull(history)) {
 
                     history.setCount(history.getCount() + 1);
@@ -280,8 +275,6 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     public List<Long> findIdByShopIdIn(Collection<Long> shopIdCollection) {
         return goodsSpuMapper.findIdByShopIdIn(shopIdCollection);
     }
-
-
 }
 
 
