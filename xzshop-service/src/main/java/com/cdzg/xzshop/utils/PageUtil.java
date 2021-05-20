@@ -42,7 +42,7 @@ public class PageUtil {
         pageResultVO.setPageSize(pageInfo.getPageSize());
         pageResultVO.setData(pageInfo.getList());
         pageResultVO.setTotalPage(pageInfo.getPages());
-        pageResultVO.setTotalNum(pageInfo.getSize());
+        pageResultVO.setTotalNum(new Long(pageInfo.getTotal()).intValue());
         return pageResultVO;
 
     }
