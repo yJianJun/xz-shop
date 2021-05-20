@@ -171,8 +171,9 @@ public class ShoppingCartController {
         return ApiResponse.buildCommonErrorResponse("添加失败");
     }
 
+    @MobileApi
     @ApiOperation(value = "30003-删除购物车商品")
-    @RequestMapping(value = "/deleteShoppingCart", method = RequestMethod.POST)
+    @PostMapping(value = "/deleteShoppingCart")
     public ApiResponse<String> deleteShoppingCart(@RequestBody AppDeleteShoppingCartReqVO reqVO) {
         CustomerBaseInfoVo appUserInfo = getAppUserInfo();
         if (!Optional.ofNullable(appUserInfo).isPresent()) {
@@ -186,8 +187,9 @@ public class ShoppingCartController {
         return ApiResponse.buildResponse(ApiConst.Code.CODE_SERVER_ERROR, "操作失败");
     }
 
+    @MobileApi
     @ApiOperation(value = "30004-修改购物车商品数量")
-    @RequestMapping(value = "/updateGoodsNum", method = RequestMethod.POST)
+    @PostMapping(value = "/updateGoodsNum")
     public ApiResponse<String> updateGoodsNum(@RequestBody @Valid AppUpdateShoppingCartGoodsNumReqVO reqVO) {
         GoodsSpu goodsSpu = goodsSpuService.getById(reqVO.getGoodsId());
         if (goodsSpu.getIsDelete() || !goodsSpu.getStatus()) {
