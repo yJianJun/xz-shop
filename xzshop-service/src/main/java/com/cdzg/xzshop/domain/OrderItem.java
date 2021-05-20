@@ -50,7 +50,7 @@ public class OrderItem implements Serializable {
 	 */
 	private Integer deleted;
 	/**
-	 * 状态 0正常 1退款
+	 * 状态 0正常 1.退款中2.已退款3.退货中4.已退货5.拒绝退款6.拒绝退货
 	 */
 	private Integer status;
 
