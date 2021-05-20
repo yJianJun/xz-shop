@@ -62,7 +62,7 @@ public class Order implements Serializable {
 	 */
 	private Date createTime;
 	/**
-	 * 订单状态（1待付款2.待发货3.已发货4.已完成5.已关闭6.退款中7.已退款8.退货中9.已退货）
+	 * 订单状态（1待付款2.待发货3.已发货4.已完成5.已关闭）
 	 */
 	private Integer orderStatus;
 	/**
