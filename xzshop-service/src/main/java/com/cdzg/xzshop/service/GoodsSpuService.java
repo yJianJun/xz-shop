@@ -39,11 +39,7 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 
     PageResultVO<GoodsSpuTo> page(int page, int pageSize, Boolean status, String goodsName, LocalDateTime minGmtPutOnTheShelf, LocalDateTime maxGmtPutOnTheShelf, Long spuNo, Long categoryIdLevel1, Long categoryIdLevel2, String shopName);
 
-    List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(PaymentType paymentMethod);
-
-    List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(PaymentType paymentMethod);
-
-    PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort);
+    PageResultVO<GoodsSpuHomePageTo> homePage(int page, int pageSize, PaymentType paymentMethod, Boolean sort, Boolean type);
 
     PageResultVO<GoodsSpuHomePageTo> spuWithSalesByPage(PageResultVO<GoodsSpu> pageResultVO);
 
@@ -53,11 +49,7 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 
     PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo, String customerId);
 
-
-
 	List<GoodsSpu> findByShopIdIn(Collection<Long> shopIdCollection);
-
-
 
 	List<Long> findIdByShopIdIn(Collection<Long> shopIdCollection);
 

@@ -59,7 +59,8 @@ public class GoodsSpuController {
 
         PaymentType paymentType = vo.getPaymentType();
         Boolean sort = vo.getSort();
-        PageResultVO<GoodsSpuHomePageTo> resultVO = goodsSpuService.homePage(vo.getCurrentPage(), vo.getPageSize(), paymentType, sort);
+        Boolean type = vo.getType();
+        PageResultVO<GoodsSpuHomePageTo> resultVO = goodsSpuService.homePage(vo.getCurrentPage(), vo.getPageSize(), paymentType, sort,type);
         return CommonResult.buildSuccessResponse(resultVO);
     }
 
