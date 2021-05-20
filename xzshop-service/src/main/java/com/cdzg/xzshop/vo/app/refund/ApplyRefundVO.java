@@ -16,9 +16,9 @@ public class ApplyRefundVO {
     @ApiModelProperty("订单id")
     private Long orderId;
     /**
-     * 订单商品项id
+     * 订单明细id
      */
-    @ApiModelProperty("订单商品项id")
+    @ApiModelProperty("订单明细id")
     private Long orderItemId;
     /**
      * 退款原因
