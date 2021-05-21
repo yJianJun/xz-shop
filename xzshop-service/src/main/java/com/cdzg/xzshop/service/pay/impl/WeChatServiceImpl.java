@@ -107,7 +107,7 @@ public class WeChatServiceImpl implements PayService {
         if (!successStrings.contains(StringUtils.trimToEmpty(returnCode).toUpperCase())
                 || !successStrings.contains(StringUtils.trimToEmpty(resultCode).toUpperCase())) {
 
-            //支付失败后的业务处理
+            //Todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
             String errCode = notifyResult.getErrCode();
             String errCodeDes = notifyResult.getErrCodeDes();
@@ -115,7 +115,7 @@ public class WeChatServiceImpl implements PayService {
             return WxPayNotifyResponse.fail("失败");
         }else {
             // 可在此持久化微信传回的该 map 数据
-            //支付成功后的业务处理
+            //Todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
             return WxPayNotifyResponse.success("成功");
         }
@@ -149,7 +149,7 @@ public class WeChatServiceImpl implements PayService {
         // 测试时，将支付金额设置为 1 分钱
         WxPayUnifiedOrderRequest request = WxPayUnifiedOrderRequest.newBuilder()
                 .outTradeNo(orderId + "")
-                .totalFee(1)  //yjjtodo 测试1分钱
+                .totalFee(1)  //todo:测试1分钱
                 .body("西藏职工app-商城商品交易")
                 .spbillCreateIp(ipAddress)
                 .build();

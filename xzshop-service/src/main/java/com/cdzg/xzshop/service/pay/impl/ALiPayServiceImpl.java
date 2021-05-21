@@ -69,7 +69,7 @@ public class ALiPayServiceImpl implements PayService {
         //该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。
         // 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
         model.setTimeoutExpress("30m");
-        //yjjtodo 测试:订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
+        //todo:测试:订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
         model.setTotalAmount("0.01");
         //销售产品码，商家和支付宝签约的产品码
         model.setProductCode("QUICK_MSECURITY_PAY");
@@ -163,11 +163,11 @@ public class ALiPayServiceImpl implements PayService {
          */
         if ("TRADE_FINISHED".equals(tradeStatus) || "TRADE_SUCCESS".equals(tradeStatus)) {
 
-            //支付成功后的业务处理
+            //todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
             return "success";
         } else {
-            //支付失败后的业务处理
+            //todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
             return "failure";
         }
