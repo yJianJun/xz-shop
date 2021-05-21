@@ -32,7 +32,7 @@ public interface GoodsSpuMapper extends BaseMapper<GoodsSpu> {
 
     List<Long> findIdByShopIdIn(@Param("shopIdCollection") Collection<Long> shopIdCollection);
 
-    List<GoodsSpu> findByPaymentMethodOrderBySales(@Param("paymentMethod") PaymentType paymentMethod, @Param("sort") Boolean sort);
+    List<GoodsSpuHomePageTo> findByPaymentMethodOrderBySales(@Param("paymentMethod") PaymentType paymentMethod, @Param("sort") Boolean sort);
 
     List<GoodsSpu> findByPaymentMethodOrderByFractionPrice(@Param("paymentMethod") PaymentType paymentMethod, @Param("sort") Boolean sort);
 

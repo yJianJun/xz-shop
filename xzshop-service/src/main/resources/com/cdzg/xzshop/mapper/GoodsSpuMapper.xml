@@ -446,7 +446,6 @@
     <select id="findByPaymentMethodOrderByFractionPrice" resultMap="BaseResultMap">
         select t1.*
         from goods_spu t1
-        left join goods_spu_sales gss on t1.spu_no = gss.spu_no
         where t1.payment_method = #{paymentMethod,jdbcType=VARCHAR}
         and t1.is_delete = false
         and t1.status = true
@@ -456,8 +455,9 @@
         </if>
     </select>
 
-    <select id="findByPaymentMethodOrderBySales" resultMap="BaseResultMap">
-        select t1.*
+    <select id="findByPaymentMethodOrderBySales" resultType="com.cdzg.xzshop.to.app.GoodsSpuHomePageTo">
+        select t1.*,
+        coalesce(gss.sales,0) as sales
         from goods_spu t1
         left join goods_spu_sales gss on t1.spu_no = gss.spu_no
         where t1.payment_method = #{paymentMethod,jdbcType=VARCHAR}
@@ -541,7 +541,6 @@
     <select id="findByPaymentMethodOrderByGmtPutOnTheShelf" resultMap="BaseResultMap">
         select t1.*
         from goods_spu t1
-        left join goods_spu_sales gss on t1.spu_no = gss.spu_no
         where t1.payment_method = #{paymentMethod,jdbcType=VARCHAR}
         and t1.is_delete = false
         and t1.status = true order by t1.gmt_put_on_the_shelf
