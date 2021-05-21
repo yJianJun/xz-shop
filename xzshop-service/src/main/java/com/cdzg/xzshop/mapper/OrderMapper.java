@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.cdzg.xzshop.domain.Order;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -13,5 +14,9 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface OrderMapper extends BaseMapper<Order> {
+
+    Order findById(@Param("id")Long id);
+
+
 	
 }
