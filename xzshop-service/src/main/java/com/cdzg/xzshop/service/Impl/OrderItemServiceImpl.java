@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.domain.OrderItem;
 import com.cdzg.xzshop.mapper.OrderItemMapper;
 import com.cdzg.xzshop.service.OrderItemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,5 +19,8 @@ public class OrderItemServiceImpl extends ServiceImpl<OrderItemMapper, OrderItem
         return this.list(lambdaQuery().eq(OrderItem::getOrderId, orderId));
     }
 
-
+    @Override
+    public List<Long> findIdByOrderIdAndDeleted(Long orderId, Integer deleted) {
+        return baseMapper.findIdByOrderIdAndDeleted(orderId, deleted);
+    }
 }

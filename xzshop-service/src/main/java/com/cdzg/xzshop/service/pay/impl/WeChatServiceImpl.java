@@ -1,6 +1,8 @@
 package com.cdzg.xzshop.service.pay.impl;
 
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
+import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.service.pay.PayService;
 import com.cdzg.xzshop.utils.pay.WxUtils;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
@@ -106,18 +108,19 @@ public class WeChatServiceImpl implements PayService {
      * 统一下单(详见https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1)
      * 在发起微信支付前，需要调用统一下单接口，获取"预支付交易会话标识"
      * 接口地址：https://api.mch.weixin.qq.com/pay/unifiedorder
-     *
-     * @param orderId 商品订单号
+     *  @param orderId 商品订单号
+     * @param spus
+     * @param order
      */
     @Override
-    public String pay(String orderId,String ipAddress) throws WxPayException {
+    public String pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws WxPayException {
 
         WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
         // 测试时，将支付金额设置为 1 分钱
         WxPayUnifiedOrderRequest request = WxPayUnifiedOrderRequest.newBuilder()
-                .outTradeNo(orderId)
+                .outTradeNo(orderId+"")
                 .totalFee(1)  //yjjtodo 测试1分钱
-                .body("商品描述") //yjjtodo: 等业务系统
+                .body("西藏职工app-商城商品交易")
                 .spbillCreateIp(ipAddress)
                 .build();
         WxPayUnifiedOrderResult result = this.wxService.unifiedOrder(request);

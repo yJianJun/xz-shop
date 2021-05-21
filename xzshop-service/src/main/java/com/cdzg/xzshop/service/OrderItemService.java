@@ -21,5 +21,6 @@ public interface OrderItemService extends IService<OrderItem> {
      */
     List<OrderItem> getByOrderId(Long orderId);
 
+    List<Long> findIdByOrderIdAndDeleted(Long orderId, Integer deleted);
 }
 

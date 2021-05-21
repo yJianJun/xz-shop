@@ -55,6 +55,11 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 
 	Map<Long, GoodsSpu> getMapByIds(List<Long> ids);
 
+
+
+	List<GoodsSpu> findBySpuNoInAndIsDeleteFalseAndStatusTrue(Collection<Long> spuNoCollection);
+
+
 }
 
 

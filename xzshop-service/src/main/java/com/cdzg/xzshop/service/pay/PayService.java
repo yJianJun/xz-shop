@@ -1,8 +1,12 @@
 package com.cdzg.xzshop.service.pay;
 
+import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.domain.Order;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 public interface PayService {
 
@@ -19,10 +23,12 @@ public interface PayService {
      *
      * @param orderId   公司业务订单号
      * @param ipAddress 客户端APP IP 地址
+     * @param spus
+     * @param order
      * @return 返回的信息直接发给客户端即可
      * @throws IOException
      */
-    String pay(String orderId,String ipAddress) throws Exception;
+    String pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception;
 
     /**
      * 微信服务器调用该接口，进行数据异步传回作用

@@ -14,6 +14,8 @@ import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
+import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.service.pay.PayService;
 import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +24,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service("aliPayService")
 @Slf4j
@@ -34,24 +36,24 @@ public class ALiPayServiceImpl implements PayService {
     private SnowflakeIdWorker snowflakeIdWorker;
 
     @Override
-    public String pay(String orderId,String ipAddress) throws Exception {
+    public String pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         AlipayClient alipayClient = AlipayConfig.buildAlipayClient();
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
         AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
         //SDK已经封装掉了公共参数，这里只需要传入业务参数。以下方法为sdk的model入参方式(model和biz_content同时存在的情况下取biz_content)。
         AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
-        //yjjtodo: 这里塞的都是测试数据 根据参数含义 塞真是数据库数据
         //对一笔交易的具体描述信息
-        model.setBody("我是测试数据");
+        String spuNames = getSpusName(spus);
+        model.setBody(spuNames);
         //商品的标题/交易标题/订单标题/订单关键字等
-        model.setSubject("App支付测试Java");
+        model.setSubject("西藏职工app-商城商品订单");
         //商户系统唯一订单号
-        model.setOutTradeNo(orderId);
+        model.setOutTradeNo(orderId+"");
         //该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。
         // 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
         model.setTimeoutExpress("30m");
-        //yjjtodo 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
+        //yjjtodo 测试:订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
         model.setTotalAmount("0.01");
         //销售产品码，商家和支付宝签约的产品码
         model.setProductCode("QUICK_MSECURITY_PAY");
@@ -67,6 +69,10 @@ public class ALiPayServiceImpl implements PayService {
             log.error("支付宝支付调用接口异常:{}", Json.pretty(e.getStackTrace()));
             throw e;
         }
+    }
+
+    private String getSpusName(List<GoodsSpu> spus) {
+        return spus.stream().map(GoodsSpu::getGoodsName).collect(Collectors.joining(","));
     }
 
     /**

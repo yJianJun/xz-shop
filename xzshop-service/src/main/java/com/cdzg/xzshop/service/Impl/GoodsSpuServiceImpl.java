@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.service.Impl;
+import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
@@ -281,6 +282,14 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         }
         return map;
     }
+
+	@Override
+	public List<GoodsSpu> findBySpuNoInAndIsDeleteFalseAndStatusTrue(Collection<Long> spuNoCollection){
+		 return goodsSpuMapper.findBySpuNoInAndIsDeleteFalseAndStatusTrue(spuNoCollection);
+	}
+
+
+
 }
 
 

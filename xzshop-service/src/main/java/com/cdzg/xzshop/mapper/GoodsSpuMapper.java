@@ -38,5 +38,8 @@ public interface GoodsSpuMapper extends BaseMapper<GoodsSpu> {
 
     List<GoodsSpu> findByPaymentMethodOrderByGmtPutOnTheShelf(@Param("paymentMethod")PaymentType paymentMethod,@Param("sort") Boolean sort);
 
+    List<GoodsSpu> findBySpuNoInAndIsDeleteFalseAndStatusTrue(@Param("spuNoCollection")Collection<Long> spuNoCollection);
+
+
 
 }
