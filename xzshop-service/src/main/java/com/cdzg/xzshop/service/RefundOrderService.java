@@ -67,12 +67,6 @@ public interface RefundOrderService extends IService<RefundOrder> {
     String sellerRefuseReceipt(SellerRefuseReceiptVO vo);
 
     /**
-     * 支付退款回调
-     * @param refundOrderId
-     */
-    void refundCallBack(Long refundOrderId);
-
-    /**
      * 根据id获取退款详情
      * @param id
      * @return

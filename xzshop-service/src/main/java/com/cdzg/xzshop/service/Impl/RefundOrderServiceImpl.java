@@ -303,40 +303,6 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     }
 
     @Override
-    public void refundCallBack(Long refundOrderId) {
-        RefundOrder refundOrder = this.getById(refundOrderId);
-        if (Objects.isNull(refundOrder)) {
-            log.error("没有该退款订单：" + refundOrderId);
-            throw new RuntimeException("没有该退款订单：" + refundOrderId);
-        }
-        // 退款订单
-        RefundOrder modify = new RefundOrder();
-        modify.setId(refundOrderId);
-        modify.setStatus(8);
-        this.updateById(modify);
-        // 订单
-        Order modifyOrder = new Order();
-        modifyOrder.setId(refundOrder.getOrderId());
-        if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
-            modifyOrder.setOrderStatus(7);
-            orderService.updateById(modifyOrder);
-        } else {
-            // 判断订单是否全退
-            List<OrderItem> orderItems = orderItemService.getByOrderId(refundOrder.getOrderId());
-            List<Long> collect = orderItems.stream().filter(o -> o.getStatus().equals(1)).map(OrderItem::getId).collect(Collectors.toList());
-            if (collect.size() == orderItems.size()) {
-                List<RefundOrder> list = this.list(lambdaQuery().eq(RefundOrder::getOrderId, refundOrder.getOrderId()));
-                long count = list.stream().filter(o -> o.getStatus().equals(8)).count();
-                if (count == collect.size()) {
-                    // 修改订单状态
-                    modifyOrder.setOrderStatus(9);
-                    orderService.updateById(modifyOrder);
-                }
-            }
-        }
-    }
-
-    @Override
     public RefundOrderDetailVO getAdminDetailById(Long id) {
         RefundOrderDetailVO vo = new RefundOrderDetailVO();
         RefundOrder refundOrder = this.getById(id);
@@ -358,16 +324,16 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 case 3:
                     vo.setDealTime(time);
                     break;
-                    // 买家发货
+                // 买家发货
                 case 4:
                     vo.setBuyerShipTime(time);
                     break;
-                    // 卖家收货处理时间
+                // 卖家收货处理时间
                 case 5:
                 case 6:
                     vo.setSellerDealGoodsTime(time);
                     break;
-                    // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
+                // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
                 case 7:
                     if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
                         vo.setDealTime(time);
@@ -375,7 +341,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                         vo.setSellerDealGoodsTime(time);
                     }
                     break;
-                    // 处理退款时间
+                // 处理退款时间
                 case 8:
                 case 9:
                     vo.setReturnMoneyTime(time);
@@ -410,11 +376,11 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             case 1:
                 minute = systemTimeConfig.getSystemAutoDeal();
                 break;
-                // 买家待发货
+            // 买家待发货
             case 3:
                 minute = systemTimeConfig.getSystemAutoFail();
                 break;
-                // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
+            // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
             case 7:
                 if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
                     minute = systemTimeConfig.getAutoRefund();
