@@ -1,10 +1,13 @@
 package com.cdzg.xzshop.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class RefundProcess {
 
     /**
@@ -32,4 +35,11 @@ public class RefundProcess {
      */
     private Long createBy;
 
+    public RefundProcess(Long refundOrderId, String content, Integer status, Long createBy) {
+        this.refundOrderId = refundOrderId;
+        this.content = content;
+        this.status = status;
+        this.createTime = LocalDateTime.now();
+        this.createBy = createBy;
+    }
 }

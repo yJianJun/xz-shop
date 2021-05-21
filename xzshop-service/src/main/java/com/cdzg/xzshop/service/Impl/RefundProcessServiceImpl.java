@@ -6,7 +6,6 @@ import com.cdzg.xzshop.mapper.RefundProcessMapper;
 import com.cdzg.xzshop.service.RefundProcessService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,12 +17,4 @@ public class RefundProcessServiceImpl extends ServiceImpl<RefundProcessMapper, R
         return this.list(lambdaQuery().eq(RefundProcess::getRefundOrderId, refundOrderId));
     }
 
-    @Override
-    public void saveProcess(Long refundOrderId, Long userId, String content) {
-        RefundProcess process = new RefundProcess();
-        process.setRefundOrderId(refundOrderId);
-        process.setCreateBy(userId);
-        process.setContent(content);
-        process.setCreateTime(LocalDateTime.now());
-    }
 }

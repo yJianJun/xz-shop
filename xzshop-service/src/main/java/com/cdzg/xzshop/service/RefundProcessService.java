@@ -14,6 +14,5 @@ public interface RefundProcessService extends IService<RefundProcess> {
      */
     List<RefundProcess> getByRefundOrderId(Long refundOrderId);
 
-    void saveProcess(Long refundOrderId, Long userId, String content);
 
 }

@@ -1,10 +1,10 @@
 package com.cdzg.xzshop.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.customer.vo.response.CustomerLoginResponse;
-import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
 import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.domain.*;
 import com.cdzg.xzshop.enums.RefundTypeEnum;
@@ -27,9 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -95,8 +99,8 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         RefundOrderStatisticVO vo = new RefundOrderStatisticVO();
         int total = this.count(lambdaQuery().ge(RefundOrder::getStatus, 0));
         int returnToDo = this.count(lambdaQuery().eq(RefundOrder::getStatus, 1));
-        int refundToDo = this.count(lambdaQuery().eq(RefundOrder::getStatus, 6));
-        int refundSuccess = this.count(lambdaQuery().eq(RefundOrder::getStatus, 8));
+        int refundToDo = this.count(lambdaQuery().eq(RefundOrder::getStatus, 7));
+        int refundSuccess = this.count(lambdaQuery().eq(RefundOrder::getStatus, 9));
         vo.setTotal(total);
         vo.setReturnToDo(returnToDo);
         vo.setRefundToDo(refundToDo);
@@ -128,7 +132,6 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }
         // 订单商品项
         Long orderItemId = vo.getOrderItemId();
-        OrderItem orderItem = orderItemService.getById(orderItemId);
         // 店铺
         ShopInfo shop = shopInfoService.getById(order.getShopId());
         // 用户
@@ -139,13 +142,8 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         BeanUtils.copyProperties(vo, refundOrder);
         refundOrder.setImg(StringUtils.join(vo.getImg(), ","));
         refundOrder.setCreateTime(now);
-        refundOrder.setOrderId(orderId);
         refundOrder.setOrderAmount(order.getTotalMoney());
         refundOrder.setPayType(order.getPayMethod());
-        refundOrder.setOrderItemId(orderItemId);
-        refundOrder.setGoodsName(orderItem.getGoodsName());
-        refundOrder.setGoodsNumber(orderItem.getGoodsCount().toString());
-        refundOrder.setRefundAmount(orderItem.getGoodsUnitPrice().multiply(orderItem.getGoodsCount()));
         refundOrder.setShopName(shop.getShopName());
         refundOrder.setOrgId(Long.parseLong(shop.getShopUnion()));
         refundOrder.setUserId(appUser.getUserBaseInfo().getId());
@@ -154,10 +152,6 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
 
         // 所有订单明细
         List<OrderItem> orderItemList = orderItemService.getByOrderId(orderId);
-
-        // 如果所有明细都退了，修改订单状态
-        long refundedCount = orderItemList.stream().filter(o -> !o.getId().equals(orderItemId) && o.getStatus().equals(1)).count();
-        boolean refundAll = refundedCount + 1 == orderItemList.size();
 
         // 退款类型
         Integer type = vo.getType();
@@ -169,21 +163,28 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         String processContent = null;
         // 修改原订单状态
         if (RefundTypeEnum.REFUND.getCode().equals(type)) {
+            // 不同类型的商品信息保存不一样
+            refundOrder.setGoodsName(orderItemList.stream().map(OrderItem::getGoodsName).collect(Collectors.joining(",")));
+            refundOrder.setGoodsNumber(orderItemList.stream().map(OrderItem::getGoodsCount).map(BigDecimal::toString).collect(Collectors.joining(",")));
+            BigDecimal refundMoney = orderItemList.stream().map(o -> o.getGoodsUnitPrice().multiply(o.getGoodsCount())).reduce(BigDecimal.ZERO, BigDecimal::add);
+            refundOrder.setRefundAmount(refundMoney);
             processContent = appUser.getUserBaseInfo().getUserName() + "提交退款申请";
-            refundOrder.setStatus(6);
-            modifyOrder.setOrderStatus(6);
-            orderService.updateById(modifyOrder);
+            // 修改状态
+            refundOrder.setStatus(7);
+            revertOrderStatus(refundOrder, 1);
         } else {
+            OrderItem orderItem = orderItemService.getById(orderItemId);
+            refundOrder.setOrderItemId(orderItemId);
+            refundOrder.setGoodsName(orderItem.getGoodsName());
+            refundOrder.setGoodsNumber(orderItem.getGoodsCount().toString());
+            refundOrder.setRefundAmount(orderItem.getGoodsUnitPrice().multiply(orderItem.getGoodsCount()));
             processContent = appUser.getUserBaseInfo().getUserName() + "提交退货申请";
             refundOrder.setStatus(1);
-            if (refundAll) {
-                modifyOrder.setOrderStatus(8);
-                orderService.updateById(modifyOrder);
-            }
+            revertOrderStatus(refundOrder, 3);
         }
-        // 保存流程
-        refundProcessService.saveProcess(refundOrder.getId(), Long.parseLong(appUser.getCustomerId()), processContent);
         this.save(refundOrder);
+        // 保存流程
+        refundProcessService.save(new RefundProcess(refundOrder.getId(), processContent, refundOrder.getStatus(), Long.parseLong(appUser.getCustomerId())));
         return null;
     }
 
@@ -191,21 +192,28 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     public String refuseRefund(RefuseRefundVO vo) {
         Long id = vo.getId();
         RefundOrder refundOrder = this.getById(id);
-        if (!Lists.newArrayList(1, 6).contains(refundOrder.getStatus())) {
+        if (!Lists.newArrayList(1, 7).contains(refundOrder.getStatus())) {
             return "该退款订单状态有误，操作无效！";
         }
         RefundOrder modify = new RefundOrder();
         modify.setId(id);
-        if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
-            modify.setStatus(7);
+        if (refundOrder.getStatus().equals(7)) {
+            modify.setStatus(8);
         } else {
             modify.setStatus(2);
         }
         modify.setRefuseReason(vo.getReason());
         this.updateById(modify);
+        // 修改订单明细
+        if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
+            revertOrderStatus(refundOrder, 5);
+        } else {
+            revertOrderStatus(refundOrder, 6);
+        }
         // 流程记录
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        refundProcessService.saveProcess(id, adminUser.getUserId(), adminUser.getUserBaseInfo().getUserName() + "拒绝退款。");
+        refundProcessService.save(new RefundProcess(refundOrder.getId(), adminUser.getUserBaseInfo().getUserName() + "拒绝退款。",
+                modify.getStatus(), adminUser.getUserId()));
         return null;
     }
 
@@ -216,17 +224,22 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         modify.setId(id);
         if (refundOrder.getStatus().equals(1)) {
             modify.setStatus(3);
-        } else if (refundOrder.getStatus().equals(6)) {
-            modify.setStatus(8);
-            // TODO 支付退款接口
-
+        } else if (refundOrder.getStatus().equals(7)) {
+            modify.setStatus(9);
+            revertOrderStatus(refundOrder, 2);
         } else {
             return "该退款订单状态有误，操作无效！";
         }
         this.updateById(modify);
         // 流程记录
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        refundProcessService.saveProcess(id, adminUser.getUserId(), adminUser.getUserBaseInfo().getUserName() + "同意退款。");
+        refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "同意退款。",
+                modify.getStatus(), adminUser.getUserId()));
+        // 退款最后操作，其他代码异常不能影响退款，退款异常回滚所有
+        if (refundOrder.getStatus().equals(7)) {
+            // TODO 支付退款接口
+
+        }
         return null;
     }
 
@@ -245,7 +258,8 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         this.updateById(modify);
         // 流程记录
         CustomerLoginResponse appUser = LoginSessionUtils.getAppUser();
-        refundProcessService.saveProcess(id, Long.parseLong(appUser.getCustomerId()), appUser.getUserBaseInfo().getUserName() + "买家已发货。");
+        refundProcessService.save(new RefundProcess(id, appUser.getUserBaseInfo().getUserName() + "买家已发货。",
+                modify.getStatus(), Long.parseLong(appUser.getCustomerId())));
         return null;
     }
 
@@ -255,12 +269,16 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         if (!refundOrder.getStatus().equals(4)) {
             return "该退款订单状态有误，操作无效！";
         }
-        // TODO 支付退款
-
-
+        RefundOrder modify = new RefundOrder();
+        modify.setId(id);
+        modify.setStatus(7);
+        this.updateById(modify);
         // 流程记录
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        refundProcessService.saveProcess(id, adminUser.getUserId(), adminUser.getUserBaseInfo().getUserName() + "卖家已收货。");
+        refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "卖家已收货。",
+                modify.getStatus(), adminUser.getUserId()));
+        // TODO 支付退款
+
         return null;
     }
 
@@ -276,11 +294,11 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         modify.setStatus(5);
         modify.setRefuseReceiptReason(vo.getRefuseReason());
         this.updateById(modify);
-        // TODO 商家拒绝收货后流程不清楚
-
+        revertOrderStatus(refundOrder, 6);
         // 流程记录
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        refundProcessService.saveProcess(id, adminUser.getUserId(), adminUser.getUserBaseInfo().getUserName() + "卖家拒绝收货。");
+        refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "卖家拒绝收货。",
+                modify.getStatus(), adminUser.getUserId()));
         return null;
     }
 
@@ -337,22 +355,31 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             switch (status) {
                 // 处理时间
                 case 2:
-                case 3: vo.setDealTime(time);
-                // 买家发货
-                case 4: vo.setBuyerShipTime(time);
-                // 卖家收货处理时间
+                case 3:
+                    vo.setDealTime(time);
+                    break;
+                    // 买家发货
+                case 4:
+                    vo.setBuyerShipTime(time);
+                    break;
+                    // 卖家收货处理时间
                 case 5:
-                case 6: vo.setSellerDealGoodsTime(time);
-                // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
+                case 6:
+                    vo.setSellerDealGoodsTime(time);
+                    break;
+                    // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
                 case 7:
                     if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
                         vo.setDealTime(time);
                     } else {
                         vo.setSellerDealGoodsTime(time);
                     }
-                // 处理退款时间
+                    break;
+                    // 处理退款时间
                 case 8:
-                case 9: vo.setReturnMoneyTime(time);
+                case 9:
+                    vo.setReturnMoneyTime(time);
+                    break;
             }
         }
         return vo;
@@ -380,16 +407,21 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         LocalDateTime startTime = process.getCreateTime();
         switch (status) {
             // 处理时间
-            case 1: minute = systemTimeConfig.getSystemAutoDeal();
-            // 买家待发货
-            case 3: minute = systemTimeConfig.getSystemAutoFail();
-            // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
+            case 1:
+                minute = systemTimeConfig.getSystemAutoDeal();
+                break;
+                // 买家待发货
+            case 3:
+                minute = systemTimeConfig.getSystemAutoFail();
+                break;
+                // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
             case 7:
                 if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
                     minute = systemTimeConfig.getAutoRefund();
                 } else {
                     minute = systemTimeConfig.getSystemAutoRefund();
                 }
+                break;
         }
         Duration duration = Duration.between(startTime, LocalDateTime.now());
         long restTime = duration.toMinutes();
@@ -399,10 +431,11 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
 
     /**
      * 获取退货/退款的商品信息
+     *
      * @param refundOrder
      * @return
      */
-    private List<GoodsInfoVO> getGoodsInfoVOS(RefundOrder refundOrder){
+    private List<GoodsInfoVO> getGoodsInfoVOS(RefundOrder refundOrder) {
         List<OrderItem> orderItems = orderItemService.getByOrderId(refundOrder.getOrderId());
         List<GoodsInfoVO> goodsInfoVOS = Lists.newArrayList();
         // 商品信息
@@ -469,6 +502,25 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }).collect(Collectors.toList()));
         pageResultVO.setPageParams(page);
         return pageResultVO;
+    }
+
+    /**
+     * 修改订单明细的状态
+     *
+     * @param refundOrder
+     * @param status
+     */
+    private void revertOrderStatus(RefundOrder refundOrder, Integer status) {
+        boolean refund = refundOrder.getRefundType().equals(RefundTypeEnum.REFUND.getCode());
+        // 还原订单明细状态
+        LambdaUpdateWrapper<OrderItem> updateWrapper = new LambdaUpdateWrapper<>();
+        if (refund) {
+            updateWrapper.eq(OrderItem::getOrderId, refundOrder.getOrderId());
+        } else {
+            updateWrapper.eq(OrderItem::getId, refundOrder.getOrderItemId());
+        }
+        updateWrapper.set(OrderItem::getStatus, status);
+        orderItemService.update(updateWrapper);
     }
 
 }
