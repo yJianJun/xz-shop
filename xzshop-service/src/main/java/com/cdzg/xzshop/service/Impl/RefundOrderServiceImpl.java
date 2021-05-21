@@ -357,13 +357,16 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 case 2:
                 case 3:
                     vo.setDealTime(time);
+                    break;
                     // 买家发货
                 case 4:
                     vo.setBuyerShipTime(time);
+                    break;
                     // 卖家收货处理时间
                 case 5:
                 case 6:
                     vo.setSellerDealGoodsTime(time);
+                    break;
                     // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
                 case 7:
                     if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
@@ -371,10 +374,12 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                     } else {
                         vo.setSellerDealGoodsTime(time);
                     }
+                    break;
                     // 处理退款时间
                 case 8:
                 case 9:
                     vo.setReturnMoneyTime(time);
+                    break;
             }
         }
         return vo;
@@ -404,9 +409,11 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             // 处理时间
             case 1:
                 minute = systemTimeConfig.getSystemAutoDeal();
+                break;
                 // 买家待发货
             case 3:
                 minute = systemTimeConfig.getSystemAutoFail();
+                break;
                 // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
             case 7:
                 if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
@@ -414,6 +421,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 } else {
                     minute = systemTimeConfig.getSystemAutoRefund();
                 }
+                break;
         }
         Duration duration = Duration.between(startTime, LocalDateTime.now());
         long restTime = duration.toMinutes();
@@ -511,7 +519,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         } else {
             updateWrapper.eq(OrderItem::getId, refundOrder.getOrderItemId());
         }
-        updateWrapper.set(OrderItem::getStatus, 0);
+        updateWrapper.set(OrderItem::getStatus, status);
         orderItemService.update(updateWrapper);
     }
 
