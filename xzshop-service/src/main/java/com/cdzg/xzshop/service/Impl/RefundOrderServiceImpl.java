@@ -118,14 +118,6 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             return "该订单还未付款!";
         } else if (order.getOrderStatus().equals(5)) {
             return "该订单已关闭!";
-        } else if (order.getOrderStatus().equals(6)) {
-            return "该订单退款中!";
-        } else if (order.getOrderStatus().equals(8)) {
-            return "该订单已退款!";
-        } else if (order.getOrderStatus().equals(9)) {
-            return "该订单退货中!";
-        } else if (order.getOrderStatus().equals(10)) {
-            return "该订单已退货!";
         }
         if (order.getPayMethod().equals(3)) {
             return "积分购买无法退款!";
