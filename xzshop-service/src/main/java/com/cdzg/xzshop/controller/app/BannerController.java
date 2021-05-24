@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -55,7 +56,7 @@ public class BannerController {
         CmsAppBannerRequest bannerReq = new CmsAppBannerRequest();
         bannerReq.setBannerGroupId("800");
         List<CmsAppBannerResponse> bannerConfigList = bannerClient.getBannerConfigList(bannerReq, token);
-        return ApiResponse.buildSuccessResponse((!CollectionUtils.isEmpty(bannerConfigList))?(bannerConfigList.size() > 10 ? bannerConfigList.subList(0,10):bannerConfigList):null);
+        return ApiResponse.buildSuccessResponse((!CollectionUtils.isEmpty(bannerConfigList))?(bannerConfigList.size() > 10 ? bannerConfigList.subList(0,10):bannerConfigList): Collections.emptyList());
     }
 
 }
