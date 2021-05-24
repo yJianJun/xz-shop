@@ -165,7 +165,7 @@ public class WeChatServiceImpl implements PayService {
      * @param orderno 商品订单号
      */
     @Override
-    public String refund(String orderno, String tradeno, String refundFee) throws WxPayException {
+    public String refund(String orderno, Long tradeno, String refundFee) throws WxPayException {
 
         long refundId = snowflakeIdWorker.nextId(); //yjjtodo 雪花算法生成退款交易号
         WxPayRefundRequest request = WxPayRefundRequest.newBuilder()
@@ -173,7 +173,7 @@ public class WeChatServiceImpl implements PayService {
                 .totalFee(1) //yjjtodo 订单金额 整数 分
                 .refundFee(new BigDecimal(refundFee).intValue())
                 .outTradeNo(orderno)
-                .transactionId(tradeno).build();
+                .transactionId(tradeno+"").build();
         return Json.pretty(this.wxService.refund(request));
     }
 

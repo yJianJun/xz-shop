@@ -5,6 +5,7 @@ import com.cdzg.cms.api.vo.app.request.CmsAppBannerRequest;
 import com.cdzg.cms.api.vo.app.response.CmsAppBannerResponse;
 import com.cdzg.customer.vo.response.CustomerLoginResponse;
 import com.cdzg.xzshop.componet.BannerClient;
+import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.utils.BaseParameterUtil;
@@ -46,6 +47,7 @@ public class BannerController {
 
     @MobileApi
     @GetMapping("/homePage")
+    @IgnoreAuth
     @ApiOperation("商城首页轮播图")
     public ApiResponse<List<CmsAppBannerResponse>> homePage() {
 

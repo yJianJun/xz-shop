@@ -19,6 +19,7 @@ import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +34,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@RequestMapping("app/pay")
-@RestController
-@Api(tags = "app_支付")
+@Component
 @Validated
-public class PayController {
+public class PayDecoration {
 
     @Autowired
     @Qualifier("weChatService")
@@ -133,38 +132,28 @@ public class PayController {
     ) throws Exception {
         String refundFee = refundParam.getRefundFee();
         String tradeno = refundParam.getTransactionId();
-        String orderno = refundParam.getOrderno();
+        Long orderId = refundParam.getOrderno();
 
-        //yjjtodo: 对订单号对应的订单数据 进行常规性校验 幂等
-        /* 查询订单信息 */
-//        OrderInfo info = orderInfoService.findOneByOrderNo(num);
-//        OrderItem item = orderItemService.findOneByOrderNo(num);
-//
-//        if (Objects.isNull(info) || Objects.isNull(item)) {
-//            return CommonResult.failed("无此订单！", ResultCode.FAILED.getCode());
-////            throw ApiException.builder().errorCode(ResultCode.FAILED).message("无此订单！").build();
-//        }
-//
-//        if (info.getStatus() != OrderStatus.Unpaid && info.getStatus() != OrderStatus.Payment_Failed) {
-//            return CommonResult.failed(ResultCode.Illegal.getMessage(), ResultCode.Illegal.getCode());
-////            throw ApiException.builder().errorCode(ResultCode.Illegal).build();
-//        }
-        //yjjtodo: 对此订单对应的商品 进行常规性校验
-        //Voucher voucher = voucherService.findOneBySpuNoAndIsDeleteFalseAndIsExpiredFalse(item.getSpuId());
-//        if (voucher.getIsDelete()) {
-//            return CommonResult.failed("此商品已删除", ResultCode.FAILED.getCode());
-////            throw ApiException.builder().errorCode(ResultCode.FAILED).message("此商品已删除").build();
-//        }
-//
-//        if (voucher.getIsExpired()) {
-//            return CommonResult.failed("此商品过期下架", ResultCode.FAILED.getCode());
-//        }
+        Order order = orderService.getById(orderId);
+        List<Long> itemsIds = orderItemService.findIdByOrderIdAndDeleted(orderId,0);
+
+        if (Objects.isNull(order) || CollectionUtils.isEmpty(itemsIds)) {
+            throw new BaseException("无此订单");
+        }
+
+        // 订单状态（1待付款2.待发货3.已发货4.已完成5.已关闭）
+        Integer orderStatus = order.getOrderStatus();
+
+        if (orderStatus == 1 || orderStatus ==5){
+            throw new BaseException(ResultCode.Illegal);
+        }
+
         String body;
         if (PaymentMethod.Wechat == type) {
 
-            body = refund(wxPayService, tradeno, orderno, refundFee);
+            body = refund(wxPayService, tradeno, orderId, refundFee);
         } else {
-            body = refund(aliPayService, tradeno, orderno, refundFee);
+            body = refund(aliPayService, tradeno, orderId, refundFee);
         }
         return ApiResponse.buildSuccessResponse(body);
     }
@@ -184,7 +173,7 @@ public class PayController {
         return aliPayService.callBack(request, response);
     }
 
-    String refund(PayService payService, String tradeno, String orderno, String refundFee) throws Exception {
+    String refund(PayService payService, String tradeno, Long orderno, String refundFee) throws Exception {
         return payService.refund(tradeno, orderno, refundFee);
     }
 
