@@ -50,11 +50,11 @@ public class PageUtil {
     public static  PageResultVO<T> transform(Page<T> pageInfo) {
 
         PageResultVO<T> pageResultVO = new PageResultVO<>();
-        pageResultVO.setCurrentPage(pageInfo.getPageable().getPageNumber());
+        pageResultVO.setCurrentPage(pageInfo.getPageable().getPageNumber() + 1);
         pageResultVO.setPageSize(pageInfo.getSize());
         pageResultVO.setData(pageInfo.getContent());
         pageResultVO.setTotalPage(pageInfo.getTotalPages());
-        pageResultVO.setTotalNum(pageInfo.getNumberOfElements());
+        pageResultVO.setTotalNum(new Long(pageInfo.getTotalElements()).intValue());
         return pageResultVO;
 
     }
