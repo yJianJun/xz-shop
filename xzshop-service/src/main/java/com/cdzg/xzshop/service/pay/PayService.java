@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service.pay;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
 
@@ -28,7 +29,7 @@ public interface PayService {
      * @return 返回的信息直接发给客户端即可
      * @throws IOException
      */
-    String pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception;
+    Object pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception;
 
     /**
      * 微信服务器调用该接口，进行数据异步传回作用
@@ -39,5 +40,5 @@ public interface PayService {
      */
     String callBack(HttpServletRequest request, HttpServletResponse response);
 
-    String refund(String tradeno, Long orderno, String refundFee) throws Exception;
+    Object refund(String tradeno, Long orderno,Long refundId,String refundFee) throws Exception;
 }

@@ -1,6 +1,7 @@
 package com.cdzg.xzshop.componet.pay;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
@@ -55,14 +56,18 @@ public class PayDecoration {
     @Resource
     private GoodsSpuService goodsSpuService;
 
-    @MobileApi
-    @PostMapping("/{type}")
-    @ApiOperation("支付")
-    @IgnoreAuth
-    public ApiResponse<String> pay( @PathVariable("type") @Valid @NotNull @ApiParam(value = "支付方式", required = true, allowableValues = "1,2") PaymentMethod type,
-                                   @ApiParam(value = "订单支付参数", required = true) @Valid @RequestBody PayParam payParam) throws Exception {
+
+    /**
+     *
+     * @param payParam
+     * @return 有两种返回类型 wechat:WxPayUnifiedOrderResult / aLiPay:AlipayTradeAppPayResponse
+     * @throws Exception
+     */
+    @ApiOperation("订单支付")
+    public Object pay(PayParam payParam) throws Exception {
 
         Long orderId = payParam.getOrderId();
+        PaymentMethod type = payParam.getType();
 
         Order order = orderService.getById(orderId);
         List<Long> itemsIds = orderItemService.findIdByOrderIdAndDeleted(orderId,0);
@@ -89,7 +94,7 @@ public class PayDecoration {
             }
         }
 
-        String body;
+        Object body;
         if (PaymentMethod.Wechat == type) {
 
             String ip = payParam.getIp();
@@ -119,20 +124,18 @@ public class PayDecoration {
     }
 
     /**
+     *
      * @param refundParam
-     * @param type
-     * @return
+     * @return 有两种返回类型 wechat: WxPayRefundResult / aLiPay: AlipayTradeRefundResponse
      * @throws Exception
      */
-    @MobileApi
-    @PostMapping("/{type}/refund")
-    @ApiOperation("退款")
-    public ApiResponse<String> refund(@Valid @RequestBody @ApiParam(value = "订单退款参数", required = true) RefundParam refundParam,
-                                      @Valid @PathVariable("type") @NotNull @ApiParam(value = "支付方式", required = true, allowableValues = "1,2") PaymentMethod type
-    ) throws Exception {
+    @ApiOperation("订单退款")
+    public Object refund(RefundParam refundParam) throws Exception {
         String refundFee = refundParam.getRefundFee();
         String tradeno = refundParam.getTransactionId();
         Long orderId = refundParam.getOrderno();
+        Long refundId = refundParam.getRefundId();
+        PaymentMethod type = refundParam.getType();
 
         Order order = orderService.getById(orderId);
         List<Long> itemsIds = orderItemService.findIdByOrderIdAndDeleted(orderId,0);
@@ -148,14 +151,14 @@ public class PayDecoration {
             throw new BaseException(ResultCode.Illegal);
         }
 
-        String body;
+        Object body;
         if (PaymentMethod.Wechat == type) {
 
-            body = refund(wxPayService, tradeno, orderId, refundFee);
+            body = refund(wxPayService, tradeno, orderId,refundId,refundFee);
         } else {
-            body = refund(aliPayService, tradeno, orderId, refundFee);
+            body = refund(aliPayService, tradeno, orderId,refundId,refundFee);
         }
-        return ApiResponse.buildSuccessResponse(body);
+        return body;
     }
 
 
@@ -173,8 +176,8 @@ public class PayDecoration {
         return aliPayService.callBack(request, response);
     }
 
-    String refund(PayService payService, String tradeno, Long orderno, String refundFee) throws Exception {
-        return payService.refund(tradeno, orderno, refundFee);
+    Object refund(PayService payService, String tradeno, Long orderno,Long refundId,String refundFee) throws Exception {
+        return payService.refund(tradeno, orderno,refundId,refundFee);
     }
 
     String query(PayService payService, String transactionId, String outTradeNo) throws Exception {

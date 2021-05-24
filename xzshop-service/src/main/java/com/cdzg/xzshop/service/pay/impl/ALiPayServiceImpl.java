@@ -13,18 +13,14 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.cdzg.xzshop.common.BaseException;
-import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
-import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.mapper.OrderMapper;
 import com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper;
-import com.cdzg.xzshop.mapper.ShopInfoMapper;
 import com.cdzg.xzshop.service.pay.PayService;
 import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service("aliPayService")
@@ -53,7 +48,7 @@ public class ALiPayServiceImpl implements PayService {
     private ReceivePaymentInfoMapper paymentInfoMapper;
 
     @Override
-    public String pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
+    public Object pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         AlipayClient alipayClient = AlipayConfig.buildAlipayClient();
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
@@ -81,7 +76,7 @@ public class ALiPayServiceImpl implements PayService {
             AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
             //就是orderString 可以直接给客户端请求，无需再做处理。
             log.info(Json.pretty(response.getBody()));
-            return response.getBody();
+            return response;
         } catch (Exception e) {
             log.error("支付宝支付调用接口异常:{}", Json.pretty(e.getStackTrace()));
             throw e;
@@ -221,12 +216,11 @@ public class ALiPayServiceImpl implements PayService {
      *
      * 一笔退款失败后重新提交，要采用原来的退款单号。
      * 总退款金额不能超过用户实际支付金额
+     * @return
      */
     @Override
-    public String refund(String tradeNo, Long outTradeNo, String refundAmount) throws AlipayApiException {
-        String returnStr = null;
+    public Object refund(String tradeNo, Long outTradeNo,Long refundId,String refundAmount) throws AlipayApiException {
 
-        long refundId = snowflakeIdWorker.nextId();
         try {
             ////获得初始化的AlipayClient
             AlipayClient alipayClient = AlipayConfig.getAlipayClient();
@@ -248,17 +242,15 @@ public class ALiPayServiceImpl implements PayService {
             AlipayTradeRefundResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {
                 log.info("支付宝app退款成功");
-                returnStr = response.getBody();
+                return response;
             } else {
-                returnStr = response.getSubMsg();//失败会返回错误信息
-                log.debug("支付宝app退款失败:{}", returnStr);
+                log.debug("支付宝app退款失败:{}", response.getSubMsg());//失败会返回错误信息
+                return response;
             }
-
         } catch (Exception e) {
             log.error("支付宝app退款报错:{}", Json.pretty(e.getStackTrace()));
             throw e;
         }
-        return returnStr;
     }
 
     /**

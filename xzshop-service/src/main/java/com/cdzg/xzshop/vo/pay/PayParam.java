@@ -1,6 +1,7 @@
 package com.cdzg.xzshop.vo.pay;
 
 
+import com.cdzg.xzshop.constant.PaymentMethod;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,5 +21,9 @@ public class PayParam {
 
     @ApiModelProperty(value = "终端IP地址（微信支付时必传）",allowEmptyValue = true,position = 2)
     private String ip;
+
+    @ApiModelProperty(value = "支付方式", required = true, allowableValues = "1,2")
+    @NotNull
+    private PaymentMethod type;
 
 }
