@@ -39,5 +39,5 @@ public interface PayService {
      */
     String callBack(HttpServletRequest request, HttpServletResponse response);
 
-    String refund(String tradeno, String orderno, String refundFee) throws Exception;
+    String refund(String tradeno, Long orderno, String refundFee) throws Exception;
 }
