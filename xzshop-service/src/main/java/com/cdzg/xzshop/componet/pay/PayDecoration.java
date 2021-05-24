@@ -94,15 +94,13 @@ public class PayDecoration {
             }
         }
 
-        Object body;
         if (PaymentMethod.Wechat == type) {
 
             String ip = payParam.getIp();
-            body = wxPayService.pay(orderId,ip,spus,order);
+            return wxPayService.pay(orderId,ip,spus,order);
         } else {
-            body = aliPayService.pay(orderId, null, spus,order);
+            return aliPayService.pay(orderId, null, spus,order);
         }
-        return ApiResponse.buildSuccessResponse(body);
     }
 
 
@@ -151,14 +149,12 @@ public class PayDecoration {
             throw new BaseException(ResultCode.Illegal);
         }
 
-        Object body;
         if (PaymentMethod.Wechat == type) {
 
-            body = refund(wxPayService, tradeno, orderId,refundId,refundFee);
+           return refund(wxPayService, tradeno, orderId,refundId,refundFee);
         } else {
-            body = refund(aliPayService, tradeno, orderId,refundId,refundFee);
+            return refund(aliPayService, tradeno, orderId,refundId,refundFee);
         }
-        return body;
     }
 
     Object refund(PayService payService, String tradeno, Long orderno,Long refundId,String refundFee) throws Exception {

@@ -15,6 +15,7 @@ import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
@@ -144,7 +145,7 @@ public class WeChatServiceImpl implements PayService {
      * @param order
      */
     @Override
-    public Object pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws WxPayException {
+    public WxPayUnifiedOrderResult pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws WxPayException {
 
         WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
         // 测试时，将支付金额设置为 1 分钱
@@ -172,7 +173,7 @@ public class WeChatServiceImpl implements PayService {
      *@return
      */
     @Override
-    public Object refund(String tradeno, Long orderno,Long refundId,String refundFee) throws WxPayException {
+    public WxPayRefundResult refund(String tradeno, Long orderno, Long refundId, String refundFee) throws WxPayException {
 
         WxPayRefundRequest request = WxPayRefundRequest.newBuilder()
                 .outRefundNo(Long.toString(refundId)) // 商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔。

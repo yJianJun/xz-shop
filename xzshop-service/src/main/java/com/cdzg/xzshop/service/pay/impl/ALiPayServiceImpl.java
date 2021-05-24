@@ -48,7 +48,7 @@ public class ALiPayServiceImpl implements PayService {
     private ReceivePaymentInfoMapper paymentInfoMapper;
 
     @Override
-    public Object pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
+    public AlipayTradeAppPayResponse pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         AlipayClient alipayClient = AlipayConfig.buildAlipayClient();
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
@@ -219,7 +219,7 @@ public class ALiPayServiceImpl implements PayService {
      * @return
      */
     @Override
-    public Object refund(String tradeNo, Long outTradeNo,Long refundId,String refundAmount) throws AlipayApiException {
+    public AlipayTradeRefundResponse refund(String tradeNo, Long outTradeNo,Long refundId,String refundAmount) throws AlipayApiException {
 
         try {
             ////获得初始化的AlipayClient
