@@ -1,4 +1,4 @@
-package com.cdzg.xzshop.controller.app.pay;
+package com.cdzg.xzshop.componet.pay;
 
 
 import com.cdzg.xzshop.common.BaseException;

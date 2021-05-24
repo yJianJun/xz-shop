@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service.pay.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
@@ -222,26 +223,26 @@ public class ALiPayServiceImpl implements PayService {
      * 总退款金额不能超过用户实际支付金额
      */
     @Override
-    public String refund(String outTradeNo, Long tradeNo, String refundAmount) throws AlipayApiException {
+    public String refund(String tradeNo, Long outTradeNo, String refundAmount) throws AlipayApiException {
         String returnStr = null;
 
         long refundId = snowflakeIdWorker.nextId();
-
-        //todo:订单编号,支付宝交易号不为空
         try {
             ////获得初始化的AlipayClient
             AlipayClient alipayClient = AlipayConfig.getAlipayClient();
             //创建API对应的request类
             AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
-            ////设置业务参数
-            //alipay.trade.refund
             AlipayTradeRefundModel model = new AlipayTradeRefundModel();
-            model.setOutTradeNo(outTradeNo);
-            model.setTradeNo(tradeNo+"");
-            //yjjtodo 测试时0.01 退款金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
+            //订单支付时传入的商户订单号，商家自定义且保证商家系统中唯一。与支付宝交易号 trade_no 不能同时为空。
+            model.setOutTradeNo(outTradeNo+"");
+            //	支付宝交易号，和商户订单号 out_trade_no 不能同时为空。
+            model.setTradeNo(tradeNo);
+            //todo：测试时0.01 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
             model.setRefundAmount("0.01");
+            //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
             model.setOutRequestNo(Long.toString(refundId));
-            // model.setRefundReason(refundReason);
+            //	退款原因说明，商家自定义。
+            model.setRefundReason("正常退款");
 
             request.setBizModel(model);
             AlipayTradeRefundResponse response = alipayClient.execute(request);

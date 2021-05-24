@@ -163,17 +163,27 @@ public class WeChatServiceImpl implements PayService {
      *
      * @param tradeno 微信交易订单号
      * @param orderno 商品订单号
+     * 当交易发生之后一段时间内，由于买家或者卖家的原因需要退款时，卖家可以通过退款接口将支付款退还给买家，
+     * 微信支付将在收到退款请求并且验证成功之后，按照退款规则将支付款按原路退到买家账号上。
+     *
+     * 微信支付退款支持单笔交易分多次退款，多次退款需要提交原支付订单的商户订单号和设置不同的退款单号。
+     * 申请退款总金额不能超过订单金额。
+     * 一笔退款失败后重新提交，请不要更换退款单号，请使用原商户退款单号。
+     *
+     * 申请退款接口的返回仅代表业务的受理情况，具体退款是否成功，需要通过退款查询接口获取结果。
      */
     @Override
-    public String refund(String orderno, Long tradeno, String refundFee) throws WxPayException {
+    public String refund(String tradeno, Long orderno, String refundFee) throws WxPayException {
 
         long refundId = snowflakeIdWorker.nextId(); //yjjtodo 雪花算法生成退款交易号
         WxPayRefundRequest request = WxPayRefundRequest.newBuilder()
-                .outRefundNo(Long.toString(refundId))
-                .totalFee(1) //yjjtodo 订单金额 整数 分
-                .refundFee(new BigDecimal(refundFee).intValue())
-                .outTradeNo(orderno)
-                .transactionId(tradeno+"").build();
+                .outRefundNo(Long.toString(refundId)) // 商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔。
+                .totalFee(1) //todo: 测试时设置1分钱 订单总金额，单位为分，只能为整数，详见支付金额
+                .refundFee(1) //todo: 测试时设置1分钱 退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
+                .outTradeNo(orderno+"") //商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。
+                // transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no
+                .transactionId(tradeno) //微信生成的订单号，在支付通知中有返回
+                .build();
         return Json.pretty(this.wxService.refund(request));
     }
 
