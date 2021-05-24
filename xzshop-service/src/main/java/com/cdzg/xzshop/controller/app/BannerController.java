@@ -47,7 +47,6 @@ public class BannerController {
 
     @MobileApi
     @GetMapping("/homePage")
-    @IgnoreAuth
     @ApiOperation("商城首页轮播图")
     public ApiResponse<List<CmsAppBannerResponse>> homePage() {
 
