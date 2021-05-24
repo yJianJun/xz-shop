@@ -286,7 +286,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         modify.setStatus(5);
         modify.setRefuseReceiptReason(vo.getRefuseReason());
         this.updateById(modify);
-        revertOrderStatus(refundOrder, 6);
+        revertOrderStatus(refundOrder, 5);
         // 流程记录
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "卖家拒绝收货。",
