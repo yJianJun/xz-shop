@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/search")
+@RequestMapping("app/search")
 @Validated
 @Api(tags = {"app_商城搜索"}, description = "搜索相关接口")
 public class SearchController {
@@ -48,6 +48,9 @@ public class SearchController {
     @RequestMapping(value = "/history", method = RequestMethod.GET)
     @ApiOperation(value = "搜索历史关键词列表")
     @MobileApi
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse<List<String>> getSearchHistory() {
 
         String customerId = LoginSessionUtils.getAppUser().getCustomerId();
@@ -58,6 +61,9 @@ public class SearchController {
     @MobileApi
     @PostMapping("/goods")
     @ApiOperation("搜索商品列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse<PageResultVO<GoodsSpu>> search(@ApiParam(value = "商品搜索列表分页模型", required = true) @RequestBody @Valid GoodsSpuSearchPageVo vo) {
 
         String customerId = LoginSessionUtils.getAppUser().getCustomerId();
