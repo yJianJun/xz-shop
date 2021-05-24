@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("app/refundOrder")
-@Api(tags = "06_app_订单退款/退货")
+@Api(tags = "06_app_订单退款退货")
 public class RefundOrderAppController {
 
     @Autowired
