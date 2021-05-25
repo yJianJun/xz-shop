@@ -15,6 +15,7 @@ import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.BaseWxPayResult;
+import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
@@ -127,12 +128,24 @@ public class WeChatServiceImpl implements PayService {
     /**
      * 查询微信支付订单
      *
-     * @param transactionId 微信交易订单号
-     * @param outTradeNo    商品订单号
+     * @param transactionId 微信交易订单号  微信的订单号，优先使用
+     * @param outTradeNo    商品订单号      商户系统内部的订单号，当没提供transaction_id时需要传这个。
+     *
+     * 该接口提供所有微信支付订单的查询，商户可以通过该接口主动查询订单状态，完成下一步的业务逻辑。
+     *
+     * 需要调用查询接口的情况：
+     *
+     * ◆ 当商户后台、网络、服务器等出现异常，商户系统最终未接收到支付通知（查单实现可参考：支付回调和查单实现指引）；
+     * ◆ 调用支付接口后，返回系统错误或未知交易状态情况；
+     * ◆ 调用被扫支付API，返回USERPAYING的状态；
+     * ◆ 调用关单或撤销接口API之前，需确认支付状态；
+     *
+     * 交易成功判断条件： return_code、result_code和trade_state都为SUCCESS
+     *
      */
     @Override
-    public String query(String transactionId, String outTradeNo) throws WxPayException {
-        return Json.pretty(this.wxService.queryOrder(transactionId, outTradeNo));
+    public WxPayOrderQueryResult query(String transactionId, String outTradeNo) throws WxPayException {
+        return this.wxService.queryOrder(transactionId, outTradeNo);
     }
 
     /**

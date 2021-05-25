@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface PayService {
 
-    String query(String transactionId,String outTradeNo) throws Exception;
+    Object query(String transactionId,String outTradeNo) throws Exception;
     /**
      * 创建支付订单，对应文章中第一步，由合理的业务 service 调用，
      * 比如：购买商品业务中：

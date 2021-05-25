@@ -256,12 +256,19 @@ public class ALiPayServiceImpl implements PayService {
     /**
      * 查看支付订单信息
      *
-     * @param outTradeNo 商户网站唯一订单号
-     * @param tradeNo    支付宝交易号
+     * @param outTradeNo 商户网站唯一订单号 订单支付时传入的商户订单号,和支付宝交易号不能同时为空。trade_no,out_trade_no如果同时存在优先取trade_no
+     * @param tradeNo    支付宝交易号  支付宝交易号，和商户订单号不能同时为空
      * @return 公共响应参数 code,msg    响应参数: https://docs.open.alipay.com/api_1/alipay.trade.query
+     *
+     * 该接口提供所有支付宝支付订单的查询，商户可以通过该接口主动查询订单状态，完成下一步的业务逻辑。
+     * 需要调用查询接口的情况：
+     * 当商户后台、网络、服务器等出现异常，商户系统最终未接收到支付通知；
+     * 调用支付接口后，返回系统错误或未知交易状态情况；
+     * 调用alipay.trade.pay，返回INPROCESS的状态；
+     * 调用alipay.trade.cancel之前，需确认支付状态；
      */
     @Override
-    public String query(String outTradeNo, String tradeNo) throws AlipayApiException {
+    public AlipayTradeQueryResponse query(String tradeNo, String outTradeNo) throws AlipayApiException {
 
         AlipayClient alipayClient = AlipayConfig.buildAlipayClient();
         AlipayTradeQueryRequest alipayTradeQueryRequest = new AlipayTradeQueryRequest();
@@ -270,8 +277,7 @@ public class ALiPayServiceImpl implements PayService {
         model.setTradeNo(tradeNo);
         alipayTradeQueryRequest.setBizModel(model);
         try {
-            AlipayTradeQueryResponse alipayTradeQueryResponse = alipayClient.execute(alipayTradeQueryRequest);
-            return alipayTradeQueryResponse.getBody();
+            return alipayClient.execute(alipayTradeQueryRequest);
         } catch (AlipayApiException e) {
             log.error("支付宝app查询支付订单报错:{}", Json.pretty(e.getStackTrace()));
             throw e;

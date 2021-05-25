@@ -103,22 +103,25 @@ public class PayDecoration {
         }
     }
 
-
+    /**
+     *
+     * @param transactionId
+     * @param outTradeNo
+     * @param type
+     * @return  有2种返回类型 AlipayTradeQueryResponse / WxPayOrderQueryResult
+     * @throws Exception
+     */
     @ApiOperation("查询交易订单信息")
-    @MobileApi
-    @GetMapping(value = "/{type}/query")
-    public ApiResponse<String> query(@Valid @RequestParam("transactionId") @NotBlank @ApiParam(value = "微信/支付宝交易号", required = true) String transactionId,
-                                     @Valid @RequestParam("outTradeNo") @NotBlank @ApiParam(value = "商品订单号", required = true) String outTradeNo,
-                                     @Valid @PathVariable("type") @NotNull @ApiParam(value = "支付方式", required = true, allowableValues = "1,2") PaymentMethod type) throws Exception {
+    public Object query(@Valid @NotBlank @ApiParam(value = "微信/支付宝交易号", required = true) String transactionId,
+                                     @Valid @NotBlank @ApiParam(value = "商品订单号", required = true) String outTradeNo,
+                                     @Valid @NotNull @ApiParam(value = "支付方式", required = true, allowableValues = "1,2") PaymentMethod type) throws Exception {
 
-        String body;
         if (PaymentMethod.Wechat == type) {
 
-            body = query(wxPayService, transactionId, outTradeNo);
+           return query(wxPayService, transactionId, outTradeNo);
         } else {
-            body = query(aliPayService, transactionId, outTradeNo);
+          return query(aliPayService, transactionId, outTradeNo);
         }
-        return ApiResponse.buildSuccessResponse(body);
     }
 
     /**
@@ -161,7 +164,7 @@ public class PayDecoration {
         return payService.refund(tradeno, orderno,refundId,refundFee);
     }
 
-    String query(PayService payService, String transactionId, String outTradeNo) throws Exception {
+    Object query(PayService payService, String transactionId, String outTradeNo) throws Exception {
         return payService.query(transactionId, outTradeNo);
     }
 
