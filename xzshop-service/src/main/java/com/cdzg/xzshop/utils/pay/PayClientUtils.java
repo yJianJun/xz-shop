@@ -1,38 +1,28 @@
-package com.cdzg.xzshop.componet.pay;
+package com.cdzg.xzshop.utils.pay;
 
-import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
 import com.cdzg.xzshop.config.pay.WechatPayConfig;
+import com.cdzg.xzshop.config.pay.WxPayShopConfig;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.mapper.OrderMapper;
 import com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper;
-import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
-import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
-import java.util.SortedMap;
 
 @Component
 @Slf4j
@@ -62,7 +52,7 @@ public class PayClientUtils {
     public static WxPayService getWxClient(String appId, String mchId,String mchKey,String keyPath){
 
 
-        WxPayConfig payConfig = new WxPayConfig();
+        WxPayConfig payConfig = new WxPayShopConfig();
         payConfig.setAppId(StringUtils.trimToNull(appId));
         payConfig.setMchId(StringUtils.trimToNull(mchId));
         payConfig.setMchKey(StringUtils.trimToNull(mchKey));

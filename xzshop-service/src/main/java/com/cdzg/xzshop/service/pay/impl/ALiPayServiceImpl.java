@@ -1,6 +1,5 @@
 package com.cdzg.xzshop.service.pay.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
@@ -13,9 +12,7 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.cdzg.xzshop.common.BaseException;
-import com.cdzg.xzshop.componet.SnowflakeIdWorker;
-import com.cdzg.xzshop.componet.pay.PayClientUtils;
+import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
@@ -26,7 +23,6 @@ import com.cdzg.xzshop.mapper.ReceivePaymentInfoMapper;
 import com.cdzg.xzshop.service.pay.PayService;
 import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

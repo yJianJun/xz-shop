@@ -1,8 +1,6 @@
 package com.cdzg.xzshop.service.pay.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cdzg.xzshop.componet.SnowflakeIdWorker;
-import com.cdzg.xzshop.componet.pay.PayClientUtils;
+import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
@@ -20,13 +18,11 @@ import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.google.common.collect.Lists;
 import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service("weChatService")
 @Slf4j

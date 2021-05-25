@@ -14,6 +14,5 @@ import javax.validation.constraints.NotBlank;
 public class GoodsSpuSearchPageVo extends BasePageRequest {
 
     @ApiModelProperty(value = "搜索关键词", position = 4,required = true)
-    @NotBlank
     private String keyWord;
 }
