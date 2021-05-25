@@ -97,9 +97,9 @@ public class PayDecoration {
         if (PaymentMethod.Wechat == type) {
 
             String ip = payParam.getIp();
-            return wxPayService.pay(orderId,ip,spus,order);
+            return wxPayService.pay(ip,spus,order);
         } else {
-            return aliPayService.pay(orderId, null, spus,order);
+            return aliPayService.pay(null, spus,order);
         }
     }
 

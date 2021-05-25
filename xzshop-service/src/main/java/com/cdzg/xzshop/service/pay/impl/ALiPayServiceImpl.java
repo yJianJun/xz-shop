@@ -13,7 +13,9 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
+import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
+import com.cdzg.xzshop.componet.pay.PayClientUtils;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
@@ -38,9 +40,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ALiPayServiceImpl implements PayService {
 
-    @Autowired
-    private SnowflakeIdWorker snowflakeIdWorker;
-
     @Resource
     private OrderMapper orderMapper;
 
@@ -48,9 +47,9 @@ public class ALiPayServiceImpl implements PayService {
     private ReceivePaymentInfoMapper paymentInfoMapper;
 
     @Override
-    public AlipayTradeAppPayResponse pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
+    public AlipayTradeAppPayResponse pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
-        AlipayClient alipayClient = AlipayConfig.buildAlipayClient();
+        AlipayClient aliPayClient = PayClientUtils.getAliPayClient(order.getId() + "");
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
         AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
         //SDK已经封装掉了公共参数，这里只需要传入业务参数。以下方法为sdk的model入参方式(model和biz_content同时存在的情况下取biz_content)。
@@ -61,7 +60,7 @@ public class ALiPayServiceImpl implements PayService {
         //商品的标题/交易标题/订单标题/订单关键字等
         model.setSubject("西藏职工app-商城商品订单");
         //商户系统唯一订单号
-        model.setOutTradeNo(orderId + "");
+        model.setOutTradeNo(order.getId() + "");
         //该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。
         // 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
         model.setTimeoutExpress("30m");
@@ -73,7 +72,7 @@ public class ALiPayServiceImpl implements PayService {
         request.setNotifyUrl(AlipayConfig.getNotifyUrl());
         try {
             //这里和普通的接口调用不同，使用的是sdkExecute
-            AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
+            AlipayTradeAppPayResponse response = aliPayClient.sdkExecute(request);
             //就是orderString 可以直接给客户端请求，无需再做处理。
             log.info(Json.pretty(response.getBody()));
             return response;
@@ -91,22 +90,32 @@ public class ALiPayServiceImpl implements PayService {
     public String callBack(HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, String> receiveMap = getReceiveMap(request);
+        //商品订单号
+        String out_trade_no = receiveMap.get("out_trade_no");
+        Order order = orderMapper.findById(Long.parseLong(out_trade_no));
+
+        // 1.商户需要验证该通知数据中的 out_trade_no 是否为商户系统中创建的订单号；
+        if (Objects.isNull(order)) {
+
+            log.error("订单支付宝支付失败 -> 系统不存在此交易订单！");
+            return "failure";
+        }
+
+        ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Alipay);
         boolean signVerified = false;
         try {
             //3.签名验证(对支付宝返回的数据验证，确定是支付宝返回的)
             //切记alipaypublickey是支付宝的公钥，请去open.alipay.com对应应用下查看。
             //boolean AlipaySignature.rsaCheckV1(Map<String, String> params, String publicKey, String charset, String sign_type)
-            signVerified = AlipaySignature.rsaCheckV1(receiveMap, AlipayConfig.getAlipayPublicKey(), "utf-8", "RSA2");
+            signVerified = AlipaySignature.rsaCheckV1(receiveMap,receivePaymentInfo.getPublicKey(), "utf-8", "RSA2");
             log.info("支付宝支付验签结果:{}", signVerified);
-        } catch (AlipayApiException e) {
+        } catch (Exception e) {
             log.error("支付宝支付验签异常:{}", Json.pretty(e.getStackTrace()));
             return "failure";
         }
 
         // 当前交易状态
         String tradeStatus = receiveMap.get("trade_status");
-        //商品订单号
-        String out_trade_no = receiveMap.get("out_trade_no");
         // 该笔订单的资金总额，单位为 RMB-Yuan。取值范围为[0.01,100000000.00]，精确到小数点后两位。
         String total_amount = receiveMap.get("total_amount");
         //支付宝分配给开发者的应用 Id。
@@ -123,14 +132,6 @@ public class ALiPayServiceImpl implements PayService {
         /**
          按照支付结果异步通知中的描述，对支付结果中的业务内容进行1\2\3\4二次校验，校验成功后在response中返回success，校验失败返回failure
          */
-
-        // 1.商户需要验证该通知数据中的 out_trade_no 是否为商户系统中创建的订单号；
-        Order order = orderMapper.findById(Long.parseLong(out_trade_no));
-        if (Objects.isNull(order)) {
-
-            log.error("订单支付宝支付失败 -> 系统不存在此交易订单！");
-            return "failure";
-        }
 
         // 2.过滤重复的通知结果数据。 订单状态（1待付款2.待发货3.已发货4.已完成5.已关闭）
         Integer orderStatus = order.getOrderStatus();
@@ -219,11 +220,11 @@ public class ALiPayServiceImpl implements PayService {
      * @return
      */
     @Override
-    public AlipayTradeRefundResponse refund(String tradeNo, Long outTradeNo,Long refundId,String refundAmount) throws AlipayApiException {
+    public AlipayTradeRefundResponse refund(String tradeNo, Long outTradeNo,Long refundId,String refundAmount) throws Exception {
 
         try {
             ////获得初始化的AlipayClient
-            AlipayClient alipayClient = AlipayConfig.getAlipayClient();
+            AlipayClient alipayClient = PayClientUtils.getAliPayClient(outTradeNo + "");
             //创建API对应的request类
             AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
             AlipayTradeRefundModel model = new AlipayTradeRefundModel();
@@ -268,16 +269,16 @@ public class ALiPayServiceImpl implements PayService {
      * 调用alipay.trade.cancel之前，需确认支付状态；
      */
     @Override
-    public AlipayTradeQueryResponse query(String tradeNo, String outTradeNo) throws AlipayApiException {
+    public AlipayTradeQueryResponse query(String tradeNo, String outTradeNo) throws Exception {
 
-        AlipayClient alipayClient = AlipayConfig.buildAlipayClient();
+        AlipayClient aliPayClient = PayClientUtils.getAliPayClient(outTradeNo);
         AlipayTradeQueryRequest alipayTradeQueryRequest = new AlipayTradeQueryRequest();
         AlipayTradeQueryModel model = new AlipayTradeQueryModel();
         model.setOutTradeNo(outTradeNo);
         model.setTradeNo(tradeNo);
         alipayTradeQueryRequest.setBizModel(model);
         try {
-            return alipayClient.execute(alipayTradeQueryRequest);
+            return aliPayClient.execute(alipayTradeQueryRequest);
         } catch (AlipayApiException e) {
             log.error("支付宝app查询支付订单报错:{}", Json.pretty(e.getStackTrace()));
             throw e;

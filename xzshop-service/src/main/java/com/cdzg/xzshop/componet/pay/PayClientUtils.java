@@ -1,7 +1,12 @@
 package com.cdzg.xzshop.componet.pay;
 
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.internal.util.AlipaySignature;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.cdzg.xzshop.common.BaseException;
+import com.cdzg.xzshop.config.pay.AlipayConfig;
 import com.cdzg.xzshop.config.pay.WechatPayConfig;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.Order;
@@ -25,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
 
@@ -74,7 +80,7 @@ public class PayClientUtils {
         return wxPayService;
     }
 
-    public static WxPayService getWxClient(String out_trade_no) {
+    public static WxPayService getWxClient (String out_trade_no) throws Exception{
 
         // 1.商户需要验证该通知数据中的 out_trade_no 是否为商户系统中创建的订单号；
         Order order = orderMapper.findById(Long.parseLong(out_trade_no));
@@ -86,5 +92,38 @@ public class PayClientUtils {
 
         ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Wechat);
         return PayClientUtils.getWxClient(receivePaymentInfo.getAppid(), receivePaymentInfo.getMchid(), receivePaymentInfo.getPrivateKey(), receivePaymentInfo.getKeyPath());
+    }
+
+    public static AlipayClient getAliPayClient(String APP_ID,String APP_PRIVATE_KEY,String ALIPAY_PUBLIC_KEY) {
+
+        return new DefaultAlipayClient(AlipayConfig.getServerUrl(), APP_ID, APP_PRIVATE_KEY,AlipayConfig.getFormat(),AlipayConfig.getCharset(), ALIPAY_PUBLIC_KEY,AlipayConfig.getSigntype());
+    }
+
+    public static AlipayClient getAliPayClient(String out_trade_no) throws Exception{
+
+        // 1.商户需要验证该通知数据中的 out_trade_no 是否为商户系统中创建的订单号；
+        Order order = orderMapper.findById(Long.parseLong(out_trade_no));
+        if (Objects.isNull(order)) {
+
+            log.error("订单支付失败 -> 系统不存在此交易订单！");
+            throw new BaseException("系统不存在此交易订单");
+        }
+
+        ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Alipay);
+        return PayClientUtils.getAliPayClient(receivePaymentInfo.getAppid(), receivePaymentInfo.getPrivateKey(), receivePaymentInfo.getPublicKey());
+    }
+
+    public static boolean rsaCertCheck(Map<String, String> params,String out_trade_no) throws Exception {
+
+        // 1.商户需要验证该通知数据中的 out_trade_no 是否为商户系统中创建的订单号；
+        Order order = orderMapper.findById(Long.parseLong(out_trade_no));
+        if (Objects.isNull(order)) {
+
+            log.error("订单支付失败 -> 系统不存在此交易订单！");
+            throw new BaseException("系统不存在此交易订单");
+        }
+
+        ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Alipay);
+        return AlipaySignature.rsaCheckV1(params,receivePaymentInfo.getPublicKey(),AlipayConfig.getCharset(),AlipayConfig.getSigntype());
     }
 }

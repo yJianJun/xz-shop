@@ -22,14 +22,13 @@ public interface PayService {
      * 绑定物流单 -> ...
      * 此处，应该是在第二步中生成该支付订单
      *
-     * @param orderId   公司业务订单号
      * @param ipAddress 客户端APP IP 地址
      * @param spus
      * @param order
      * @return 返回的信息直接发给客户端即可
      * @throws IOException
      */
-    Object pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws Exception;
+    Object pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception;
 
     /**
      * 微信服务器调用该接口，进行数据异步传回作用

@@ -65,7 +65,13 @@ public class WeChatServiceImpl implements PayService {
         }
 
         String out_trade_no = notifyResult.getOutTradeNo();
-        WxPayService wxService = PayClientUtils.getWxClient(out_trade_no);
+        WxPayService wxService = null;
+        try {
+            wxService = PayClientUtils.getWxClient(out_trade_no);
+        } catch (Exception e) {
+            log.error("微信客户端初始化失败:{}", Json.pretty(e.getSuppressed()));
+            return WxPayNotifyResponse.fail(e.getMessage());
+        }
         Order order = orderMapper.findById(Long.parseLong(out_trade_no));
         ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Wechat);
         try {
@@ -143,7 +149,7 @@ public class WeChatServiceImpl implements PayService {
      *                      交易成功判断条件： return_code、result_code和trade_state都为SUCCESS
      */
     @Override
-    public WxPayOrderQueryResult query(String transactionId, String outTradeNo) throws WxPayException {
+    public WxPayOrderQueryResult query(String transactionId, String outTradeNo) throws Exception {
         WxPayService wxPayService = PayClientUtils.getWxClient(outTradeNo);
         return wxPayService.queryOrder(transactionId, outTradeNo);
     }
@@ -153,17 +159,16 @@ public class WeChatServiceImpl implements PayService {
      * 在发起微信支付前，需要调用统一下单接口，获取"预支付交易会话标识"
      * 接口地址：https://api.mch.weixin.qq.com/pay/unifiedorder
      *
-     * @param orderId 商品订单号
      * @param spus
      * @param order
      */
     @Override
-    public WxPayUnifiedOrderResult pay(Long orderId, String ipAddress, List<GoodsSpu> spus, Order order) throws WxPayException {
+    public WxPayUnifiedOrderResult pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         WxPayService wxPayService = PayClientUtils.getWxClient(order.getId() + "");
         // 测试时，将支付金额设置为 1 分钱
         WxPayUnifiedOrderRequest request = WxPayUnifiedOrderRequest.newBuilder()
-                .outTradeNo(orderId + "")
+                .outTradeNo(order.getId() + "")
                 .totalFee(1)  //todo:测试1分钱
                 .body("西藏职工app-商城商品交易")
                 .spbillCreateIp(ipAddress)
@@ -187,7 +192,7 @@ public class WeChatServiceImpl implements PayService {
      * @return
      */
     @Override
-    public WxPayRefundResult refund(String tradeno, Long orderno, Long refundId, String refundFee) throws WxPayException {
+    public WxPayRefundResult refund(String tradeno, Long orderno, Long refundId, String refundFee) throws Exception {
 
         WxPayService wxPayService = PayClientUtils.getWxClient(orderno+"");
         WxPayRefundRequest request = WxPayRefundRequest.newBuilder()
