@@ -31,17 +31,18 @@ public class UploadController {
     @ApiOperation("上传微信支付证书")
     public ApiResponse<String> create(@RequestPart MultipartFile file) throws IOException {
 
-        if (file.isEmpty()) {
-            return CommonResult.buildCommonErrorResponse("上传失败，请选择文件");
-        }
-
-        String fileSuffix= Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
-        String fileName= WechatPayConfig.getMchId()+fileSuffix;
-        String filePath = WechatPayConfig.getKeyPath() + "/" + fileName;
-
-        File dest = new File(filePath);
-        Files.copy(file.getInputStream(), dest.toPath());
-        return CommonResult.buildSuccessResponse(dest.getAbsolutePath());
+        //if (file.isEmpty()) {
+        //    return CommonResult.buildCommonErrorResponse("上传失败，请选择文件");
+        //}
+        //
+        //String fileSuffix= Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
+        //String fileName= WechatPayConfig.getMchId()+fileSuffix;
+        //String filePath = WechatPayConfig.getKeyPath() + "/" + fileName;
+        //
+        //File dest = new File(filePath);
+        //Files.copy(file.getInputStream(), dest.toPath());
+        //return CommonResult.buildSuccessResponse(dest.getAbsolutePath());
+        return null;
     }
 
 

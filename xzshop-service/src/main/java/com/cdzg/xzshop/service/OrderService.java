@@ -20,5 +20,10 @@ public interface OrderService extends IService<Order> {
 	Order findById(Long id);
 
 
+
+	String findShopIdById(Long id);
+
+
+
 }
 

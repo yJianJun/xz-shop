@@ -1,5 +1,9 @@
 package com.cdzg.xzshop.utils.pay;
 
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.converter.WxPayOrderNotifyResultConverter;
+import com.thoughtworks.xstream.XStream;
+import me.chanjar.weixin.common.util.xml.XStreamInitializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -36,6 +40,20 @@ public class WxUtils {
         return readResponse(response);
     }
 
+
+    public static WxPayOrderNotifyResult fromXML(String xmlString) {
+        XStream xstream = XStreamInitializer.getInstance();
+        xstream.processAnnotations(WxPayOrderNotifyResult.class);
+        xstream.registerConverter(new WxPayOrderNotifyResultConverter(xstream.getMapper(), xstream.getReflectionProvider()));
+        WxPayOrderNotifyResult result = (WxPayOrderNotifyResult) xstream.fromXML(xmlString);
+        result.setXmlString(xmlString);
+        return result;
+    }
+
+    public static WxPayOrderNotifyResult readRequestToResult(HttpServletRequest request) throws IOException {
+        String xml = readRequest(request);
+        return fromXML(xml);
+    }
 
     /**
      * 第一次签名

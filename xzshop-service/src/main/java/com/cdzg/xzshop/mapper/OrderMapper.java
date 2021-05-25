@@ -17,6 +17,8 @@ public interface OrderMapper extends BaseMapper<Order> {
 
     Order findById(@Param("id")Long id);
 
+    String findShopIdById(@Param("id")Long id);
+
 
 	
 }
