@@ -24,5 +24,10 @@ public interface SearchHistoryService extends IService<SearchHistory> {
 
 	List<String> findKeyWordByUserIdOrderByCountDesc(Long userId);
 
+
+
+	int deleteByKeyWordAndUserId(String keyWord,Long userId);
+
+
 }
 
