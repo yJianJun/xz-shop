@@ -22,6 +22,8 @@ public interface SearchHistoryMapper extends BaseMapper<SearchHistory> {
 
     List<String> findKeyWordByUserIdOrderByCountDesc(@Param("userId")Long userId);
 
+    int deleteByKeyWordAndUserId(@Param("keyWord")String keyWord,@Param("userId")Long userId);
+
 
 
 

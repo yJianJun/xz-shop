@@ -45,6 +45,8 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 
     GoodsSpuHomePageTo spuWithSales(GoodsSpu spu);
 
+    GoodsSpuHomePageTo spuWithSalesIsCollect(GoodsSpu spu,String userId);
+
 	GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo);
 
     PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo, String customerId);

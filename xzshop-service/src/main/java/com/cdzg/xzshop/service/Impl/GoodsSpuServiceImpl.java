@@ -7,13 +7,11 @@ import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
 import com.cdzg.xzshop.constant.PaymentType;
-import com.cdzg.xzshop.domain.GoodsSpu;
-import com.cdzg.xzshop.domain.GoodsSpuSales;
-import com.cdzg.xzshop.domain.SearchHistory;
-import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.domain.*;
 import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 import com.cdzg.xzshop.mapper.GoodsSpuSalesMapper;
 import com.cdzg.xzshop.mapper.SearchHistoryMapper;
+import com.cdzg.xzshop.mapper.UserGoodsFavoritesMapper;
 import com.cdzg.xzshop.repository.GoodsSpuRepository;
 import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.ShopInfoService;
@@ -53,6 +51,9 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
     @Resource
     private SearchHistoryMapper historyMapper;
+
+    @Resource
+    private UserGoodsFavoritesMapper favoritesMapper;
 
     @Resource
     private GoodsSpuRepository goodsSpuRepository;
@@ -218,6 +219,22 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         to.setSales((spuSales != null) ? spuSales.getSales() : null);
         return to;
     }
+
+    @Override
+    public GoodsSpuHomePageTo spuWithSalesIsCollect(GoodsSpu spu,String userId) {
+        GoodsSpuHomePageTo to = spuWithSales(spu);
+        boolean collect = isCollect(spu.getSpuNo(), userId);
+        to.setIsCollect(collect);
+        return to;
+    }
+
+    private boolean isCollect(Long spuNo,String userId) {
+
+        UserGoodsFavorites userGoodsFavorites = favoritesMapper.findOneByUserIdAndSpuNo(userId, spuNo);
+        return Objects.nonNull(userGoodsFavorites);
+    }
+
+
 
     @Override
     public GoodsSpu findOneBySpuNoAndIsDeleteFalse(Long spuNo) {
