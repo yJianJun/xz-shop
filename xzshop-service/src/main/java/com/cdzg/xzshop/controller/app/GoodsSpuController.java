@@ -72,7 +72,12 @@ public class GoodsSpuController {
     @ApiOperation("商品详情")
     public ApiResponse<GoodsSpuDescriptionTo> detail(@ApiParam(value = "商品编号", required = true) @PathVariable("spu") @Valid @NotNull Long spu) {
 
-        String customerId = LoginSessionUtils.getAppUser().getCustomerId();
+        String customerId = null;
+        try {
+            customerId = LoginSessionUtils.getAppUser().getCustomerId();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         GoodsSpu spuNo = goodsSpuService.findOneBySpuNoAndIsDeleteFalse(spu);
         GoodsSpuHomePageTo to = goodsSpuService.spuWithSalesIsCollect(spuNo,customerId);
 
