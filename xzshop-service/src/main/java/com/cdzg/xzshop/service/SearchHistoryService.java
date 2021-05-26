@@ -29,5 +29,10 @@ public interface SearchHistoryService extends IService<SearchHistory> {
 	int deleteByKeyWordAndUserId(String keyWord,Long userId);
 
 
+
+	int deleteByUserId(Long userId);
+
+
+
 }
 

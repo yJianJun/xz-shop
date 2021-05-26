@@ -55,6 +55,14 @@ public class SearchHistoryServiceImpl extends ServiceImpl<SearchHistoryMapper, S
 		 return searchHistoryMapper.deleteByKeyWordAndUserId(keyWord,userId);
 	}
 
+	@Override
+	public int deleteByUserId(Long userId){
+		 return searchHistoryMapper.deleteByUserId(userId);
+	}
+
+
+
+
 
 
 }

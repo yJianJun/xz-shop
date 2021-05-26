@@ -66,10 +66,11 @@ public class SearchController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
     })
-    public ApiResponse deleteSearchHistory(@Valid @RequestParam("keyWord") @NotBlank @ApiParam(value = "搜索关键词", required = true) String keyWord) {
+    public ApiResponse deleteSearchHistory() {
 
         String customerId = LoginSessionUtils.getAppUser().getCustomerId();
-        searchHistoryService.deleteByKeyWordAndUserId(keyWord,Long.parseLong(customerId));
+       // searchHistoryService.deleteByKeyWordAndUserId(keyWord,Long.parseLong(customerId));
+        searchHistoryService.deleteByUserId(Long.parseLong(customerId));
         return CommonResult.buildSuccessResponse();
     }
 
