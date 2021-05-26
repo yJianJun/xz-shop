@@ -166,6 +166,9 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
             BeanUtils.copyProperties(goodsSpu, spuTo);
             ShopInfo shopInfo = shopInfoService.getById(goodsSpu.getShopId());
             spuTo.setShopName(shopInfo.getShopName());
+
+            GoodsSpuSales spuSales = salesMapper.findOneBySpuNo(goodsSpu.getSpuNo());
+            spuTo.setSales((spuSales != null) ? spuSales.getSales() : 0);
             goodsSpuTos.add(spuTo);
         }
 
@@ -216,7 +219,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         GoodsSpuHomePageTo to = new GoodsSpuHomePageTo();
         GoodsSpuSales spuSales = salesMapper.findOneBySpuNo(spu.getSpuNo());
         BeanUtils.copyProperties(spu, to);
-        to.setSales((spuSales != null) ? spuSales.getSales() : null);
+        to.setSales((spuSales != null) ? spuSales.getSales() : 0);
         return to;
     }
 
