@@ -26,7 +26,7 @@ public class BaseException extends RuntimeException {
     }
 
     public BaseException(ResultCode errorInfoInterface) {
-        this(errorInfoInterface,null);
+        this(errorInfoInterface.getCode(),errorInfoInterface.getMessage());
     }
 
     public BaseException(String errorMsg) {
@@ -35,6 +35,10 @@ public class BaseException extends RuntimeException {
 
     public BaseException(Integer errorCode, String errorMsg) {
         this(errorCode,errorMsg,null);
+    }
+
+    public BaseException(ResultCode errorInfoInterface, String errorMsg) {
+        this(errorInfoInterface.getCode(),errorMsg,null);
     }
 
     public BaseException(ResultCode errorInfoInterface, Throwable cause) {
