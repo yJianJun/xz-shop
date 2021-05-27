@@ -24,6 +24,8 @@ import com.cdzg.xzshop.service.pay.PayService;
 import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +45,7 @@ public class ALiPayServiceImpl implements PayService {
     private ReceivePaymentInfoMapper paymentInfoMapper;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public AlipayTradeAppPayResponse pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         AlipayClient aliPayClient = PayClientUtils.getAliPayClient(order.getId() + "");
@@ -83,6 +86,7 @@ public class ALiPayServiceImpl implements PayService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String callBack(HttpServletRequest request, HttpServletResponse response) {
 
         Map<String, String> receiveMap = getReceiveMap(request);
@@ -216,6 +220,7 @@ public class ALiPayServiceImpl implements PayService {
      * @return
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public AlipayTradeRefundResponse refund(String tradeNo, Long outTradeNo,Long refundId,String refundAmount) throws Exception {
 
         try {

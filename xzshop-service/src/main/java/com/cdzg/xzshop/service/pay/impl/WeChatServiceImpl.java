@@ -24,6 +24,8 @@ import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +51,7 @@ public class WeChatServiceImpl implements PayService {
      * 在对业务数据进行状态检查和处理之前，要采用数据锁进行并发控制，以避免函数重入造成的数据混乱。
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String callBack(HttpServletRequest request, HttpServletResponse response) {
 
         WxPayOrderNotifyResult notifyResult = null;
@@ -158,6 +161,7 @@ public class WeChatServiceImpl implements PayService {
      * @param order
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public WxPayUnifiedOrderResult pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         WxPayService wxPayService = PayClientUtils.getWxClient(order.getId() + "");
@@ -187,6 +191,7 @@ public class WeChatServiceImpl implements PayService {
      * @return
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public WxPayRefundResult refund(String tradeno, Long orderno, Long refundId, String refundFee) throws Exception {
 
         WxPayService wxPayService = PayClientUtils.getWxClient(orderno+"");
