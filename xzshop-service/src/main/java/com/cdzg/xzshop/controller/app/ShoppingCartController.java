@@ -136,7 +136,7 @@ public class ShoppingCartController {
         }
         //库存校验
         GoodsSpu goodsSpu = goodsSpuService.getById(request.getGoodsId());
-        if (!Optional.ofNullable(goodsSpu).isPresent() || goodsSpu.getIsDelete() || goodsSpu.getStatus()) {
+        if (!Optional.ofNullable(goodsSpu).isPresent() || goodsSpu.getIsDelete() || !goodsSpu.getStatus()) {
             return ApiResponse.buildCommonErrorResponse("商品不存在或已下架");
         }
         if (goodsSpu.getStock() <= request.getGoodsNumber()) {
