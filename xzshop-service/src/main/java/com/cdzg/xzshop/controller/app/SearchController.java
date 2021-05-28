@@ -22,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +57,21 @@ public class SearchController {
 
         String customerId = LoginSessionUtils.getAppUser().getCustomerId();
         List<String> data = searchHistoryService.findKeyWordByUserIdOrderByCountDesc(Long.parseLong(customerId));
-        return CommonResult.buildSuccessResponse((!CollectionUtils.isEmpty(data)) ?(data.size() > 10 ? data.subList(0, 10) : data):null);
+        return CommonResult.buildSuccessResponse((!CollectionUtils.isEmpty(data)) ? (data.size() > 10 ? data.subList(0, 10) : data) : null);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    @ApiOperation(value = "删除历史关键词")
+    @MobileApi
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
+    public ApiResponse deleteSearchHistory() {
+
+        String customerId = LoginSessionUtils.getAppUser().getCustomerId();
+       // searchHistoryService.deleteByKeyWordAndUserId(keyWord,Long.parseLong(customerId));
+        searchHistoryService.deleteByUserId(Long.parseLong(customerId));
+        return CommonResult.buildSuccessResponse();
     }
 
     @MobileApi

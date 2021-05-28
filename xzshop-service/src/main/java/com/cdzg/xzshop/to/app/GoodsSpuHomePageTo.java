@@ -16,4 +16,7 @@ public class GoodsSpuHomePageTo extends GoodsSpu {
 
     @ApiModelProperty(value = "销量", required = true)
     private Long sales;
+
+    @ApiModelProperty(value = "是否收藏", required = true)
+    private Boolean isCollect;
 }

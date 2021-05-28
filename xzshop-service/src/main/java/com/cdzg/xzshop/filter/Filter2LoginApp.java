@@ -4,6 +4,7 @@ import com.cdzg.customer.vo.response.CustomerLoginResponse;
 import com.cdzg.xzshop.filter.auth.*;
 import com.cdzg.xzshop.utils.OAuthIgnoreUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.framework.utils.core.api.ApiConst;
 import com.framework.utils.core.api.ApiResponse;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
@@ -65,33 +66,45 @@ public class Filter2LoginApp implements Filter {
                 filterUrl -> PatternMatchUtils.simpleMatch(filterUrl, SpringSessionUtils.getRequest().getRequestURI()))
                 || FilterConstants.INTERNEL_IGNORE_URLS.stream().anyMatch(filterUrl -> PatternMatchUtils
                 .simpleMatch(filterUrl, SpringSessionUtils.getRequest().getRequestURI())))) {
+            setSession(request);
             chain.doFilter(request, response);
             return;
         }
 //        //需要验证的数据
-        if (serverPth.startsWith("/")){
+        if (serverPth.startsWith("/")) {
             serverPth = serverPth.substring(1);
         }
         if (!contains(serverPth)) {
+            setSession(request);
             chain.doFilter(request, response);
             return;
         }
         //对token验证
-        HttpServletRequest httpRequest = (HttpServletRequest)request;
-        String InterfaceToken=httpRequest.getHeader("token");
-        Object o=redisTemplate.opsForValue().get("appToken:"+InterfaceToken);
-        if(o==null){
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String InterfaceToken = httpRequest.getHeader("token");
+        Object o = redisTemplate.opsForValue().get("appToken:" + InterfaceToken);
+        if (o == null) {
             HttpServletResponse responses = SpringSessionUtils.getResponse();
-            RequestUtil.writeJsonToResponseCos(ApiResponse.buildCommonErrorResponse("登录已过期！请重新登录"),
+            RequestUtil.writeJsonToResponseCos(ApiResponse.buildResponse(ApiConst.Code.CODE_NO_SESSION, "登录已过期！请重新登录"),
                     SpringSessionUtils.getRequest().getHeader("origin"), responses);
             return;
         }
-        CustomerLoginResponse customerLoginResponse=objectMapper.convertValue(o,CustomerLoginResponse.class);
+        CustomerLoginResponse customerLoginResponse = objectMapper.convertValue(o, CustomerLoginResponse.class);
         customerLoginResponse.setTicketString(InterfaceToken);
-        SpringSessionUtils.setSession(LoginConstants.Session.WEBAPI_SESSION_USER,customerLoginResponse);
+        SpringSessionUtils.setSession(LoginConstants.Session.WEBAPI_SESSION_USER, customerLoginResponse);
         chain.doFilter(request, response);
     }
 
+    private void setSession(ServletRequest request){
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String InterfaceToken = httpRequest.getHeader("token");
+        Object o = redisTemplate.opsForValue().get("appToken:" + InterfaceToken);
+        if (o != null) {
+            CustomerLoginResponse customerLoginResponse = objectMapper.convertValue(o, CustomerLoginResponse.class);
+            customerLoginResponse.setTicketString(InterfaceToken);
+            SpringSessionUtils.setSession(LoginConstants.Session.WEBAPI_SESSION_USER, customerLoginResponse);
+        }
+    }
     @Override
     public void destroy() {
 

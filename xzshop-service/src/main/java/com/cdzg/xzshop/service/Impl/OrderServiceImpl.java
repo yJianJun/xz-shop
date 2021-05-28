@@ -17,6 +17,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		 return orderMapper.findById(id);
 	}
 
+	@Override
+	public String findShopIdById(Long id){
+		 return orderMapper.findShopIdById(id);
+	}
+
+
+
+
 
 
 

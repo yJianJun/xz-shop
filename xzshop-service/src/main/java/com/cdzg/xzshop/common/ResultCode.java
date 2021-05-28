@@ -23,7 +23,7 @@ public enum ResultCode {
     /**
      * 请重新登录
      */
-    UNAUTHORIZED(401, "请重新登录！"),
+    UNAUTHORIZED(5003, "请重新登录！"),
     /**
      * 您已在另一台设备登录，本次登录已下线!
      */

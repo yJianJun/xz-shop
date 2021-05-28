@@ -49,5 +49,21 @@ public class SearchHistoryServiceImpl extends ServiceImpl<SearchHistoryMapper, S
 	public List<String> findKeyWordByUserIdOrderByCountDesc(Long userId){
 		 return searchHistoryMapper.findKeyWordByUserIdOrderByCountDesc(userId);
 	}
+
+	@Override
+	public int deleteByKeyWordAndUserId(String keyWord,Long userId){
+		 return searchHistoryMapper.deleteByKeyWordAndUserId(keyWord,userId);
+	}
+
+	@Override
+	public int deleteByUserId(Long userId){
+		 return searchHistoryMapper.deleteByUserId(userId);
+	}
+
+
+
+
+
+
 }
 
