@@ -94,6 +94,7 @@ public class ShoppingCartController {
             resultList.add(appShoppingCartListRespVO);
         });
         resultList.forEach(r -> {
+            List<AppShoppingCartGoodsRespVO> shoppingCartGoodsList = new ArrayList<>();
             List<ShoppingCart> shopAndGoodsIdList = shoppingCartList.stream().filter(s -> (s.getShopId() + "").equals(r.getShopId())).collect(Collectors.toList());
             shopAndGoodsIdList.forEach(s -> goodsSpuList.forEach(g -> {
                 if (s.getGoodsId().equals(g.getId())) {
@@ -110,9 +111,10 @@ public class ShoppingCartController {
                     if (!g.getStatus() || g.getIsDelete()) {
                         shoppingCartGoods.setGoodsStatus(2);
                     }
-                    r.getGoodsList().add(shoppingCartGoods);
+                    shoppingCartGoodsList.add(shoppingCartGoods);
                 }
             }));
+            r.setGoodsList(shoppingCartGoodsList);
         });
         //处理空数据
         for (int i = resultList.size(); i > 0; i--) {
