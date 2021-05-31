@@ -193,7 +193,7 @@ public class WeChatServiceImpl implements PayService {
                 .theTotalAmountOfOrders(orderMoney)
                 .type(ReceivePaymentType.Alipay)
                 .status(status)
-                .remark("订单支付成功")
+                .remark("")
                 .build();
         /* 添加支付历史记录 */
         payHistoryMapper.insertOrUpdate(history);
