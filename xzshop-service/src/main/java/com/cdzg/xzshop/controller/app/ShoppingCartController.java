@@ -142,7 +142,7 @@ public class ShoppingCartController {
         if (!Optional.ofNullable(goodsSpu).isPresent() || goodsSpu.getIsDelete() || !goodsSpu.getStatus()) {
             return ApiResponse.buildCommonErrorResponse("商品不存在或已下架");
         }
-        if (goodsSpu.getStock() <= request.getGoodsNumber()) {
+        if (goodsSpu.getStock() < request.getGoodsNumber()) {
             return ApiResponse.buildCommonErrorResponse("商品库存不足");
         }
         //查询该用户是否存在该商品的购物车
