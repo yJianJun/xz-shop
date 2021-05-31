@@ -53,56 +53,6 @@ public class PayDecoration {
     @Resource
     private OrderItemService orderItemService;
 
-    @Resource
-    private GoodsSpuService goodsSpuService;
-
-
-    /**
-     *
-     * @param payParam
-     * @return 有两种返回类型 wechat:WxPayUnifiedOrderResult / aLiPay:AlipayTradeAppPayResponse
-     * @throws Exception
-     */
-    @ApiOperation("订单支付")
-    public Object pay(PayParam payParam) throws Exception {
-
-        Long orderId = payParam.getOrderId();
-        PaymentMethod type = payParam.getType();
-
-        Order order = orderService.getById(orderId);
-        List<Long> itemsIds = orderItemService.findIdByOrderIdAndDeleted(orderId,0);
-
-        if (Objects.isNull(order) || CollectionUtils.isEmpty(itemsIds)) {
-            throw new BaseException("无此订单");
-        }
-
-        // 订单状态（1待付款2.待发货3.已发货4.已完成5.已关闭）
-        Integer orderStatus = order.getOrderStatus();
-
-        if (orderStatus != 1){
-            throw new BaseException(ResultCode.Illegal);
-        }
-
-        List<GoodsSpu> spus = goodsSpuService.findBySpuNoInAndIsDeleteFalseAndStatusTrue(itemsIds);
-
-        for (GoodsSpu goodsSpu : spus) {
-            if (goodsSpu.getIsDelete()){
-                throw new BaseException("此商品已删除");
-            }
-            if (!goodsSpu.getStatus()){
-                throw new BaseException("此商品已下架");
-            }
-        }
-
-        if (PaymentMethod.Wechat == type) {
-
-            String ip = payParam.getIp();
-            return wxPayService.pay(ip,spus,order);
-        } else {
-            return aliPayService.pay(null, spus,order);
-        }
-    }
-
     /**
      *
      * @param transactionId

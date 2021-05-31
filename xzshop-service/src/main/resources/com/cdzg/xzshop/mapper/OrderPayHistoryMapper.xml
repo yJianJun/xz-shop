@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdzg.xzshop.mapper.OrderPayHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.cdzg.xzshop.domain.OrderPayHistory">
+    <!--@mbg.generated-->
+    <!--@Table order_pay_history-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_number" jdbcType="BIGINT" property="orderNumber" />
+    <result column="pay_number" jdbcType="VARCHAR" property="payNumber" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="payment_amount" jdbcType="DECIMAL" property="paymentAmount" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="the_total_amount_of_orders" jdbcType="DECIMAL" property="theTotalAmountOfOrders" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, order_number, pay_number, `type`, payment_amount, `status`, the_total_amount_of_orders, 
+    gmt_create, gmt_update, remark
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update order_pay_history
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="order_number = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.orderNumber,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="pay_number = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.payNumber,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`type` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.type,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="payment_amount = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.paymentAmount,jdbcType=DECIMAL}
+        </foreach>
+      </trim>
+      <trim prefix="`status` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.status,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="the_total_amount_of_orders = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.theTotalAmountOfOrders,jdbcType=DECIMAL}
+        </foreach>
+      </trim>
+      <trim prefix="gmt_create = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.gmtCreate,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="gmt_update = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.gmtUpdate,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into order_pay_history
+    (order_number, pay_number, `type`, payment_amount, `status`, the_total_amount_of_orders, 
+      gmt_create, gmt_update, remark)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.orderNumber,jdbcType=BIGINT}, #{item.payNumber,jdbcType=VARCHAR}, #{item.type,jdbcType=INTEGER}, 
+        #{item.paymentAmount,jdbcType=DECIMAL}, #{item.status,jdbcType=TINYINT}, #{item.theTotalAmountOfOrders,jdbcType=DECIMAL}, 
+        #{item.gmtCreate,jdbcType=TIMESTAMP}, #{item.gmtUpdate,jdbcType=TIMESTAMP}, #{item.remark,jdbcType=VARCHAR}
+        )
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.OrderPayHistory" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into order_pay_history
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      order_number,
+      pay_number,
+      `type`,
+      payment_amount,
+      `status`,
+      the_total_amount_of_orders,
+      gmt_create,
+      gmt_update,
+      remark,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{orderNumber,jdbcType=BIGINT},
+      #{payNumber,jdbcType=VARCHAR},
+      #{type,jdbcType=INTEGER},
+      #{paymentAmount,jdbcType=DECIMAL},
+      #{status,jdbcType=TINYINT},
+      #{theTotalAmountOfOrders,jdbcType=DECIMAL},
+      #{gmtCreate,jdbcType=TIMESTAMP},
+      #{gmtUpdate,jdbcType=TIMESTAMP},
+      #{remark,jdbcType=VARCHAR},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      order_number = #{orderNumber,jdbcType=BIGINT},
+      pay_number = #{payNumber,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=INTEGER},
+      payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      `status` = #{status,jdbcType=TINYINT},
+      the_total_amount_of_orders = #{theTotalAmountOfOrders,jdbcType=DECIMAL},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+    </trim>
+  </insert>
+  <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.cdzg.xzshop.domain.OrderPayHistory" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into order_pay_history
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="orderNumber != null">
+        order_number,
+      </if>
+      <if test="payNumber != null and payNumber != ''">
+        pay_number,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="paymentAmount != null">
+        payment_amount,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="theTotalAmountOfOrders != null">
+        the_total_amount_of_orders,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update,
+      </if>
+      <if test="remark != null and remark != ''">
+        remark,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderNumber != null">
+        #{orderNumber,jdbcType=BIGINT},
+      </if>
+      <if test="payNumber != null and payNumber != ''">
+        #{payNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="paymentAmount != null">
+        #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="theTotalAmountOfOrders != null">
+        #{theTotalAmountOfOrders,jdbcType=DECIMAL},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null and remark != ''">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderNumber != null">
+        order_number = #{orderNumber,jdbcType=BIGINT},
+      </if>
+      <if test="payNumber != null and payNumber != ''">
+        pay_number = #{payNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="paymentAmount != null">
+        payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="theTotalAmountOfOrders != null">
+        the_total_amount_of_orders = #{theTotalAmountOfOrders,jdbcType=DECIMAL},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null and remark != ''">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

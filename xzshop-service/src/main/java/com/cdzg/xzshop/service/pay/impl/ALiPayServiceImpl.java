@@ -12,6 +12,8 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
+import com.cdzg.xzshop.domain.OrderPayHistory;
+import com.cdzg.xzshop.mapper.OrderPayHistoryMapper;
 import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
@@ -44,9 +46,12 @@ public class ALiPayServiceImpl implements PayService {
     @Resource
     private ReceivePaymentInfoMapper paymentInfoMapper;
 
+    @Resource
+    private OrderPayHistoryMapper payHistoryMapper;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AlipayTradeAppPayResponse pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
+    public String pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         AlipayClient aliPayClient = PayClientUtils.getAliPayClient(order.getId() + "");
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
@@ -74,7 +79,7 @@ public class ALiPayServiceImpl implements PayService {
             AlipayTradeAppPayResponse response = aliPayClient.sdkExecute(request);
             //就是orderString 可以直接给客户端请求，无需再做处理。
             log.info(Json.pretty(response.getBody()));
-            return response;
+            return response.getBody();
         } catch (Exception e) {
             log.error("支付宝支付调用接口异常:{}", Json.pretty(e.getStackTrace()));
             throw e;
@@ -120,6 +125,8 @@ public class ALiPayServiceImpl implements PayService {
         String total_amount = receiveMap.get("total_amount");
         //支付宝分配给开发者的应用 Id。
         String app_id = receiveMap.get("app_id");
+        // 该交易在支付宝系统中的交易流水号。
+        String trade_no = receiveMap.get("trade_no");
 
         //返回状态存入redis中
         //对验签进行处理
@@ -162,12 +169,29 @@ public class ALiPayServiceImpl implements PayService {
 
             //todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
+            addHistoryRecord(out_trade_no,total_amount,order.getPayMoney(),trade_no,true);
             return "success";
         } else {
             //todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
+            addHistoryRecord(out_trade_no,total_amount,order.getPayMoney(), trade_no, false);
             return "failure";
         }
+    }
+
+    private void addHistoryRecord(String out_trade_no, String total_amount, BigDecimal orderMoney, String trade_no, Boolean status) {
+
+        OrderPayHistory history = OrderPayHistory.builder()
+                .orderNumber(Long.parseLong(out_trade_no))
+                .paymentAmount(new BigDecimal(total_amount))
+                .payNumber(trade_no)
+                .theTotalAmountOfOrders(orderMoney)
+                .type(ReceivePaymentType.Alipay)
+                .status(status)
+                .remark("订单支付成功")
+                .build();
+        /* 添加支付历史记录 */
+        payHistoryMapper.insertOrUpdate(history);
     }
 
 

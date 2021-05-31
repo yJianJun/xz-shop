@@ -1,5 +1,7 @@
 package com.cdzg.xzshop.service.pay.impl;
 
+import com.cdzg.xzshop.domain.OrderPayHistory;
+import com.cdzg.xzshop.mapper.OrderPayHistoryMapper;
 import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
@@ -44,6 +46,9 @@ public class WeChatServiceImpl implements PayService {
 
     @Resource
     private ReceivePaymentInfoMapper paymentInfoMapper;
+
+    @Resource
+    private OrderPayHistoryMapper payHistoryMapper;
 
 
     /**
@@ -116,6 +121,7 @@ public class WeChatServiceImpl implements PayService {
 
             //Todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
+            addHistoryRecord(out_trade_no,totalFee,order.getPayMoney(),notifyResult.getTransactionId(),false);
             String errCode = notifyResult.getErrCode();
             String errCodeDes = notifyResult.getErrCodeDes();
             log.error("微信支付失败，错误代码:{}，错误详情:{}", errCode, errCodeDes);
@@ -124,6 +130,7 @@ public class WeChatServiceImpl implements PayService {
             // 可在此持久化微信传回的该 map 数据
             //Todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
+            addHistoryRecord(out_trade_no,totalFee,order.getPayMoney(),notifyResult.getTransactionId(),true);
             return WxPayNotifyResponse.success("成功");
         }
     }
@@ -162,7 +169,7 @@ public class WeChatServiceImpl implements PayService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public WxPayUnifiedOrderResult pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
+    public String pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         WxPayService wxPayService = PayClientUtils.getWxClient(order.getId() + "");
         // 测试时，将支付金额设置为 1 分钱
@@ -174,7 +181,22 @@ public class WeChatServiceImpl implements PayService {
                 .build();
         WxPayUnifiedOrderResult result = wxPayService.unifiedOrder(request);
         log.info("微信支付调用结果:{}", Json.pretty(result));
-        return result;
+        return Json.pretty(result);
+    }
+
+    private void addHistoryRecord(String out_trade_no, String total_amount, BigDecimal orderMoney, String trade_no, Boolean status) {
+
+        OrderPayHistory history = OrderPayHistory.builder()
+                .orderNumber(Long.parseLong(out_trade_no))
+                .paymentAmount(new BigDecimal(total_amount))
+                .payNumber(trade_no)
+                .theTotalAmountOfOrders(orderMoney)
+                .type(ReceivePaymentType.Alipay)
+                .status(status)
+                .remark("订单支付成功")
+                .build();
+        /* 添加支付历史记录 */
+        payHistoryMapper.insertOrUpdate(history);
     }
 
     /**

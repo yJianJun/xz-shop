@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -13,12 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.Column;
 
 /**
  * 订单支付历史记录
@@ -33,6 +30,7 @@ public class OrderPayHistory implements Serializable {
      */
     @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty(value = "主键")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -40,6 +38,7 @@ public class OrderPayHistory implements Serializable {
      */
     @TableField(value = "order_number")
     @ApiModelProperty(value = "订单编号")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long orderNumber;
 
     /**
@@ -49,17 +48,10 @@ public class OrderPayHistory implements Serializable {
     @ApiModelProperty(value = "支付平台交易单号")
     private String payNumber;
 
-
-    /**
-     * 支付是否成功
-     */
-    @TableField(value = "`status`")
-    @ApiModelProperty(value = "支付是否成功")
-    private Boolean status;
-
     /**
      * 支付类型：1:支付宝支付 2:微信支付
      */
+    @TableField(value = "`type`")
     @ApiModelProperty(value = "支付类型：1:支付宝支付 2:微信支付")
     private ReceivePaymentType type;
 
@@ -70,6 +62,13 @@ public class OrderPayHistory implements Serializable {
     @TableField(value = "payment_amount")
     @ApiModelProperty(value = "支付金额")
     private BigDecimal paymentAmount;
+
+    /**
+     * 支付是否成功
+     */
+    @TableField(value = "`status`")
+    @ApiModelProperty(value = "支付是否成功")
+    private Boolean status;
 
     /**
      * 订单总金额
