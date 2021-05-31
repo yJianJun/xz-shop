@@ -66,5 +66,15 @@ public interface GoodsCategoryService {
 	GoodsCategory findOneByIdAndLevelAndStatus(Long id,Integer level,Boolean status);
 
 
+
+	String findCategoryNameByIdAndLevelAndStatus(Long id,Integer level,Boolean status);
+
+
+
+	String findCategoryNameByIdAndLevel(Long id,Integer level);
+
+
+
+
 }
 

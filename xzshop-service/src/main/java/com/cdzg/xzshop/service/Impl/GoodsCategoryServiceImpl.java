@@ -259,6 +259,22 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
 		 return goodsCategoryMapper.findOneByIdAndLevelAndStatus(id,level,status);
 	}
 
+	@Override
+	public String findCategoryNameByIdAndLevelAndStatus(Long id,Integer level,Boolean status){
+		 return goodsCategoryMapper.findCategoryNameByIdAndLevelAndStatus(id,level,status);
+	}
+
+	@Override
+	public String findCategoryNameByIdAndLevel(Long id,Integer level){
+		 return goodsCategoryMapper.findCategoryNameByIdAndLevel(id,level);
+	}
+
+
+
+
+
+
+
 
 
 

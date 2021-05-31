@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -21,4 +22,10 @@ public class GoodsSpuUpdateVO extends GoodsSpuAddVo {
     @JsonSerialize(using = ToStringSerializer.class)
     @NotNull(message = "商品spuNo不能为空")
     private Long spuNo;
+
+    @ApiModelProperty(value = "一级分类名字",allowEmptyValue = true,position = 14)
+    private String categoryNameLevel1;
+
+    @ApiModelProperty(value = "二级分类名字",allowEmptyValue = true,position = 15)
+    private String categoryNameLevel2;
 }

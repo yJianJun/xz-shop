@@ -5,11 +5,9 @@ import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
-import com.cdzg.xzshop.domain.GoodsSpu;
-import com.cdzg.xzshop.domain.ReceivePaymentInfo;
-import com.cdzg.xzshop.domain.ReturnGoodsInfo;
-import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.domain.*;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
+import com.cdzg.xzshop.service.GoodsCategoryService;
 import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
@@ -43,6 +41,9 @@ public class GoodsSpuController {
     @Autowired
     ShopInfoService shopInfoService;
 
+    @Autowired
+    GoodsCategoryService categoryService;
+
     @WebApi
     @PostMapping("/add")
     @ApiOperation("新建商品")
@@ -74,6 +75,10 @@ public class GoodsSpuController {
         if (Objects.nonNull(goodsSpu)){
             GoodsSpuUpdateVO updateVO = new GoodsSpuUpdateVO();
             BeanUtils.copyProperties(goodsSpu,updateVO);
+            String categoryNameLevel1 = categoryService.findCategoryNameByIdAndLevel(goodsSpu.getCategoryIdLevel1(), 1);
+            String categoryNameLevel2 = categoryService.findCategoryNameByIdAndLevel(goodsSpu.getCategoryIdLevel2(), 2);
+            updateVO.setCategoryNameLevel1(categoryNameLevel1);
+            updateVO.setCategoryNameLevel2(categoryNameLevel2);
             return CommonResult.buildSuccessResponse(updateVO);
         }
         throw new BaseException(ResultCode.DATA_ERROR);
