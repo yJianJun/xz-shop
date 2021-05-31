@@ -94,12 +94,14 @@ public class ShoppingCartController {
             resultList.add(appShoppingCartListRespVO);
         });
         resultList.forEach(r -> {
+            List<AppShoppingCartGoodsRespVO> shoppingCartGoodsList = new ArrayList<>();
             List<ShoppingCart> shopAndGoodsIdList = shoppingCartList.stream().filter(s -> (s.getShopId() + "").equals(r.getShopId())).collect(Collectors.toList());
             shopAndGoodsIdList.forEach(s -> goodsSpuList.forEach(g -> {
                 if (s.getGoodsId().equals(g.getId())) {
                     AppShoppingCartGoodsRespVO shoppingCartGoods = new AppShoppingCartGoodsRespVO();
                     BeanUtils.copyProperties(g, shoppingCartGoods);
                     BeanUtils.copyProperties(s, shoppingCartGoods);
+                    shoppingCartGoods.setShoppingCartId(s.getId() + "");
                     shoppingCartGoods.setGoodsId(s.getGoodsId() + "");
                     shoppingCartGoods.setGoodsImg(CollectionUtils.isEmpty(g.getShowImgs()) ? null : g.getShowImgs().get(0));
                     //默认正常 商品当前状态 0-正常 1-库存不足 2-已下架或已删除
@@ -110,9 +112,10 @@ public class ShoppingCartController {
                     if (!g.getStatus() || g.getIsDelete()) {
                         shoppingCartGoods.setGoodsStatus(2);
                     }
-                    r.getGoodsList().add(shoppingCartGoods);
+                    shoppingCartGoodsList.add(shoppingCartGoods);
                 }
             }));
+            r.setGoodsList(shoppingCartGoodsList);
         });
         //处理空数据
         for (int i = resultList.size(); i > 0; i--) {
@@ -136,7 +139,7 @@ public class ShoppingCartController {
         }
         //库存校验
         GoodsSpu goodsSpu = goodsSpuService.getById(request.getGoodsId());
-        if (!Optional.ofNullable(goodsSpu).isPresent() || goodsSpu.getIsDelete() || goodsSpu.getStatus()) {
+        if (!Optional.ofNullable(goodsSpu).isPresent() || goodsSpu.getIsDelete() || !goodsSpu.getStatus()) {
             return ApiResponse.buildCommonErrorResponse("商品不存在或已下架");
         }
         if (goodsSpu.getStock() <= request.getGoodsNumber()) {
