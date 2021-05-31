@@ -56,4 +56,7 @@ public class AppShoppingCartGoodsRespVO implements Serializable {
     @ApiModelProperty(value = "商品当前状态 0-正常 1-库存不足 2-已下架或已删除")
     private Integer goodsStatus;
 
+    @ApiModelProperty(value = "购物车id")
+    private String shoppingCartId;
+
 }

@@ -101,6 +101,7 @@ public class ShoppingCartController {
                     AppShoppingCartGoodsRespVO shoppingCartGoods = new AppShoppingCartGoodsRespVO();
                     BeanUtils.copyProperties(g, shoppingCartGoods);
                     BeanUtils.copyProperties(s, shoppingCartGoods);
+                    shoppingCartGoods.setShoppingCartId(s.getId() + "");
                     shoppingCartGoods.setGoodsId(s.getGoodsId() + "");
                     shoppingCartGoods.setGoodsImg(CollectionUtils.isEmpty(g.getShowImgs()) ? null : g.getShowImgs().get(0));
                     //默认正常 商品当前状态 0-正常 1-库存不足 2-已下架或已删除
