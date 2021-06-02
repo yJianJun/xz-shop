@@ -121,7 +121,7 @@ public class WeChatServiceImpl implements PayService {
 
             //Todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
-            addHistoryRecord(out_trade_no,totalFee,order.getPayMoney(),notifyResult.getTransactionId(),false);
+            addHistoryRecord(out_trade_no,totalFee,order.getTotalMoney(),notifyResult.getTransactionId(),false);
             String errCode = notifyResult.getErrCode();
             String errCodeDes = notifyResult.getErrCodeDes();
             log.error("微信支付失败，错误代码:{}，错误详情:{}", errCode, errCodeDes);
@@ -130,7 +130,7 @@ public class WeChatServiceImpl implements PayService {
             // 可在此持久化微信传回的该 map 数据
             //Todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
-            addHistoryRecord(out_trade_no,totalFee,order.getPayMoney(),notifyResult.getTransactionId(),true);
+            addHistoryRecord(out_trade_no,totalFee,order.getTotalMoney(),notifyResult.getTransactionId(),true);
             return WxPayNotifyResponse.success("成功");
         }
     }

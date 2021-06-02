@@ -169,12 +169,12 @@ public class ALiPayServiceImpl implements PayService {
 
             //todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
-            addHistoryRecord(out_trade_no,total_amount,order.getPayMoney(),trade_no,true);
+            addHistoryRecord(out_trade_no,total_amount,order.getTotalMoney(),trade_no,true);
             return "success";
         } else {
             //todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
-            addHistoryRecord(out_trade_no,total_amount,order.getPayMoney(), trade_no, false);
+            addHistoryRecord(out_trade_no,total_amount,order.getTotalMoney(), trade_no, false);
             return "failure";
         }
     }
