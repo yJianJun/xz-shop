@@ -191,7 +191,7 @@ public class WeChatServiceImpl implements PayService {
                 .paymentAmount(new BigDecimal(total_amount))
                 .payNumber(trade_no)
                 .theTotalAmountOfOrders(orderMoney)
-                .type(ReceivePaymentType.Alipay)
+                .type(ReceivePaymentType.Wechat)
                 .status(status)
                 .remark("")
                 .build();
