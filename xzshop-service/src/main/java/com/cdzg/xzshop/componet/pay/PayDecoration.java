@@ -13,6 +13,7 @@ import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
 import com.cdzg.xzshop.service.pay.PayService;
+import com.cdzg.xzshop.to.app.QueryOrderTo;
 import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.vo.pay.PayParam;
 import com.cdzg.xzshop.vo.pay.RefundParam;
@@ -63,7 +64,7 @@ public class PayDecoration {
      * @throws Exception
      */
     @ApiOperation("查询交易订单信息")
-    public Object query(@Valid @NotBlank @ApiParam(value = "微信/支付宝交易号", required = true) String transactionId,
+    public QueryOrderTo query(@Valid @NotBlank @ApiParam(value = "微信/支付宝交易号", required = true) String transactionId,
                                      @Valid @NotBlank @ApiParam(value = "商品订单号", required = true) String outTradeNo,
                                      @Valid @NotNull @ApiParam(value = "支付方式", required = true, allowableValues = "1,2") PaymentMethod type) throws Exception {
 
@@ -78,7 +79,7 @@ public class PayDecoration {
     /**
      *
      * @param refundParam
-     * @return 有两种返回类型 wechat: WxPayRefundResult / aLiPay: AlipayTradeRefundResponse
+     * @return RefundTo
      * @throws Exception
      */
     @ApiOperation("订单退款")
@@ -115,7 +116,7 @@ public class PayDecoration {
         return payService.refund(tradeno, orderno,refundId,refundFee);
     }
 
-    Object query(PayService payService, String transactionId, String outTradeNo) throws Exception {
+    QueryOrderTo query(PayService payService, String transactionId, String outTradeNo) throws Exception {
         return payService.query(transactionId, outTradeNo);
     }
 

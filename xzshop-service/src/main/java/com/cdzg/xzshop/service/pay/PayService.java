@@ -2,6 +2,7 @@ package com.cdzg.xzshop.service.pay;
 
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
+import com.cdzg.xzshop.to.app.QueryOrderTo;
 import com.cdzg.xzshop.to.app.RefundTo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface PayService {
 
-    Object query(String transactionId,String outTradeNo) throws Exception;
+    QueryOrderTo query(String transactionId, String outTradeNo) throws Exception;
     /**
      * 创建支付订单，对应文章中第一步，由合理的业务 service 调用，
      * 比如：购买商品业务中：

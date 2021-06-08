@@ -2,6 +2,7 @@ package com.cdzg.xzshop.service.pay.impl;
 
 import com.cdzg.xzshop.domain.OrderPayHistory;
 import com.cdzg.xzshop.mapper.OrderPayHistoryMapper;
+import com.cdzg.xzshop.to.app.QueryOrderTo;
 import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
@@ -155,9 +156,18 @@ public class WeChatServiceImpl implements PayService {
      *                      交易成功判断条件： return_code、result_code和trade_state都为SUCCESS
      */
     @Override
-    public WxPayOrderQueryResult query(String transactionId, String outTradeNo) throws Exception {
+    public QueryOrderTo query(String transactionId, String outTradeNo) throws Exception {
         WxPayService wxPayService = PayClientUtils.getWxClient(outTradeNo);
-        return wxPayService.queryOrder(transactionId, outTradeNo);
+        WxPayOrderQueryResult wxPayOrderQueryResult = wxPayService.queryOrder(transactionId, outTradeNo);
+        QueryOrderTo queryOrderTo = new QueryOrderTo();
+        queryOrderTo.setBuyerUserId(wxPayOrderQueryResult.getOpenid());
+        queryOrderTo.setTradeStatus(wxPayOrderQueryResult.getTradeState());
+        queryOrderTo.setTotalAmount(BaseWxPayResult.fenToYuan(wxPayOrderQueryResult.getTotalFee()));
+        queryOrderTo.setType(ReceivePaymentType.Wechat);
+        queryOrderTo.setOutTradeNo(wxPayOrderQueryResult.getOutTradeNo());
+        queryOrderTo.setTradeStatusPrompt(wxPayOrderQueryResult.getTradeStateDesc());
+        queryOrderTo.setTradeNo(wxPayOrderQueryResult.getTransactionId());
+        return queryOrderTo;
     }
 
     /**

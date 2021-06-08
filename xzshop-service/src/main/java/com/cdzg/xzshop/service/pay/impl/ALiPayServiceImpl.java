@@ -14,6 +14,7 @@ import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.cdzg.xzshop.domain.OrderPayHistory;
 import com.cdzg.xzshop.mapper.OrderPayHistoryMapper;
+import com.cdzg.xzshop.to.app.QueryOrderTo;
 import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
@@ -306,7 +307,7 @@ public class ALiPayServiceImpl implements PayService {
      * 调用alipay.trade.cancel之前，需确认支付状态；
      */
     @Override
-    public AlipayTradeQueryResponse query(String tradeNo, String outTradeNo) throws Exception {
+    public QueryOrderTo query(String tradeNo, String outTradeNo) throws Exception {
 
         AlipayClient aliPayClient = PayClientUtils.getAliPayClient(outTradeNo);
         AlipayTradeQueryRequest alipayTradeQueryRequest = new AlipayTradeQueryRequest();
@@ -315,7 +316,15 @@ public class ALiPayServiceImpl implements PayService {
         model.setTradeNo(tradeNo);
         alipayTradeQueryRequest.setBizModel(model);
         try {
-            return aliPayClient.execute(alipayTradeQueryRequest);
+            AlipayTradeQueryResponse response = aliPayClient.execute(alipayTradeQueryRequest);
+            QueryOrderTo queryOrderTo = new QueryOrderTo();
+            queryOrderTo.setBuyerUserId(response.getBuyerUserId());
+            queryOrderTo.setTradeStatus(response.getTradeStatus());
+            queryOrderTo.setType(ReceivePaymentType.Alipay);
+            queryOrderTo.setOutTradeNo(response.getOutTradeNo());
+            queryOrderTo.setTotalAmount(response.getTotalAmount());
+            queryOrderTo.setTradeNo(response.getTradeNo());
+            return queryOrderTo;
         } catch (AlipayApiException e) {
             log.error("支付宝app查询支付订单报错:{}", Json.pretty(e.getStackTrace()));
             throw e;
