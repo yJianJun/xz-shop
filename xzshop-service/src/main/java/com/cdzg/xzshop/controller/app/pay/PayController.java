@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Objects;
 
@@ -103,7 +104,8 @@ public class PayController {
 
         if (PaymentMethod.Wechat == type) {
 
-            String ip = payParam.getIp();
+            InetAddress addr = InetAddress.getLocalHost();
+            String ip =addr.getHostAddress();
             return CommonResult.buildSuccessResponse(wxPayService.pay(ip,spus,order));
         } else {
             return CommonResult.buildSuccessResponse(aliPayService.pay(null, spus,order));

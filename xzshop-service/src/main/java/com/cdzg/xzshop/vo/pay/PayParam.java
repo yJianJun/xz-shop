@@ -18,11 +18,7 @@ public class PayParam {
     @NotNull
     private Long orderId;
 
-
-    @ApiModelProperty(value = "终端IP地址（微信支付时必传）",allowEmptyValue = true,position = 2)
-    private String ip;
-
-    @ApiModelProperty(value = "支付方式", required = true, allowableValues = "1,2")
+    @ApiModelProperty(value = "支付方式", required = true, allowableValues = "1,2",position = 2)
     @NotNull
     private PaymentMethod type;
 
