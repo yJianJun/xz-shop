@@ -2,6 +2,7 @@ package com.cdzg.xzshop.service.pay.impl;
 
 import com.cdzg.xzshop.domain.OrderPayHistory;
 import com.cdzg.xzshop.mapper.OrderPayHistoryMapper;
+import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
@@ -121,7 +122,7 @@ public class WeChatServiceImpl implements PayService {
 
             //Todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
-            addHistoryRecord(out_trade_no,totalFee,order.getPayMoney(),notifyResult.getTransactionId(),false);
+            addHistoryRecord(out_trade_no,totalFee,order.getTotalMoney(),notifyResult.getTransactionId(),false);
             String errCode = notifyResult.getErrCode();
             String errCodeDes = notifyResult.getErrCodeDes();
             log.error("微信支付失败，错误代码:{}，错误详情:{}", errCode, errCodeDes);
@@ -130,7 +131,7 @@ public class WeChatServiceImpl implements PayService {
             // 可在此持久化微信传回的该 map 数据
             //Todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
-            addHistoryRecord(out_trade_no,totalFee,order.getPayMoney(),notifyResult.getTransactionId(),true);
+            addHistoryRecord(out_trade_no,totalFee,order.getTotalMoney(),notifyResult.getTransactionId(),true);
             return WxPayNotifyResponse.success("成功");
         }
     }
@@ -191,7 +192,7 @@ public class WeChatServiceImpl implements PayService {
                 .paymentAmount(new BigDecimal(total_amount))
                 .payNumber(trade_no)
                 .theTotalAmountOfOrders(orderMoney)
-                .type(ReceivePaymentType.Alipay)
+                .type(ReceivePaymentType.Wechat)
                 .status(status)
                 .remark("")
                 .build();
@@ -214,7 +215,7 @@ public class WeChatServiceImpl implements PayService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public WxPayRefundResult refund(String tradeno, Long orderno, Long refundId, String refundFee) throws Exception {
+    public RefundTo refund(String tradeno, Long orderno, Long refundId, String refundFee) throws Exception {
 
         WxPayService wxPayService = PayClientUtils.getWxClient(orderno+"");
         WxPayRefundRequest request = WxPayRefundRequest.newBuilder()
@@ -225,7 +226,14 @@ public class WeChatServiceImpl implements PayService {
                 // transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no
                 .transactionId(tradeno) //微信生成的订单号，在支付通知中有返回
                 .build();
-        return wxPayService.refund(request);
+        WxPayRefundResult refundResult = wxPayService.refund(request);
+        RefundTo refundTo = new RefundTo();
+        refundTo.setRefundFee(BaseWxPayResult.fenToYuan(refundResult.getRefundFee()));
+        refundTo.setOutRequestNo(refundResult.getOutRefundNo());
+        refundTo.setOutTradeNo(refundResult.getOutTradeNo());
+        refundTo.setTradeNo(refundResult.getTransactionId());
+        refundTo.setType(ReceivePaymentType.Wechat);
+        return refundTo;
     }
 
 }

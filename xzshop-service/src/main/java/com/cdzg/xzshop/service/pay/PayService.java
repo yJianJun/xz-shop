@@ -1,8 +1,8 @@
 package com.cdzg.xzshop.service.pay;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
+import com.cdzg.xzshop.to.app.RefundTo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,5 +39,5 @@ public interface PayService {
      */
     String callBack(HttpServletRequest request, HttpServletResponse response);
 
-    Object refund(String tradeno, Long orderno,Long refundId,String refundFee) throws Exception;
+    RefundTo refund(String tradeno, Long orderno, Long refundId, String refundFee) throws Exception;
 }

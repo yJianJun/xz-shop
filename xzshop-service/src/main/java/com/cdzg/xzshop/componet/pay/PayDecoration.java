@@ -13,6 +13,7 @@ import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
 import com.cdzg.xzshop.service.pay.PayService;
+import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.vo.pay.PayParam;
 import com.cdzg.xzshop.vo.pay.RefundParam;
 import com.framework.utils.core.api.ApiResponse;
@@ -81,7 +82,7 @@ public class PayDecoration {
      * @throws Exception
      */
     @ApiOperation("订单退款")
-    public Object refund(RefundParam refundParam) throws Exception {
+    public RefundTo refund(RefundParam refundParam) throws Exception {
         String refundFee = refundParam.getRefundFee();
         String tradeno = refundParam.getTransactionId();
         Long orderId = refundParam.getOrderno();
@@ -110,7 +111,7 @@ public class PayDecoration {
         }
     }
 
-    Object refund(PayService payService, String tradeno, Long orderno,Long refundId,String refundFee) throws Exception {
+    RefundTo refund(PayService payService, String tradeno, Long orderno, Long refundId, String refundFee) throws Exception {
         return payService.refund(tradeno, orderno,refundId,refundFee);
     }
 

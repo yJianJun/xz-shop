@@ -14,6 +14,7 @@ import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.cdzg.xzshop.domain.OrderPayHistory;
 import com.cdzg.xzshop.mapper.OrderPayHistoryMapper;
+import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
 import com.cdzg.xzshop.constant.ReceivePaymentType;
@@ -169,12 +170,12 @@ public class ALiPayServiceImpl implements PayService {
 
             //todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
-            addHistoryRecord(out_trade_no,total_amount,order.getPayMoney(),trade_no,true);
+            addHistoryRecord(out_trade_no,total_amount,order.getTotalMoney(),trade_no,true);
             return "success";
         } else {
             //todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
-            addHistoryRecord(out_trade_no,total_amount,order.getPayMoney(), trade_no, false);
+            addHistoryRecord(out_trade_no,total_amount,order.getTotalMoney(), trade_no, false);
             return "failure";
         }
     }
@@ -245,7 +246,7 @@ public class ALiPayServiceImpl implements PayService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AlipayTradeRefundResponse refund(String tradeNo, Long outTradeNo,Long refundId,String refundAmount) throws Exception {
+    public RefundTo refund(String tradeNo, Long outTradeNo, Long refundId, String refundAmount) throws Exception {
 
         try {
             ////获得初始化的AlipayClient
@@ -268,15 +269,26 @@ public class ALiPayServiceImpl implements PayService {
             AlipayTradeRefundResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {
                 log.info("支付宝app退款成功");
-                return response;
+                return transferTo(response,Long.toString(refundId));
             } else {
                 log.debug("支付宝app退款失败:{}", response.getSubMsg());//失败会返回错误信息
-                return response;
+                return transferTo(response,Long.toString(refundId));
             }
         } catch (Exception e) {
             log.error("支付宝app退款报错:{}", Json.pretty(e.getStackTrace()));
             throw e;
         }
+    }
+
+    private RefundTo transferTo(AlipayTradeRefundResponse response, String refundId) {
+
+        RefundTo refundTo = new RefundTo();
+        refundTo.setRefundFee(response.getRefundFee());
+        refundTo.setTradeNo(response.getTradeNo());
+        refundTo.setOutRequestNo(refundId);
+        refundTo.setOutTradeNo(response.getOutTradeNo());
+        refundTo.setType(ReceivePaymentType.Alipay);
+        return refundTo;
     }
 
     /**
