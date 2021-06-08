@@ -29,6 +29,9 @@ public class AppShoppingCartGoodsRespVO implements Serializable {
     @ApiModelProperty(value = "商品id")
     private String goodsId;
 
+    @ApiModelProperty(value = "商品编号")
+    private String spuNo;
+
     @ApiModelProperty(value = "商品名称")
     private String goodsName;
 
