@@ -462,6 +462,20 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         return pageResultVO;
     }
 
+    @Override
+    public String revokeRefund(Long id) {
+        RefundOrder refundOrder = this.getById(id);
+        Long userId = refundOrder.getUserId();
+        if (LoginSessionUtils.getAppUser().getUserBaseInfo().getId().equals(userId)) {
+            RefundOrder modify = new RefundOrder();
+            modify.setId(id);
+            modify.setStatus(0);
+            this.updateById(modify);
+            return null;
+        }
+        return "退款单号有误！";
+    }
+
     /**
      * 修改订单明细的状态
      *
