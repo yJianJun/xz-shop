@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -31,6 +32,9 @@ public class AppShoppingCartListRespVO implements Serializable {
      */
     @ApiModelProperty(value = "商铺ID")
     private String shopId;
+
+    @ApiModelProperty(value = "店铺运费")
+    private BigDecimal fare;
 
     @ApiModelProperty(value = "购物车商品信息")
     private List<AppShoppingCartGoodsRespVO> goodsList;

@@ -86,4 +86,11 @@ public interface RefundOrderService extends IService<RefundOrder> {
      */
     PageResultVO<RefundOrderListAppVO> getRefundAppPage(BasePageRequest request);
 
+    /**
+     * app撤销退款退货申请
+     * @param id
+     * @return
+     */
+    String revokeRefund(Long id);
+
 }

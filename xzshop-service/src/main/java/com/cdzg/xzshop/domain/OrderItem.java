@@ -40,7 +40,7 @@ public class OrderItem implements Serializable {
 	/**
 	 * 数量
 	 */
-	private BigDecimal goodsCount;
+	private Integer goodsCount;
 	/**
 	 * 单价
 	 */

@@ -157,8 +157,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         if (RefundTypeEnum.REFUND.getCode().equals(type)) {
             // 不同类型的商品信息保存不一样
             refundOrder.setGoodsName(orderItemList.stream().map(OrderItem::getGoodsName).collect(Collectors.joining(",")));
-            refundOrder.setGoodsNumber(orderItemList.stream().map(OrderItem::getGoodsCount).map(BigDecimal::toString).collect(Collectors.joining(",")));
-            BigDecimal refundMoney = orderItemList.stream().map(o -> o.getGoodsUnitPrice().multiply(o.getGoodsCount())).reduce(BigDecimal.ZERO, BigDecimal::add);
+            refundOrder.setGoodsNumber(orderItemList.stream().map(OrderItem::getGoodsCount).map(Object::toString).collect(Collectors.joining(",")));
+            BigDecimal refundMoney = orderItemList.stream().map(o -> o.getGoodsUnitPrice().multiply(BigDecimal.valueOf(o.getGoodsCount())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
             refundOrder.setRefundAmount(refundMoney);
             processContent = appUser.getUserBaseInfo().getUserName() + "提交退款申请";
             // 修改状态
@@ -169,7 +170,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             refundOrder.setOrderItemId(orderItemId);
             refundOrder.setGoodsName(orderItem.getGoodsName());
             refundOrder.setGoodsNumber(orderItem.getGoodsCount().toString());
-            refundOrder.setRefundAmount(orderItem.getGoodsUnitPrice().multiply(orderItem.getGoodsCount()));
+            refundOrder.setRefundAmount(orderItem.getGoodsUnitPrice().multiply(BigDecimal.valueOf(orderItem.getGoodsCount())));
             processContent = appUser.getUserBaseInfo().getUserName() + "提交退货申请";
             refundOrder.setStatus(1);
             revertOrderStatus(refundOrder, 3);
@@ -408,7 +409,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         goodsInfoVOS.addAll(refundOrderItems.stream().map(o -> {
             GoodsInfoVO goodsInfoVO = new GoodsInfoVO();
             BeanUtils.copyProperties(o, goodsInfoVO);
-            goodsInfoVO.setTotalPrice(o.getGoodsUnitPrice().multiply(o.getGoodsCount()));
+            goodsInfoVO.setTotalPrice(o.getGoodsUnitPrice().multiply(BigDecimal.valueOf(o.getGoodsCount())));
             GoodsSpu goodsSpu = goodsMap.get(o.getId());
             if (Objects.nonNull(goodsSpu) && CollectionUtils.isNotEmpty(goodsSpu.getShowImgs())) {
                 goodsInfoVO.setImg(goodsSpu.getShowImgs().get(0));
@@ -449,7 +450,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             vo.setGoodsInfoVOList(refundOrderItems.stream().map(item -> {
                 GoodsInfoVO goodsInfoVO = new GoodsInfoVO();
                 BeanUtils.copyProperties(item, goodsInfoVO);
-                goodsInfoVO.setTotalPrice(item.getGoodsUnitPrice().multiply(item.getGoodsCount()));
+                goodsInfoVO.setTotalPrice(item.getGoodsUnitPrice().multiply(BigDecimal.valueOf(item.getGoodsCount())));
                 GoodsSpu goodsSpu = goodsMap.get(item.getId());
                 if (Objects.nonNull(goodsSpu) && CollectionUtils.isNotEmpty(goodsSpu.getShowImgs())) {
                     goodsInfoVO.setImg(goodsSpu.getShowImgs().get(0));
@@ -460,6 +461,20 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }).collect(Collectors.toList()));
         pageResultVO.setPageParams(page);
         return pageResultVO;
+    }
+
+    @Override
+    public String revokeRefund(Long id) {
+        RefundOrder refundOrder = this.getById(id);
+        Long userId = refundOrder.getUserId();
+        if (LoginSessionUtils.getAppUser().getUserBaseInfo().getId().equals(userId)) {
+            RefundOrder modify = new RefundOrder();
+            modify.setId(id);
+            modify.setStatus(0);
+            this.updateById(modify);
+            return null;
+        }
+        return "退款单号有误！";
     }
 
     /**

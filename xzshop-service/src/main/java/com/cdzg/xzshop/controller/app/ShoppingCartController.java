@@ -91,6 +91,7 @@ public class ShoppingCartController {
             AppShoppingCartListRespVO appShoppingCartListRespVO = new AppShoppingCartListRespVO();
             appShoppingCartListRespVO.setShopId(s.getId() + "");
             appShoppingCartListRespVO.setShopName(s.getShopName());
+            appShoppingCartListRespVO.setFare(s.getFare());
             resultList.add(appShoppingCartListRespVO);
         });
         resultList.forEach(r -> {
@@ -103,6 +104,7 @@ public class ShoppingCartController {
                     BeanUtils.copyProperties(s, shoppingCartGoods);
                     shoppingCartGoods.setShoppingCartId(s.getId() + "");
                     shoppingCartGoods.setGoodsId(s.getGoodsId() + "");
+                    shoppingCartGoods.setSpuNo(g.getSpuNo() + "");
                     shoppingCartGoods.setGoodsImg(CollectionUtils.isEmpty(g.getShowImgs()) ? null : g.getShowImgs().get(0));
                     //默认正常 商品当前状态 0-正常 1-库存不足 2-已下架或已删除
                     shoppingCartGoods.setGoodsStatus(0);

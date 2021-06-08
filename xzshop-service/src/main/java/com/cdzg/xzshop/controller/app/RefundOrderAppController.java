@@ -68,4 +68,16 @@ public class RefundOrderAppController {
         return ApiResponse.buildSuccessResponse(refundOrderService.getRefundAppPage(request));
     }
 
+    @GetMapping("/revokeRefund/{id}")
+    @ApiOperation("06005-撤销退货退款")
+    @MobileApi
+    public ApiResponse<String> revokeRefund(@PathVariable Long id) {
+        log.info("RefundOrderAppController-revokeRefund id:{}", id);
+        String info = refundOrderService.revokeRefund(id);
+        if (StringUtils.isNotEmpty(info)) {
+            return ApiResponse.buildCommonErrorResponse(info);
+        }
+        return ApiResponse.buildSuccessResponse(null);
+    }
+
 }
