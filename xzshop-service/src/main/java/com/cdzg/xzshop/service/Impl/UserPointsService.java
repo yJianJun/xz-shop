@@ -3,6 +3,7 @@ package com.cdzg.xzshop.service.Impl;
 import com.alibaba.fastjson.JSONObject;
 import com.cdzg.xzshop.utils.HttpUtils;
 import com.cdzg.xzshop.utils.HttpsClientUtil;
+import com.framework.utils.core.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class UserPointsService {
 
     @Value("${user.points.getUserPoints.uri:app/points/getUserEffectivePoints}")
     private String getUserEffectivePointsUri;
+
+    @Value("${user.points.getUserPoints.uri:app/points/payPoint}")
+    private String payPointUri;
 
     /**
      * 根据token查询用户有效积分余额
@@ -55,4 +59,15 @@ public class UserPointsService {
         }
         return 0;
     }
+
+    /**
+     * 积分消费接口
+     * @return
+     */
+    public ApiResponse<String> payPoint(){
+
+
+        return null;
+    }
+
 }

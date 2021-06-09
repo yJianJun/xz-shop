@@ -3,6 +3,9 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cdzg.xzshop.domain.Order;
+import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
+import com.cdzg.xzshop.vo.order.response.CommitOrderRespVO;
+import com.framework.utils.core.api.ApiResponse;
 
 import java.util.Map;
 
@@ -24,6 +27,11 @@ public interface OrderService extends IService<Order> {
 	String findShopIdById(Long id);
 
 
-
+    /**
+     * app用户提交商城订单
+     * @param request
+     * @return
+     */
+    Order commitOrder(CommitOrderReqVO request);
 }
 

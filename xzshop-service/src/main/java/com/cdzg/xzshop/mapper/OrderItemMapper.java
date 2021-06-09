@@ -5,6 +5,7 @@ import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.OrderItem;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
  * @date 2021-05-10 17:12:43
  */
 @Mapper
+@Repository
 public interface OrderItemMapper extends BaseMapper<OrderItem> {
 
     List<Long> findIdByOrderIdAndDeleted(@Param("orderId") Long orderId, @Param("deleted") Integer deleted);

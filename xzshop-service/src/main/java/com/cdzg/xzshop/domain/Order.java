@@ -16,7 +16,7 @@ import lombok.Data;
  * @date 2021-05-10 17:12:43
  */
 @Data
-@TableName("order")
+@TableName("`order`")
 public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
 
