@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service.Impl;
 
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.domain.RefundProcess;
 import com.cdzg.xzshop.mapper.RefundProcessMapper;
@@ -14,7 +15,9 @@ public class RefundProcessServiceImpl extends ServiceImpl<RefundProcessMapper, R
 
     @Override
     public List<RefundProcess> getByRefundOrderId(Long refundOrderId) {
-        return this.list(lambdaQuery().eq(RefundProcess::getRefundOrderId, refundOrderId));
+        LambdaQueryChainWrapper<RefundProcess> wrapper = lambdaQuery();
+        wrapper.eq(RefundProcess::getRefundOrderId, refundOrderId);
+        return this.list(wrapper);
     }
 
 }

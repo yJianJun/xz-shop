@@ -93,4 +93,24 @@ public interface RefundOrderService extends IService<RefundOrder> {
      */
     String revokeRefund(Long id);
 
+    /**
+     * 买家提交退款，卖家未处理，自动退款
+     */
+    void autoRefund();
+
+    /**
+     * 买家提交退货退款/换货申请，卖家未处理，系统自动处理
+     */
+    void systemAutoDeal();
+
+    /**
+     * 卖家同意退货/换货，买家未处理，系统自动失败
+     */
+    void systemAutoFail();
+
+    /**
+     * 卖家确认收货，未处理退款，系统自动退款
+     */
+    void systemAutoRefund();
+
 }

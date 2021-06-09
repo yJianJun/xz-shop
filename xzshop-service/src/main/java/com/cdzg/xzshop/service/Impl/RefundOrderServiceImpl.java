@@ -1,7 +1,9 @@
 package com.cdzg.xzshop.service.Impl;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.customer.vo.response.CustomerLoginResponse;
@@ -97,10 +99,14 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     @Override
     public RefundOrderStatisticVO getRefundOrderStatistic() {
         RefundOrderStatisticVO vo = new RefundOrderStatisticVO();
-        int total = this.count(lambdaQuery().ge(RefundOrder::getStatus, 0));
-        int returnToDo = this.count(lambdaQuery().eq(RefundOrder::getStatus, 1));
-        int refundToDo = this.count(lambdaQuery().eq(RefundOrder::getStatus, 7));
-        int refundSuccess = this.count(lambdaQuery().eq(RefundOrder::getStatus, 9));
+        LambdaQueryChainWrapper<RefundOrder> totalWrapper = lambdaQuery();
+        int total = this.count(totalWrapper.ge(RefundOrder::getStatus, 0));
+        LambdaQueryChainWrapper<RefundOrder> returnToDoWrapper = lambdaQuery();
+        int returnToDo = this.count(returnToDoWrapper.eq(RefundOrder::getStatus, 1));
+        LambdaQueryChainWrapper<RefundOrder> refundToDoWrapper = lambdaQuery();
+        int refundToDo = this.count(refundToDoWrapper.eq(RefundOrder::getStatus, 7));
+        LambdaQueryChainWrapper<RefundOrder> refundSuccessWrapper = lambdaQuery();
+        int refundSuccess = this.count(refundSuccessWrapper.eq(RefundOrder::getStatus, 9));
         vo.setTotal(total);
         vo.setReturnToDo(returnToDo);
         vo.setRefundToDo(refundToDo);
@@ -231,6 +237,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         // 退款最后操作，其他代码异常不能影响退款，退款异常回滚所有
         if (refundOrder.getStatus().equals(7)) {
             // TODO 支付退款接口
+            Order order = orderService.getById(refundOrder.getOrderId());
 
         }
         return null;
@@ -432,7 +439,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         List<RefundOrder> records = page.getRecords();
         List<Long> orderIds = records.stream().map(RefundOrder::getOrderId).collect(Collectors.toList());
         orderIds.add(-1L);
-        List<OrderItem> orderItems = orderItemService.list(orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds));
+        LambdaQueryChainWrapper<OrderItem> orderItemWrapper = orderItemService.lambdaQuery();
+        orderItemWrapper.in(OrderItem::getOrderId, orderIds);
+        List<OrderItem> orderItems = orderItemService.list(orderItemWrapper);
         // 查商品
         List<Long> goodsIds = orderItems.stream().map(OrderItem::getGoodsId).collect(Collectors.toList());
         goodsIds.add(-1L);
@@ -477,6 +486,54 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         return "退款单号有误！";
     }
 
+    @Override
+    public void autoRefund() {
+        LocalDateTime now = LocalDateTime.now();
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        Integer autoRefund = systemTimeConfig.getAutoRefund();
+        // 查询买家提交退款，卖家未处理的退款单id
+        List<Long> ids = this.baseMapper.findAutoRefund(7, 1, now.minusMinutes(autoRefund));
+        if (CollectionUtils.isNotEmpty(ids)) {
+            autoBatchOrderAndProcess(ids, 9);
+        }
+    }
+
+    @Override
+    public void systemAutoDeal() {
+        LocalDateTime now = LocalDateTime.now();
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        Integer systemAutoDeal = systemTimeConfig.getSystemAutoDeal();
+        // 买家提交退货退款申请，卖家未处理的退款单id
+        List<Long> ids = this.baseMapper.findAutoRefund(1, 2, now.minusMinutes(systemAutoDeal));
+        if (CollectionUtils.isNotEmpty(ids)) {
+            autoBatchOrderAndProcess(ids, 3);
+        }
+    }
+
+    @Override
+    public void systemAutoFail() {
+        LocalDateTime now = LocalDateTime.now();
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        Integer systemAutoFail = systemTimeConfig.getSystemAutoFail();
+        // 卖家同意退货，买家未处理的退款单id，改为撤销状态
+        List<Long> ids = this.baseMapper.findAutoRefund(3, 2, now.minusMinutes(systemAutoFail));
+        if (CollectionUtils.isNotEmpty(ids)) {
+            autoBatchOrderAndProcess(ids, 0);
+        }
+    }
+
+    @Override
+    public void systemAutoRefund() {
+        LocalDateTime now = LocalDateTime.now();
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        Integer systemAutoRefund = systemTimeConfig.getSystemAutoRefund();
+        // 卖家确认收货，未处理退款的退款单id
+        List<Long> ids = this.baseMapper.findAutoRefund(3, 2, now.minusMinutes(systemAutoRefund));
+        if (CollectionUtils.isNotEmpty(ids)) {
+            autoBatchOrderAndProcess(ids, 9);
+        }
+    }
+
     /**
      * 修改订单明细的状态
      *
@@ -494,6 +551,32 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }
         updateWrapper.set(OrderItem::getStatus, status);
         orderItemService.update(updateWrapper);
+    }
+
+    /**
+     * 系统自动处理时批量修改退款订单状态和流程记录
+     * @param orderIds
+     */
+    private void autoBatchOrderAndProcess(List<Long> orderIds, Integer status){
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return;
+        }
+        // 修改退款单状态
+        LambdaUpdateWrapper<RefundOrder> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.in(RefundOrder::getId, orderIds);
+        updateWrapper.set(RefundOrder::getStatus, status);
+        this.update(updateWrapper);
+        // 新增流程记录
+        List<RefundProcess> list = Lists.newArrayList();
+        for (Long orderId : orderIds) {
+            list.add(new RefundProcess(orderId, "流程超时系统自动处理。", status, 1L));
+        }
+        refundProcessService.saveBatch(list, list.size());
+        // 自动退款的状态
+        if (status.equals(9)) {
+            // TODO 调用退款
+
+        }
     }
 
 }
