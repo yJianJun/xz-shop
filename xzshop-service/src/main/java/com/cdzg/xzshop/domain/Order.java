@@ -30,7 +30,7 @@ public class Order implements Serializable {
 	 */
 	private Long customerId;
 	/**
-	 * 订单类型 0-普通订单 1-积分订单
+	 * 订单类型 1-积分订单 2-普通订单
 	 */
 	private Integer orderType;
 	/**

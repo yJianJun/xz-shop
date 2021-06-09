@@ -28,9 +28,9 @@ public class CommitOrderReqVO implements Serializable {
     /**
      * 订单类型 0-普通订单 1-积分订单
      */
-    @ApiModelProperty(value = "订单类型 0-普通订单 1-积分订单")
+    @ApiModelProperty(value = "订单类型 1-积分订单 2-普通订单")
     @NotNull(message = "orderType cannot be null")
-    @Range(min = 0,max = 1,message = "订单类型只能为 0-普通订单 1-积分订单")
+    @Range(min = 1,max = 2,message = "订单类型只能为 1-积分订单 2-普通订单")
     private Integer orderType;
 
     /**

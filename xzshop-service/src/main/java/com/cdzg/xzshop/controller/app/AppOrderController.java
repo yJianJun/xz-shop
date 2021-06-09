@@ -23,6 +23,7 @@ import com.framework.utils.core.api.ApiResponse;
 import io.netty.util.internal.ObjectUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 @RestController
 @Api(tags = "31_app_订单相关接口")
 @RequestMapping("app/order")
+@Slf4j
 public class AppOrderController {
 
     @Autowired
@@ -109,7 +111,7 @@ public class AppOrderController {
             return ApiResponse.buildCommonErrorResponse("该店铺已下线，下单失败");
         }
         request.setShopName(shopInfo.getShopName());
-        if (request.getOrderType() == 0 && shopInfo.getFare().compareTo(request.getFare()) != 0) {
+        if (request.getOrderType() == 2 && shopInfo.getFare().compareTo(request.getFare()) != 0) {
             return ApiResponse.buildCommonErrorResponse("店铺运费已更改，请刷新购物车或商品列表重新下单");
         }
         if (request.getOrderType() == 1 && request.getFare().compareTo(BigDecimal.ZERO) != 0) {
@@ -153,21 +155,24 @@ public class AppOrderController {
         }
         //商品属性验证，积分商品orRMB商品
         long count = goodsSpuList.stream().filter(g -> g.getPaymentMethod().getValue() == 2).count();
-        if (request.getOrderType() == 0 && count > 0) {
+        if (request.getOrderType() == 2 && count > 0) {
             return ApiResponse.buildCommonErrorResponse("包含积分商品，请单独下单购买");
         } else if (request.getOrderType() == 1 && commitGoodsList.size() != count) {
             return ApiResponse.buildCommonErrorResponse("包含非积分商品，请单独下单购买");
         }
+        //积分订单预扣除用户积分，扣除成功再下单
+        if (request.getOrderType() == 1) {
+//            ApiResponse<String> response = userPointsService.payPoint();
+//            if (Objects.isNull(response)) {
+//                return ApiResponse.buildCommonErrorResponse("系统错误，请稍后重新下单");
+//            }
+//            if (response.getCode() != 200) {
+//                return ApiResponse.buildCommonErrorResponse(response.getMsg());
+//            }
+        }
         //提交订单
         Order order = orderService.commitOrder(request);
         if (Objects.nonNull(order)) {
-            //如果积分订单扣除用户积分,扣除成功就提交成功，失败就删除用户订单
-            ApiResponse<String> response = userPointsService.payPoint();
-//            if (response.getCode() != 200) {
-//                //删除订单信息 TODO
-//
-//                return ApiResponse.buildCommonErrorResponse(response.getMsg());
-//            }
             //减库存 加销量 todo
 
             //删除用户购物车
@@ -181,7 +186,7 @@ public class AppOrderController {
             result.setPayMoney(order.getTotalMoney().setScale(2, BigDecimal.ROUND_HALF_UP));
             result.setShopId(request.getShopId());
             result.setShopName(request.getShopName());
-            if (request.getOrderType() == 0) {
+            if (request.getOrderType() == 2) {
                 //计算付款倒计时 ms
                 SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
                 result.setRemainingTime((long) (systemTimeConfig.getCancelOrder() * 60 * 1000));
