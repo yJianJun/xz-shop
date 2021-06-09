@@ -71,7 +71,7 @@ public class PayController {
     }
 
     @MobileApi
-    @PostMapping("/{type}")
+    @PostMapping
     @ApiOperation("支付")
     public ApiResponse<String> pay(@ApiParam(value = "订单支付参数", required = true) @Valid @RequestBody PayParam payParam) throws Exception {
         Long orderId = payParam.getOrderId();
