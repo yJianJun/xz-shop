@@ -26,10 +26,7 @@ public class QueryOrderTo {
     @ApiModelProperty(value = "针对当前订单状态,提示下一步操作的指引",allowEmptyValue = true)
     private String tradeStatusPrompt;
 
-    /**
-     * 交易的订单金额，单位为元，两位小数。该参数的值为支付时传入的total_amount	88.88
-     * 总金额	total_fee	是	Int	100	订单总金额，单位为分
-     */
+
     @ApiModelProperty(value = "交易的订单金额", required = true)
     private String totalAmount;
 

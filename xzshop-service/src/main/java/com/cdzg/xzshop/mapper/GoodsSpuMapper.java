@@ -40,6 +40,8 @@ public interface GoodsSpuMapper extends BaseMapper<GoodsSpu> {
 
     List<GoodsSpu> findBySpuNoInAndIsDeleteFalseAndStatusTrue(@Param("spuNoCollection")Collection<Long> spuNoCollection);
 
+    List<GoodsSpu> findByShopIdAndIsDeleteFalseAndStatusTrue(@Param("shopId")Long shopId);
+
 
 
 }

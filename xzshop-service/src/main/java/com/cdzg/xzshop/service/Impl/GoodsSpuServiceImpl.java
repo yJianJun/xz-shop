@@ -1,4 +1,5 @@
 package com.cdzg.xzshop.service.Impl;
+import com.cdzg.xzshop.domain.GoodsSpu;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -308,8 +309,17 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 		 return goodsSpuMapper.findBySpuNoInAndIsDeleteFalseAndStatusTrue(spuNoCollection);
 	}
 
+	@Override
+	public List<GoodsSpu> findByShopIdAndIsDeleteFalseAndStatusTrue(Long shopId){
+		 return goodsSpuMapper.findByShopIdAndIsDeleteFalseAndStatusTrue(shopId);
+	}
 
 
+	@Override
+    public PageResultVO<GoodsSpu> pageByShop(int page, int pageSize, Long shopId) {
+        PageHelper.startPage(page, pageSize);
+        return PageUtil.transform(new PageInfo(goodsSpuMapper.findByShopIdAndIsDeleteFalseAndStatusTrue(shopId)));
+    }
 }
 
 
