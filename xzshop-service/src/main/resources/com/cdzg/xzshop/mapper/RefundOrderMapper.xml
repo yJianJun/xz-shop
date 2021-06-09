@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdzg.xzshop.mapper.RefundOrderMapper">
+
+  <select id="findAutoRefund" resultType="long">
+    select a.id from refund_order a
+      left join refund_process b on a.id = b.refund_order_id
+    where a.status = #{status}
+      and a.refund_type = #{type}
+      and b.status = #{status}
+      and b.create_time &lt; #{time}
+  </select>
+
+</mapper>
