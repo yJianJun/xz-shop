@@ -73,7 +73,7 @@ public class UserPointsService {
             int retry = 0;
             while (retry < 3) {
                 retry++;
-                JSONObject jsonObject = HttpsClientUtil.doPost("http://localhost:8638/", payPointUri, headers, null,JSONObject.toJSONString(payPointsReqVO));
+                JSONObject jsonObject = HttpsClientUtil.doPost(userPointsUrl, payPointUri, headers, null,JSONObject.toJSONString(payPointsReqVO));
                 log.info("积分消费接口返回：{}", JSONObject.toJSONString(jsonObject));
                 if (Objects.nonNull(jsonObject)) {
                     return jsonObject;
