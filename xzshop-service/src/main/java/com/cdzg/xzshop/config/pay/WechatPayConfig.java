@@ -21,7 +21,6 @@ public class WechatPayConfig {
 
     private static String notifyUrl = "http://47.105.37.49/xzunion/app/pay/wechat/pay/notify";
 
-    // yjjtodo 这里改成本地服务器上的文件夹绝对路径
    // private static String keyPath = "classpath:pay/apiclient_cert.p12";
 
     /**

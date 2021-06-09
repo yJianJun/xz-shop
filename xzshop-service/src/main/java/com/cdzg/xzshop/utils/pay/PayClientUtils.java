@@ -84,9 +84,9 @@ public class PayClientUtils {
         return PayClientUtils.getWxClient(receivePaymentInfo.getAppid(), receivePaymentInfo.getMchid(), receivePaymentInfo.getPrivateKey(), receivePaymentInfo.getKeyPath());
     }
 
-    public static AlipayClient getAliPayClient(String APP_ID,String APP_PRIVATE_KEY,String ALIPAY_PUBLIC_KEY) {
+    public static AlipayClient getAliPayClient(String APP_ID,String APP_PRIVATE_KEY,String ALIPAY_PUBLIC_KEY,String signType) {
 
-        return new DefaultAlipayClient(AlipayConfig.getServerUrl(), APP_ID, APP_PRIVATE_KEY,AlipayConfig.getFormat(),AlipayConfig.getCharset(), ALIPAY_PUBLIC_KEY,AlipayConfig.getSigntype());
+        return new DefaultAlipayClient(AlipayConfig.getServerUrl(), APP_ID, APP_PRIVATE_KEY,AlipayConfig.getFormat(),AlipayConfig.getCharset(), ALIPAY_PUBLIC_KEY,signType);
     }
 
     public static AlipayClient getAliPayClient(String out_trade_no) throws Exception{
@@ -100,7 +100,7 @@ public class PayClientUtils {
         }
 
         ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Alipay);
-        return PayClientUtils.getAliPayClient(receivePaymentInfo.getAppid(), receivePaymentInfo.getPrivateKey(), receivePaymentInfo.getPublicKey());
+        return PayClientUtils.getAliPayClient(receivePaymentInfo.getAppid(), receivePaymentInfo.getPrivateKey(), receivePaymentInfo.getPublicKey(),receivePaymentInfo.getSigntype());
     }
 
     public static boolean rsaCertCheck(Map<String, String> params,String out_trade_no) throws Exception {
@@ -114,6 +114,6 @@ public class PayClientUtils {
         }
 
         ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Alipay);
-        return AlipaySignature.rsaCheckV1(params,receivePaymentInfo.getPublicKey(),AlipayConfig.getCharset(),AlipayConfig.getSigntype());
+        return AlipaySignature.rsaCheckV1(params,receivePaymentInfo.getPublicKey(),AlipayConfig.getCharset(),receivePaymentInfo.getSigntype());
     }
 }

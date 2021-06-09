@@ -114,7 +114,7 @@ public class ALiPayServiceImpl implements PayService {
             //3.签名验证(对支付宝返回的数据验证，确定是支付宝返回的)
             //切记alipaypublickey是支付宝的公钥，请去open.alipay.com对应应用下查看。
             //boolean AlipaySignature.rsaCheckV1(Map<String, String> params, String publicKey, String charset, String sign_type)
-            signVerified = AlipaySignature.rsaCheckV1(receiveMap,receivePaymentInfo.getPublicKey(), "utf-8", "RSA2");
+            signVerified = AlipaySignature.rsaCheckV1(receiveMap,receivePaymentInfo.getPublicKey(), "utf-8", receivePaymentInfo.getSigntype());
             log.info("支付宝支付验签结果:{}", signVerified);
         } catch (Exception e) {
             log.error("支付宝支付验签异常:{}", Json.pretty(e.getStackTrace()));

@@ -34,7 +34,7 @@ public class AlipayConfig {
     //数据类型
     private static String format = "json";
     //签名类型
-    private static String signtype = "RSA2";
+    //private static String signtype = "RSA2";
 
     //支付宝应用id
   //  private static String APP_ID = "2018102961934152";
@@ -91,13 +91,13 @@ public class AlipayConfig {
         AlipayConfig.format = format;
     }
 
-    public static String getSigntype() {
-        return signtype;
-    }
-
-    public void setSigntype(String signtype) {
-        AlipayConfig.signtype = signtype;
-    }
+    //public static String getSigntype() {
+    //    return signtype;
+    //}
+    //
+    //public void setSigntype(String signtype) {
+    //    AlipayConfig.signtype = signtype;
+    //}
 
     public static Logger getLog() {
         return log;
@@ -107,7 +107,7 @@ public class AlipayConfig {
         return serverUrl;
     }
 
-    public static void setServerUrl(String serverUrl) {
+    public void setServerUrl(String serverUrl) {
         AlipayConfig.serverUrl = serverUrl;
     }
 
