@@ -61,10 +61,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         BeanUtils.copyProperties(request, order);
         order.setFreight(request.getFare());
         order.setCreateTime(date);
+        order.setPayMoney(request.getTotalMoney());
         if (request.getOrderType() == 1) {
             //积分订单
             order.setPayMethod(3);
-            order.setPayMoney(request.getTotalMoney());
             order.setPayTime(date);
             order.setOrderStatus(2);
         } else {
