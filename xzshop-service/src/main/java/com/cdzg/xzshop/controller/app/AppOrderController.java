@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.controller.app;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cdzg.cms.api.constants.StringUtil;
 import com.cdzg.cms.api.vo.xzunion.ApiRes;
 import com.cdzg.customer.vo.response.CustomerBaseInfoVo;
@@ -13,10 +14,7 @@ import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.*;
 import com.cdzg.xzshop.service.Impl.UserPointsService;
 import com.cdzg.xzshop.vo.admin.SystemTimeConfigVO;
-import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
-import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
-import com.cdzg.xzshop.vo.order.request.SettlementGoodsListReqVO;
-import com.cdzg.xzshop.vo.order.request.SettlementReqVO;
+import com.cdzg.xzshop.vo.order.request.*;
 import com.cdzg.xzshop.vo.order.response.CommitOrderRespVO;
 import com.cdzg.xzshop.vo.order.response.SettlementRespVo;
 import com.framework.utils.core.api.ApiResponse;
@@ -161,21 +159,31 @@ public class AppOrderController {
         } else if (request.getOrderType() == 1 && commitGoodsList.size() != count) {
             return ApiResponse.buildCommonErrorResponse("包含非积分商品，请单独下单购买");
         }
-        //积分订单预扣除用户积分，扣除成功再下单
-        if (request.getOrderType() == 1) {
-//            ApiResponse<String> response = userPointsService.payPoint();
-//            if (Objects.isNull(response)) {
-//                return ApiResponse.buildCommonErrorResponse("系统错误，请稍后重新下单");
-//            }
-//            if (response.getCode() != 200) {
-//                return ApiResponse.buildCommonErrorResponse(response.getMsg());
-//            }
-        }
+
         //提交订单
         Order order = orderService.commitOrder(request);
         if (Objects.nonNull(order)) {
+            //如果积分订单扣除用户积分，扣除失败就删除积分订单
+            if (request.getOrderType() == 1) {
+                AppPayPointsReqVO payPointsReqVO = new AppPayPointsReqVO();
+                payPointsReqVO.setCustomerId(appUserInfo.getId() + "");
+                payPointsReqVO.setOrderId(order.getId() + "");
+                payPointsReqVO.setPointsNumber(order.getTotalMoney().intValue());
+                //积分商品单商品结算
+                payPointsReqVO.setGoodsName(commitGoodsList.get(0).getGoodsName());
+                payPointsReqVO.setGoodsCount(commitGoodsList.get(0).getGoodsCount());
+                JSONObject response = userPointsService.payPoint(LoginSessionUtils.getAppUser().getTicketString(),payPointsReqVO);
+                if (Objects.isNull(response)) {
+                    orderService.rollbackCommitOrder(order.getId());
+                    return ApiResponse.buildCommonErrorResponse("系统错误，请稍后重新下单");
+                }
+                if (response.getInteger("code") != 200) {
+                    orderService.rollbackCommitOrder(order.getId());
+                    return ApiResponse.buildCommonErrorResponse(response.getString("msg"));
+                }
+            }
             //减库存 加销量 todo
-
+            goodsSpuService.updateGoodsStockAndSales(commitGoodsList);
             //删除用户购物车
             List<String> shoppingCartIds = commitGoodsList.stream().map(CommitOrderGoodsReqVO::getShoppingCartId).filter(Objects::nonNull).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(shoppingCartIds)) {
@@ -191,7 +199,7 @@ public class AppOrderController {
                 //计算付款倒计时 ms
                 SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
                 result.setRemainingTime((long) (systemTimeConfig.getCancelOrder() * 60 * 1000));
-            }else {
+            } else {
                 result.setLaborUnionName("西藏自治区总工会");//TODO 查询用户所在工会
             }
             return ApiResponse.buildSuccessResponse(result);

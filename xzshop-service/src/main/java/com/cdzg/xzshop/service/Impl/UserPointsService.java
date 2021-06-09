@@ -3,6 +3,7 @@ package com.cdzg.xzshop.service.Impl;
 import com.alibaba.fastjson.JSONObject;
 import com.cdzg.xzshop.utils.HttpUtils;
 import com.cdzg.xzshop.utils.HttpsClientUtil;
+import com.cdzg.xzshop.vo.order.request.AppPayPointsReqVO;
 import com.framework.utils.core.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,8 +65,24 @@ public class UserPointsService {
      * 积分消费接口
      * @return
      */
-    public ApiResponse<String> payPoint(){
-
+    public JSONObject payPoint(String token,AppPayPointsReqVO payPointsReqVO){
+        Map<String, String> headers = new HashMap<>(2);
+        headers.put("token", token);
+        headers.put("content-type", HttpUtils.CONTENT_TYPE_JSON);
+        try {
+            int retry = 0;
+            while (retry < 3) {
+                retry++;
+                JSONObject jsonObject = HttpsClientUtil.doPost("http://localhost:8638/", payPointUri, headers, null,JSONObject.toJSONString(payPointsReqVO));
+                log.info("积分消费接口返回：{}", JSONObject.toJSONString(jsonObject));
+                if (Objects.nonNull(jsonObject)) {
+                    return jsonObject;
+                }
+            }
+        } catch (Exception e) {
+            log.error("查询用户可用积分error：{}", e.getMessage());
+            e.printStackTrace();
+        }
 
         return null;
     }

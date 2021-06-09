@@ -442,6 +442,14 @@
             </if>
         </where>
     </update>
+    <update id="batchUpdateGoodsStock">
+        <foreach collection="goodsList" item="item">
+            UPDATE goods_spu
+            SET stock = stock - #{item.goodsCount}
+            WHERE
+            id = #{item.goodsId};
+        </foreach>
+    </update>
 
     <select id="findByPaymentMethodOrderByFractionPrice" resultMap="BaseResultMap">
         select t1.*

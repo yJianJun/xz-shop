@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.cdzg.xzshop.to.app.GoodsSpuHomePageTo;
+import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -42,6 +43,11 @@ public interface GoodsSpuMapper extends BaseMapper<GoodsSpu> {
 
     List<GoodsSpu> findByShopIdAndIsDeleteFalseAndStatusTrue(@Param("shopId")Long shopId);
 
-
+    /**
+     * 批量库存的修改操作
+     * @param commitGoodsList
+     * @return
+     */
+    int batchUpdateGoodsStock(@Param("goodsList") List<CommitOrderGoodsReqVO> commitGoodsList);
 
 }

@@ -33,5 +33,12 @@ public interface OrderService extends IService<Order> {
      * @return
      */
     Order commitOrder(CommitOrderReqVO request);
+
+    /**
+     * 回滚订单
+     * @param id 订单id
+     */
+    void rollbackCommitOrder(Long id);
+
 }
 

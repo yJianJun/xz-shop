@@ -23,11 +23,13 @@ import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
 import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -67,6 +69,9 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
     @Resource
     private ShopInfoService shopInfoService;
+
+    @Resource
+    private GoodsSpuSalesMapper getSalesMapper;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -320,9 +325,21 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         PageHelper.startPage(page, pageSize);
         return PageUtil.transform(new PageInfo(goodsSpuMapper.findByShopIdAndIsDeleteFalseAndStatusTrue(shopId)));
     }
+
+
+
+    /**
+     * 修改提交订单后的商品库存和销量
+     * @param commitGoodsList
+     */
+    @Override
+    public void updateGoodsStockAndSales(List<CommitOrderGoodsReqVO> commitGoodsList) {
+        //批量修改库存
+        baseMapper.batchUpdateGoodsStock(commitGoodsList);
+        //批量修改销量
+//        getSalesMapper.batchUpdateGoodsSales();
+    }
 }
-
-
 
 
 

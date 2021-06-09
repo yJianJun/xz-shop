@@ -15,6 +15,7 @@ import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
 import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import com.github.pagehelper.PageInfo;
 
 public interface GoodsSpuService extends IService<GoodsSpu> {
@@ -68,6 +69,11 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 
 
     PageResultVO<GoodsSpu> pageByShop(int page, int pageSize, Long shopId);
+    /**
+     * 修改提交订单后的商品库存和销量
+     * @param commitGoodsList
+     */
+    void updateGoodsStockAndSales(List<CommitOrderGoodsReqVO> commitGoodsList);
 }
 
 

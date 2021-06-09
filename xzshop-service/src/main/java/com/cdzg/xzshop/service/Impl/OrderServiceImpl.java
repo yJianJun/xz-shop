@@ -2,8 +2,10 @@ package com.cdzg.xzshop.service.Impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.OrderItem;
@@ -66,7 +68,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             order.setPayTime(date);
             order.setOrderStatus(2);
         } else {
-            order.setOrderStatus(0);
+            order.setOrderStatus(1);
         }
         int i = baseMapper.insert(order);
         boolean save = false;
@@ -86,6 +88,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return order;
         }
         return null;
+    }
+
+    /**
+     * 回滚订单
+     * @param id 订单id
+     */
+    @Override
+    @Transactional
+    public void rollbackCommitOrder(Long id) {
+        baseMapper.deleteById(id);
+        HashMap<String, Object> map = new HashMap<>(1);
+        map.put("orderId", id);
+        orderItemMapper.deleteByMap(map);
     }
 
 
