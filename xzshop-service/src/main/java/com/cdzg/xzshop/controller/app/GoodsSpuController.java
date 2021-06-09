@@ -24,6 +24,7 @@ import com.cdzg.xzshop.vo.admin.GoodsSpuSwitchStatusVO;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
 import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.app.homepage.GoodsSpuHomePageVo;
+import com.cdzg.xzshop.vo.app.homepage.GoodsSpuShopPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
 import io.swagger.annotations.*;
@@ -114,5 +115,14 @@ public class GoodsSpuController {
             favoritesService.removeById(goodsFavorites.getId());
             return CommonResult.buildSuccessResponse(false);
         }
+    }
+
+    @MobileApi
+    @PostMapping("/shop/list")
+    @ApiOperation("店铺商品列表")
+    public ApiResponse<PageResultVO<GoodsSpu>> listByShop(@ApiParam(value = "店铺商品列表分页模型", required = true) @RequestBody @Valid GoodsSpuShopPageVo vo) {
+
+        PageResultVO<GoodsSpu> resultVO = goodsSpuService.pageByShop(vo.getCurrentPage(), vo.getPageSize(), vo.getShopId());
+        return CommonResult.buildSuccessResponse(resultVO);
     }
 }

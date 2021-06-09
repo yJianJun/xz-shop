@@ -55,11 +55,6 @@ public class AppOrderController {
     @Autowired
     private OrderService orderService;
 
-
-    @Autowired
-    private OrderItemService orderItemService;
-
-
     @Autowired
     private GoodsSpuService goodsSpuService;
 
@@ -74,6 +69,9 @@ public class AppOrderController {
 
     @Autowired
     private SystemTimeConfigService systemTimeConfigService;
+
+    @Autowired
+    private GoodsSpuSalesService goodsSpuSalesService;
 
 
 //    @MobileApi
@@ -107,7 +105,7 @@ public class AppOrderController {
         request.setCustomerId(appUserInfo.getId());
         //提交订单校验 店铺信息校验
         ShopInfo shopInfo = shopInfoService.getById(request.getShopId());
-        if (!shopInfo.getStatus()) {
+        if (Objects.isNull(shopInfo) || !shopInfo.getStatus()) {
             return ApiResponse.buildCommonErrorResponse("该店铺已下线，下单失败");
         }
         request.setShopName(shopInfo.getShopName());
@@ -135,7 +133,10 @@ public class AppOrderController {
                 if (g.getStock().intValue() < c.getGoodsCount()) {
                     underStockGoodsNames.add(c.getGoodsName());
                 }
-                if (g.getPromotionPrice().compareTo(c.getPromotionPrice()) != 0) {
+                if (request.getOrderType() == 2 && g.getPromotionPrice().compareTo(c.getPromotionPrice()) != 0) {
+                    changePriceGoodsNames.add(c.getGoodsName());
+                }
+                if (request.getOrderType() == 1 && g.getFractionPrice().compareTo(c.getPromotionPrice()) != 0) {
                     changePriceGoodsNames.add(c.getGoodsName());
                 }
             }
@@ -154,7 +155,7 @@ public class AppOrderController {
             return ApiResponse.buildCommonErrorResponse("商品金额错误，请刷新购物车或商品列表重新下单");
         }
         //商品属性验证，积分商品orRMB商品
-        long count = goodsSpuList.stream().filter(g -> g.getPaymentMethod().getValue() == 2).count();
+        long count = goodsSpuList.stream().filter(g -> g.getPaymentMethod().getValue() == 1).count();
         if (request.getOrderType() == 2 && count > 0) {
             return ApiResponse.buildCommonErrorResponse("包含积分商品，请单独下单购买");
         } else if (request.getOrderType() == 1 && commitGoodsList.size() != count) {
@@ -190,6 +191,8 @@ public class AppOrderController {
                 //计算付款倒计时 ms
                 SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
                 result.setRemainingTime((long) (systemTimeConfig.getCancelOrder() * 60 * 1000));
+            }else {
+                result.setLaborUnionName("西藏自治区总工会");//TODO 查询用户所在工会
             }
             return ApiResponse.buildSuccessResponse(result);
         }

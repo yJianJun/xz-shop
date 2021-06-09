@@ -1,17 +1,14 @@
 package com.cdzg.xzshop.vo.admin;
 
 
-import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @ApiModel(description = "店铺添加参数模型")

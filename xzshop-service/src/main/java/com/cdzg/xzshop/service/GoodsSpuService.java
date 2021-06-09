@@ -15,6 +15,7 @@ import com.cdzg.xzshop.vo.admin.GoodsSpuAddVo;
 import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
 import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.github.pagehelper.PageInfo;
 
 public interface GoodsSpuService extends IService<GoodsSpu> {
 
@@ -62,6 +63,11 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 	List<GoodsSpu> findBySpuNoInAndIsDeleteFalseAndStatusTrue(Collection<Long> spuNoCollection);
 
 
+
+	List<GoodsSpu> findByShopIdAndIsDeleteFalseAndStatusTrue(Long shopId);
+
+
+    PageResultVO<GoodsSpu> pageByShop(int page, int pageSize, Long shopId);
 }
 
 
