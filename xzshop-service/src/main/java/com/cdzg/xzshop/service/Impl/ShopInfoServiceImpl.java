@@ -231,7 +231,7 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
                 alipay.setAppid(aliPayVo.getAppId());
                 alipay.setPrivateKey(aliPayVo.getPrivateKey());
                 alipay.setStatus(flag);
-                alipay.setPublicKey(alipay.getPublicKey());
+                alipay.setPublicKey(aliPayVo.getPublicKey());
                 alipay.setSigntype(aliPayVo.getSigntype());
                 receivePaymentInfoMapper.insertOrUpdate(alipay);
             } else {
