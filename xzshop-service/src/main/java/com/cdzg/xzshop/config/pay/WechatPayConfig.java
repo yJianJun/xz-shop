@@ -19,7 +19,7 @@ public class WechatPayConfig {
      */
   //  private static String mchId = "1495430712";
 
-    private static String notifyUrl = "http://47.105.37.49/xzunion/app/pay/wechat/pay/notify";
+    private static String notifyUrl = "http://47.105.37.49/xz-shop/app/pay/wechat/notify";
 
    // private static String keyPath = "classpath:pay/apiclient_cert.p12";
 

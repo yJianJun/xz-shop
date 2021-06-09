@@ -25,7 +25,7 @@ public class AlipayConfig {
     //异步回调接口:得放到服务器上，且使用域名解析 IP
     //https://api.xx.com/receive_notify.htm
     //http://api.test.alipay.net/atinterface/receive_notify.htm
-    private static String notifyUrl = "http://47.105.37.49/xzunion/app/pay/ali/pay/notify";
+    private static String notifyUrl = "http://47.105.37.49/xz-shop/app/pay/ali/notify";
 
     //支付宝网关（注意沙箱alipaydev，正式则为 alipay）不需要修改
     private static String serverUrl = "https://openapi.alipay.com/gateway.do";
