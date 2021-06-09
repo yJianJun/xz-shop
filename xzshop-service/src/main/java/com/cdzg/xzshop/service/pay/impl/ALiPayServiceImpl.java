@@ -80,7 +80,8 @@ public class ALiPayServiceImpl implements PayService {
             //这里和普通的接口调用不同，使用的是sdkExecute
             AlipayTradeAppPayResponse response = aliPayClient.sdkExecute(request);
             //就是orderString 可以直接给客户端请求，无需再做处理。
-            log.info(Json.pretty(response));
+            log.info("Alipay response:{}",Json.pretty(response));
+            log.info("Alipay response body:{}",Json.pretty(response.getBody()));
             return response.getBody();
         } catch (Exception e) {
             log.error("支付宝支付调用接口异常:{}", Json.pretty(e.getStackTrace()));
