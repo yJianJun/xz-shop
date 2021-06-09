@@ -191,6 +191,8 @@ public class AppOrderController {
                 //计算付款倒计时 ms
                 SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
                 result.setRemainingTime((long) (systemTimeConfig.getCancelOrder() * 60 * 1000));
+            }else {
+                result.setLaborUnionName("西藏自治区总工会");//TODO 查询用户所在工会
             }
             return ApiResponse.buildSuccessResponse(result);
         }

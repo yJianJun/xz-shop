@@ -36,4 +36,7 @@ public class CommitOrderRespVO implements Serializable {
     @ApiModelProperty(value = "商铺Name")
     private String shopName;
 
+    @ApiModelProperty(value = "会员所属工会name")
+    private String laborUnionName;
+
 }
