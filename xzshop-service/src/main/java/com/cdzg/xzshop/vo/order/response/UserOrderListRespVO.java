@@ -1,9 +1,11 @@
 package com.cdzg.xzshop.vo.order.response;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -71,6 +73,8 @@ public class UserOrderListRespVO implements Serializable {
      * 订单生成时间
      */
     @ApiModelProperty(value = "订单生成时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     /**
      * 订单状态（1待付款2.待发货3.已发货4.已完成5.已关闭）

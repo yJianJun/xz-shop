@@ -6,11 +6,9 @@ import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
-import com.cdzg.xzshop.vo.order.response.CommitOrderRespVO;
+import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
 import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
-import com.framework.utils.core.api.ApiResponse;
 
-import java.util.Map;
 
 /**
  * 订单表
@@ -49,5 +47,14 @@ public interface OrderService extends IService<Order> {
      * @return
      */
     PageResultVO<UserOrderListRespVO> listForApp(AppQueryOrderListReqVO reqVO);
+
+
+    /**
+     * app用户查看订单详情
+     * @param orderId
+     * @param customerId
+     * @return
+     */
+    AppOrderDetailRespVO getByIdForApp(String orderId,Long customerId);
 }
 
