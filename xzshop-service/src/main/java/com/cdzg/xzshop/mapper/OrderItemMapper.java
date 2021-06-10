@@ -3,6 +3,7 @@ package com.cdzg.xzshop.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.OrderItem;
+import com.cdzg.xzshop.vo.order.response.OrderGoodsListRespVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -22,4 +23,11 @@ import java.util.List;
 public interface OrderItemMapper extends BaseMapper<OrderItem> {
 
     List<Long> findIdByOrderIdAndDeleted(@Param("orderId") Long orderId, @Param("deleted") Integer deleted);
+
+    /**
+     * 根据订单id查询商品信息
+     * @param orderId
+     * @return
+     */
+    List<OrderGoodsListRespVO> getListByOrderId(String orderId);
 }

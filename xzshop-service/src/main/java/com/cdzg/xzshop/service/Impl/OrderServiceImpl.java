@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.OrderItem;
@@ -13,12 +14,17 @@ import com.cdzg.xzshop.mapper.OrderItemMapper;
 import com.cdzg.xzshop.mapper.OrderMapper;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
+import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
+import com.cdzg.xzshop.vo.order.response.OrderGoodsListRespVO;
+import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 
 @Service("orderService")
@@ -95,12 +101,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @param id 订单id
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void rollbackCommitOrder(Long id) {
         baseMapper.deleteById(id);
         HashMap<String, Object> map = new HashMap<>(1);
         map.put("orderId", id);
         orderItemMapper.deleteByMap(map);
+    }
+
+    @Override
+    public PageResultVO<UserOrderListRespVO> listForApp(AppQueryOrderListReqVO reqVO) {
+        PageResultVO<UserOrderListRespVO> result = new PageResultVO<>();
+        Page<Order> page = new Page<>();
+        page.setCurrent(reqVO.getCurrentPage());
+        page.setSize(reqVO.getPageSize());
+        List<UserOrderListRespVO> pageList = baseMapper.listForApp(page, reqVO);
+        if (!CollectionUtils.isEmpty(pageList)) {
+            pageList.forEach(p->{
+                //订单商品信息
+                List<OrderGoodsListRespVO> orderGoodsList = orderItemMapper.getListByOrderId(p.getId());
+                p.setOrderGoodsList(orderGoodsList);
+            });
+            result.setData(pageList);
+        }else {
+            result.setData(new ArrayList<>());
+        }
+        result.setPageParams(page);
+        return result;
     }
 
 
