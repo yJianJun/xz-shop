@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service.pay.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.cdzg.xzshop.domain.OrderPayHistory;
 import com.cdzg.xzshop.mapper.OrderPayHistoryMapper;
 import com.cdzg.xzshop.to.app.QueryOrderTo;
@@ -24,6 +25,7 @@ import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonObject;
 import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Service("weChatService")
 @Slf4j
@@ -184,7 +187,7 @@ public class WeChatServiceImpl implements PayService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public String pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
+    public Map pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception {
 
         WxPayService wxPayService = PayClientUtils.getWxClient(order.getId() + "");
         // 测试时，将支付金额设置为 1 分钱
@@ -195,8 +198,8 @@ public class WeChatServiceImpl implements PayService {
                 .spbillCreateIp(ipAddress)
                 .build();
         WxPayUnifiedOrderResult result = wxPayService.unifiedOrder(request);
-        log.info("微信支付调用结果:{}", Json.pretty(result));
-        return result.toMap().toString();
+        log.info("微信支付调用结果:{}", Json.pretty(result.toMap()));
+        return result.toMap();
     }
 
     private void addHistoryRecord(String out_trade_no, String total_amount, BigDecimal orderMoney, String trade_no, Boolean status) {
