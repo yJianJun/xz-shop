@@ -130,6 +130,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         ShopInfo shop = shopInfoService.getById(order.getShopId());
         // 用户
         CustomerLoginResponse appUser = LoginSessionUtils.getAppUser();
+        if (!appUser.getUserBaseInfo().getId().equals(order.getCustomerId())) {
+            return "订单号有误!";
+        }
         // 组装数据
         LocalDateTime now = LocalDateTime.now();
         RefundOrder refundOrder = new RefundOrder();
@@ -222,7 +225,11 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             modify.setStatus(3);
         } else if (refundOrder.getStatus().equals(7)) {
             modify.setStatus(9);
-            revertOrderStatus(refundOrder, 2);
+            if (refundOrder.getRefundType().equals(RefundTypeEnum.REFUND.getCode())) {
+                revertOrderStatus(refundOrder, 2);
+            } else {
+                revertOrderStatus(refundOrder, 4);
+            }
         } else {
             return "该退款订单状态有误，操作无效！";
         }
@@ -291,7 +298,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         modify.setStatus(5);
         modify.setRefuseReceiptReason(vo.getRefuseReason());
         this.updateById(modify);
-        revertOrderStatus(refundOrder, 5);
+        revertOrderStatus(refundOrder, 6);
         // 流程记录
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "卖家拒绝收货。",
@@ -387,7 +394,8 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }
         Duration duration = Duration.between(startTime, LocalDateTime.now());
         long restTime = duration.toMinutes();
-        vo.setRestTime(minute - restTime);
+        long time = minute - restTime;
+        vo.setRestTime(time > 0 ? time : 0);
         return vo;
     }
 
@@ -526,6 +534,26 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         if (CollectionUtils.isNotEmpty(ids)) {
             autoBatchOrderAndProcess(ids, 9);
         }
+    }
+
+    @Override
+    public String sellerNotReceipt(SellerRefuseReceiptVO vo) {
+        Long id = vo.getId();
+        RefundOrder refundOrder = this.getById(id);
+        if (!refundOrder.getStatus().equals(4)) {
+            return "该退款订单状态有误，操作无效！";
+        }
+        RefundOrder modify = new RefundOrder();
+        modify.setId(id);
+        modify.setStatus(6);
+        modify.setRefuseReceiptReason(vo.getRefuseReason());
+        this.updateById(modify);
+        revertOrderStatus(refundOrder, 6);
+        // 流程记录
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "卖家拒绝收货。",
+                modify.getStatus(), adminUser.getUserId()));
+        return null;
     }
 
     /**

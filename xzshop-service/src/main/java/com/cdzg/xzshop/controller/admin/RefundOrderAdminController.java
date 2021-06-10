@@ -94,4 +94,16 @@ public class RefundOrderAdminController {
         return ApiResponse.buildSuccessResponse(refundOrderService.getAdminDetailById(id));
     }
 
+    @WebApi
+    @PostMapping("/sellerNotReceipt")
+    @ApiOperation("05008-卖家未收到货")
+    public ApiResponse<String> sellerNotReceipt(@RequestBody SellerRefuseReceiptVO vo) {
+        log.info("RefundOrderAdminController-sellerNotReceipt vo:{}", vo);
+        String info = refundOrderService.sellerNotReceipt(vo);
+        if (StringUtils.isNotEmpty(info)) {
+            return ApiResponse.buildCommonErrorResponse(info);
+        }
+        return ApiResponse.buildSuccessResponse(info);
+    }
+
 }

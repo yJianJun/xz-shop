@@ -113,4 +113,10 @@ public interface RefundOrderService extends IService<RefundOrder> {
      */
     void systemAutoRefund();
 
+    /**
+     * 卖家未收到货
+     * @param vo
+     * @return
+     */
+    String sellerNotReceipt(SellerRefuseReceiptVO vo);
 }
