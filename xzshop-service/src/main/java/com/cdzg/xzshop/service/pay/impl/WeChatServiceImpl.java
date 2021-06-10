@@ -61,6 +61,7 @@ public class WeChatServiceImpl implements PayService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String callBack(HttpServletRequest request, HttpServletResponse response) {
 
+        log.debug("-------------------------微信支付回调开始----------------------------");
         WxPayOrderNotifyResult notifyResult = null;
         try {
             notifyResult = WxUtils.readRequestToResult(request);
@@ -135,6 +136,7 @@ public class WeChatServiceImpl implements PayService {
             //Todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
             addHistoryRecord(out_trade_no,totalFee,order.getTotalMoney(),notifyResult.getTransactionId(),true);
+            log.debug("-------------------------微信支付回调成功----------------------------");
             return WxPayNotifyResponse.success("成功");
         }
     }

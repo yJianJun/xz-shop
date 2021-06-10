@@ -3,6 +3,7 @@ package com.cdzg.xzshop.utils.pay;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.converter.WxPayOrderNotifyResultConverter;
 import com.thoughtworks.xstream.XStream;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.util.xml.XStreamInitializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -19,7 +20,7 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-
+@Slf4j
 public class WxUtils {
 
     /**

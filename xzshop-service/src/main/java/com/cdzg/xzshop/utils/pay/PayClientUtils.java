@@ -61,6 +61,7 @@ public class PayClientUtils {
         //payConfig.setSubAppId(StringUtils.trimToNull(this.properties.getSubAppId()));
         //payConfig.setSubMchId(StringUtils.trimToNull(this.properties.getSubMchId()));
         payConfig.setKeyPath(StringUtils.trimToNull(keyPath));
+        payConfig.setSignType("MD5");
 
         // 可以指定是否使用沙箱环境
         payConfig.setUseSandboxEnv(false);

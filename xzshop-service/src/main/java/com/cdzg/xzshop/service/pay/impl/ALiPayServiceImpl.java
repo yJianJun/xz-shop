@@ -97,6 +97,7 @@ public class ALiPayServiceImpl implements PayService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String callBack(HttpServletRequest request, HttpServletResponse response) {
 
+        log.debug("-------------------------阿里支付回调开始----------------------------");
         Map<String, String> receiveMap = getReceiveMap(request);
         //商品订单号
         String out_trade_no = receiveMap.get("out_trade_no");
@@ -175,6 +176,7 @@ public class ALiPayServiceImpl implements PayService {
             //todo:支付成功后的业务处理
             //return updateRecord(info, true, receiveMap);
             addHistoryRecord(out_trade_no,total_amount,order.getTotalMoney(),trade_no,true);
+            log.debug("-------------------------阿里支付回调成功----------------------------");
             return "success";
         } else {
             //todo:支付失败后的业务处理
