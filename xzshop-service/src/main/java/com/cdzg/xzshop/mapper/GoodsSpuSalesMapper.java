@@ -19,4 +19,11 @@ public interface GoodsSpuSalesMapper extends BaseMapper<GoodsSpuSales> {
     GoodsSpuSales findOneBySpuNo(@Param("spuNo")Long spuNo);
 
 
+    /**
+     * 批量更改销量
+     * @param updateList
+     * @return
+     */
+    int batchUpdateSales(@Param("list")List<GoodsSpuSales> updateList);
+
 }

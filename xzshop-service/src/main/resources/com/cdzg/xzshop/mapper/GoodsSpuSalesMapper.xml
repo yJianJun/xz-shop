@@ -44,7 +44,15 @@
       #{item.id,jdbcType=BIGINT}
     </foreach>
   </update>
-  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <update id="batchUpdateSales">
+        <foreach collection="list" item="item">
+            UPDATE goods_spu_sales
+            SET sales = sales + #{item.sales}
+            WHERE
+            spu_no = #{item.spuNo};
+        </foreach>
+    </update>
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into goods_spu_sales
     (spu_no, sales, gmt_create, gmt_update)
