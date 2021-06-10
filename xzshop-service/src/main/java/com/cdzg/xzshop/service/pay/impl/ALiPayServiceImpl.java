@@ -151,6 +151,8 @@ public class ALiPayServiceImpl implements PayService {
         }
 
         // 3.判断 total_amount 是否确实为该订单的实际金额（即商户订单创建时的金额）；
+        // todo:订单的支付金额 测试阶段暂时设置为0.01元
+        order.setPayMoney(new BigDecimal("0.01"));
         if (order.getPayMoney().compareTo(new BigDecimal(total_amount)) != 0) {
             log.error("订单号:" + out_trade_no + "金额:" + "与实际支付金额不等");
             return "failure";
