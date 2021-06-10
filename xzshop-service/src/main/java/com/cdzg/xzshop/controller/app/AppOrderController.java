@@ -182,7 +182,7 @@ public class AppOrderController {
                     return ApiResponse.buildCommonErrorResponse(response.getString("msg"));
                 }
             }
-            //减库存 加销量 todo
+            //减库存 加销量
             goodsSpuService.updateGoodsStockAndSales(commitGoodsList);
             //删除用户购物车
             List<String> shoppingCartIds = commitGoodsList.stream().map(CommitOrderGoodsReqVO::getShoppingCartId).filter(Objects::nonNull).collect(Collectors.toList());
@@ -218,6 +218,23 @@ public class AppOrderController {
         int userPoints = userPointsService.getUserEffectivePoints(LoginSessionUtils.getAppUser().getTicketString());
         return ApiResponse.buildSuccessResponse(userPoints);
     }
+
+    @MobileApi
+    @GetMapping("/list")
+    @ApiOperation("31004-订单列表")
+    public ApiResponse list() {
+
+
+        return null;
+    }
+
+
+
+
+
+
+
+
 
     /**
      * 获取登录用户信息

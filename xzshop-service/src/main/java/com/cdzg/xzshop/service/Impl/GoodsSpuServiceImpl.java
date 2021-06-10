@@ -1,5 +1,9 @@
 package com.cdzg.xzshop.service.Impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cdzg.xzshop.domain.GoodsSpu;
+
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,23 +31,28 @@ import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> implements GoodsSpuService {
 
     @Resource
@@ -230,19 +239,18 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     }
 
     @Override
-    public GoodsSpuHomePageTo spuWithSalesIsCollect(GoodsSpu spu,String userId) {
+    public GoodsSpuHomePageTo spuWithSalesIsCollect(GoodsSpu spu, String userId) {
         GoodsSpuHomePageTo to = spuWithSales(spu);
         boolean collect = isCollect(spu.getSpuNo(), userId);
         to.setIsCollect(collect);
         return to;
     }
 
-    private boolean isCollect(Long spuNo,String userId) {
+    private boolean isCollect(Long spuNo, String userId) {
 
         UserGoodsFavorites userGoodsFavorites = favoritesMapper.findOneByUserIdAndSpuNo(userId, spuNo);
         return Objects.nonNull(userGoodsFavorites);
     }
-
 
 
     @Override
@@ -309,35 +317,92 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         return map;
     }
 
-	@Override
-	public List<GoodsSpu> findBySpuNoInAndIsDeleteFalseAndStatusTrue(Collection<Long> spuNoCollection){
-		 return goodsSpuMapper.findBySpuNoInAndIsDeleteFalseAndStatusTrue(spuNoCollection);
-	}
+    @Override
+    public List<GoodsSpu> findBySpuNoInAndIsDeleteFalseAndStatusTrue(Collection<Long> spuNoCollection) {
+        return goodsSpuMapper.findBySpuNoInAndIsDeleteFalseAndStatusTrue(spuNoCollection);
+    }
 
-	@Override
-	public List<GoodsSpu> findByShopIdAndIsDeleteFalseAndStatusTrue(Long shopId){
-		 return goodsSpuMapper.findByShopIdAndIsDeleteFalseAndStatusTrue(shopId);
-	}
+    @Override
+    public List<GoodsSpu> findByShopIdAndIsDeleteFalseAndStatusTrue(Long shopId) {
+        return goodsSpuMapper.findByShopIdAndIsDeleteFalseAndStatusTrue(shopId);
+    }
 
 
-	@Override
+    @Override
     public PageResultVO<GoodsSpu> pageByShop(int page, int pageSize, Long shopId) {
         PageHelper.startPage(page, pageSize);
         return PageUtil.transform(new PageInfo(goodsSpuMapper.findByShopIdAndIsDeleteFalseAndStatusTrue(shopId)));
     }
 
 
+    @Autowired
+    private GoodsSpuSalesMapper spuSalesMapper;
 
     /**
      * 修改提交订单后的商品库存和销量
+     * 销量：如果存在，修改，不存在，新增
+     *
      * @param commitGoodsList
      */
     @Override
+    @Async
+    @Transactional
     public void updateGoodsStockAndSales(List<CommitOrderGoodsReqVO> commitGoodsList) {
-        //批量修改库存
-        baseMapper.batchUpdateGoodsStock(commitGoodsList);
-        //批量修改销量
-//        getSalesMapper.batchUpdateGoodsSales();
+        try {
+            //批量修改库存
+            baseMapper.batchUpdateGoodsStock(commitGoodsList);
+            //批量修改销量
+            List<String> goodsIds = commitGoodsList.stream().map(CommitOrderGoodsReqVO::getGoodsId).collect(Collectors.toList());
+            //查询所有spuno
+            List<GoodsSpu> goodsSpuList = baseMapper.selectBatchIds(goodsIds);
+            if (!CollectionUtils.isEmpty(goodsSpuList)) {
+                LocalDateTime date = LocalDateTime.now();
+                List<Long> spuNos = goodsSpuList.stream().map(GoodsSpu::getSpuNo).collect(Collectors.toList());
+                LambdaQueryWrapper<GoodsSpuSales> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.in(GoodsSpuSales::getSpuNo, spuNos);
+                List<GoodsSpuSales> goodsSpuSales = getSalesMapper.selectList(queryWrapper);
+                List<GoodsSpuSales> addList = new ArrayList<>();
+                List<GoodsSpuSales> updateList = new ArrayList<>();
+                List<Long> updateSpuNos = new ArrayList<>();
+                if (!CollectionUtils.isEmpty(goodsSpuSales)) {
+                    updateSpuNos = goodsSpuSales.stream().map(GoodsSpuSales::getSpuNo).collect(Collectors.toList());
+                    goodsSpuSales.forEach(g -> goodsSpuList.forEach(gs -> commitGoodsList.forEach(c -> {
+                        if (g.getSpuNo().equals(gs.getSpuNo()) && (gs.getId() + "").equals(c.getGoodsId())) {
+                            GoodsSpuSales spuSales = GoodsSpuSales.builder().build();
+                            spuSales.setSpuNo(g.getSpuNo());
+                            //此处sales保存的是需要修改的数量，而非全量
+                            spuSales.setSales(Long.valueOf(c.getGoodsCount()));
+                            spuSales.setGmtUpdate(date);
+                            updateList.add(spuSales);
+                        }
+                    })));
+                    //修改
+                    spuSalesMapper.batchUpdateSales(updateList);
+                }
+                if (!CollectionUtils.isEmpty(updateSpuNos)) {
+                    spuNos.removeAll(updateSpuNos);
+                }
+                if (!CollectionUtils.isEmpty(spuNos)) {
+                    goodsSpuList.forEach(g -> commitGoodsList.forEach(c -> {
+                        if (spuNos.contains(g.getSpuNo()) && (g.getId() + "").equals(c.getGoodsId())) {
+                            GoodsSpuSales spuSales = GoodsSpuSales.builder().build();
+                            spuSales.setSpuNo(g.getSpuNo());
+                            spuSales.setSales(Long.valueOf(c.getGoodsCount()));
+                            spuSales.setGmtCreate(date);
+                            spuSales.setGmtUpdate(date);
+                            addList.add(spuSales);
+                        }
+                    }));
+                    //新增
+                    spuSalesMapper.batchInsert(addList);
+                }
+            }
+        } catch (Exception e) {
+            //手动回滚事务
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error("下单成功批量修改库存销量error:{} , request: {}", e.getMessage(), JSONObject.toJSONString(commitGoodsList));
+        }
+
     }
 }
 
