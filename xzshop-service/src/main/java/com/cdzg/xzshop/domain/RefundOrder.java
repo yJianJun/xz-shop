@@ -39,6 +39,10 @@ public class RefundOrder {
      */
     private String shopName;
     /**
+     * 店铺id
+     */
+    private Long shopId;
+    /**
      * 商品名称
      */
     private String goodsName;

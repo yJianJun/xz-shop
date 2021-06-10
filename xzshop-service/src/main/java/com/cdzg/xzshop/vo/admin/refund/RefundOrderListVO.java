@@ -44,7 +44,7 @@ public class RefundOrderListVO {
      * 商品数量
      */
     @ApiModelProperty(value = "商品数量")
-    private Integer goodsNumber;
+    private String goodsNumber;
     /**
      * 支付方式 1:支付宝 2:微信
      */

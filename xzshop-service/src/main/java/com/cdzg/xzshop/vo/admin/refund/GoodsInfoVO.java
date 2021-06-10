@@ -30,7 +30,7 @@ public class GoodsInfoVO {
      * 数量
      */
     @ApiModelProperty(value = "数量")
-    private BigDecimal goodsCount;
+    private Integer goodsCount;
     /**
      * 价格
      */

@@ -17,9 +17,7 @@ public class OrderItemServiceImpl extends ServiceImpl<OrderItemMapper, OrderItem
 
     @Override
     public List<OrderItem> getByOrderId(Long orderId) {
-        LambdaQueryChainWrapper<OrderItem> wrapper = lambdaQuery();
-        wrapper.eq(OrderItem::getOrderId, orderId);
-        return this.list(wrapper);
+        return lambdaQuery().eq(OrderItem::getOrderId, orderId).list();
     }
 
     @Override

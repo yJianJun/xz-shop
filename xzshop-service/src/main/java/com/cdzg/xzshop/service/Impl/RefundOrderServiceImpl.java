@@ -99,14 +99,10 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     @Override
     public RefundOrderStatisticVO getRefundOrderStatistic() {
         RefundOrderStatisticVO vo = new RefundOrderStatisticVO();
-        LambdaQueryChainWrapper<RefundOrder> totalWrapper = lambdaQuery();
-        int total = this.count(totalWrapper.ge(RefundOrder::getStatus, 0));
-        LambdaQueryChainWrapper<RefundOrder> returnToDoWrapper = lambdaQuery();
-        int returnToDo = this.count(returnToDoWrapper.eq(RefundOrder::getStatus, 1));
-        LambdaQueryChainWrapper<RefundOrder> refundToDoWrapper = lambdaQuery();
-        int refundToDo = this.count(refundToDoWrapper.eq(RefundOrder::getStatus, 7));
-        LambdaQueryChainWrapper<RefundOrder> refundSuccessWrapper = lambdaQuery();
-        int refundSuccess = this.count(refundSuccessWrapper.eq(RefundOrder::getStatus, 9));
+        int total = lambdaQuery().ge(RefundOrder::getStatus, 0).count();
+        int returnToDo = lambdaQuery().ge(RefundOrder::getStatus, 1).count();
+        int refundToDo = lambdaQuery().ge(RefundOrder::getStatus, 7).count();
+        int refundSuccess = lambdaQuery().ge(RefundOrder::getStatus, 9).count();
         vo.setTotal(total);
         vo.setReturnToDo(returnToDo);
         vo.setRefundToDo(refundToDo);
@@ -140,13 +136,14 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         BeanUtils.copyProperties(vo, refundOrder);
         refundOrder.setImg(StringUtils.join(vo.getImg(), ","));
         refundOrder.setCreateTime(now);
+        refundOrder.setRefundType(vo.getType());
         refundOrder.setOrderAmount(order.getTotalMoney());
         refundOrder.setPayType(order.getPayMethod());
         refundOrder.setShopName(shop.getShopName());
+        refundOrder.setShopId(shop.getId());
         refundOrder.setOrgId(Long.parseLong(shop.getShopUnion()));
         refundOrder.setUserId(appUser.getUserBaseInfo().getId());
-        refundOrder.setUserPhone(appUser.getMobile());
-        this.save(refundOrder);
+        refundOrder.setUserPhone(appUser.getUserBaseInfo().getMobile());
 
         // 所有订单明细
         List<OrderItem> orderItemList = orderItemService.getByOrderId(orderId);
@@ -167,7 +164,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             BigDecimal refundMoney = orderItemList.stream().map(o -> o.getGoodsUnitPrice().multiply(BigDecimal.valueOf(o.getGoodsCount())))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             refundOrder.setRefundAmount(refundMoney);
-            processContent = appUser.getUserBaseInfo().getUserName() + "提交退款申请";
+            processContent = appUser.getUserBaseInfo().getMobile() + "提交退款申请";
             // 修改状态
             refundOrder.setStatus(7);
             revertOrderStatus(refundOrder, 1);
@@ -177,7 +174,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             refundOrder.setGoodsName(orderItem.getGoodsName());
             refundOrder.setGoodsNumber(orderItem.getGoodsCount().toString());
             refundOrder.setRefundAmount(orderItem.getGoodsUnitPrice().multiply(BigDecimal.valueOf(orderItem.getGoodsCount())));
-            processContent = appUser.getUserBaseInfo().getUserName() + "提交退货申请";
+            processContent = appUser.getUserBaseInfo().getMobile() + "提交退货申请";
             refundOrder.setStatus(1);
             revertOrderStatus(refundOrder, 3);
         }
@@ -333,11 +330,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 case 6:
                     vo.setSellerDealGoodsTime(time);
                     break;
-                // 如果是退款则为处理时间， 如果是退货就是卖家收货处理时间
+                // 如果是退货就是卖家收货处理时间
                 case 7:
-                    if (RefundTypeEnum.REFUND.getCode().equals(refundOrder.getRefundType())) {
-                        vo.setDealTime(time);
-                    } else {
+                    if (RefundTypeEnum.RETURN.getCode().equals(refundOrder.getRefundType())) {
                         vo.setSellerDealGoodsTime(time);
                     }
                     break;
@@ -367,9 +362,10 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
         Integer status = refundOrder.getStatus();
         Integer minute = 0;
-        RefundProcess process = refundProcessService.getOne(refundProcessService.lambdaQuery()
+        RefundProcess process = refundProcessService.lambdaQuery()
                 .eq(RefundProcess::getRefundOrderId, id)
-                .eq(RefundProcess::getStatus, status));
+                .eq(RefundProcess::getStatus, status)
+                .one();
         LocalDateTime startTime = process.getCreateTime();
         switch (status) {
             // 处理时间
@@ -417,7 +413,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             GoodsInfoVO goodsInfoVO = new GoodsInfoVO();
             BeanUtils.copyProperties(o, goodsInfoVO);
             goodsInfoVO.setTotalPrice(o.getGoodsUnitPrice().multiply(BigDecimal.valueOf(o.getGoodsCount())));
-            GoodsSpu goodsSpu = goodsMap.get(o.getId());
+            GoodsSpu goodsSpu = goodsMap.get(o.getGoodsId());
             if (Objects.nonNull(goodsSpu) && CollectionUtils.isNotEmpty(goodsSpu.getShowImgs())) {
                 goodsInfoVO.setImg(goodsSpu.getShowImgs().get(0));
             }
@@ -439,9 +435,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         List<RefundOrder> records = page.getRecords();
         List<Long> orderIds = records.stream().map(RefundOrder::getOrderId).collect(Collectors.toList());
         orderIds.add(-1L);
-        LambdaQueryChainWrapper<OrderItem> orderItemWrapper = orderItemService.lambdaQuery();
-        orderItemWrapper.in(OrderItem::getOrderId, orderIds);
-        List<OrderItem> orderItems = orderItemService.list(orderItemWrapper);
+        List<OrderItem> orderItems = orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds).list();
         // 查商品
         List<Long> goodsIds = orderItems.stream().map(OrderItem::getGoodsId).collect(Collectors.toList());
         goodsIds.add(-1L);
