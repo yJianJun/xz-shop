@@ -196,7 +196,7 @@ public class WeChatServiceImpl implements PayService {
                 .build();
         WxPayUnifiedOrderResult result = wxPayService.unifiedOrder(request);
         log.info("微信支付调用结果:{}", Json.pretty(result));
-        return Json.pretty(result);
+        return result.toMap().toString();
     }
 
     private void addHistoryRecord(String out_trade_no, String total_amount, BigDecimal orderMoney, String trade_no, Boolean status) {
