@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service("weChatService")
 @Slf4j
@@ -198,8 +199,10 @@ public class WeChatServiceImpl implements PayService {
                 .spbillCreateIp(ipAddress)
                 .build();
         WxPayUnifiedOrderResult result = wxPayService.unifiedOrder(request);
-        log.info("微信支付调用结果:{}", Json.pretty(result.toMap()));
-        return result.toMap();
+        Map<String, String> map = result.toMap();
+        log.info("微信支付调用结果:{}", Json.pretty(map));
+        map.put("timestamp", TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())+"");
+        return map;
     }
 
     private void addHistoryRecord(String out_trade_no, String total_amount, BigDecimal orderMoney, String trade_no, Boolean status) {
