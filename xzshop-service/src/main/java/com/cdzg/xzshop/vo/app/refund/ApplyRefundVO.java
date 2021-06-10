@@ -36,9 +36,9 @@ public class ApplyRefundVO {
     @ApiModelProperty("补充说明")
     private String returnExplain;
     /**
-     * 退款类型 0退款 1退货退款
+     * 退款类型 1退款 2退货退款
      */
-    @ApiModelProperty("退款类型 0退款 1退货退款")
+    @ApiModelProperty("退款类型 1退款 2退货退款")
     private Integer type;
 
 

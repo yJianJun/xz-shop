@@ -73,7 +73,10 @@ public class PayController {
     @MobileApi
     @PostMapping
     @ApiOperation("支付")
-    public ApiResponse<String> pay(@ApiParam(value = "订单支付参数", required = true) @Valid @RequestBody PayParam payParam) throws Exception {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
+    public ApiResponse<Object> pay(@ApiParam(value = "订单支付参数", required = true) @Valid @RequestBody PayParam payParam) throws Exception {
         Long orderId = payParam.getOrderId();
         PaymentMethod type = payParam.getType();
 

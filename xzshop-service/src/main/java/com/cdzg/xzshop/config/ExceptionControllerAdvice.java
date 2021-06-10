@@ -101,7 +101,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(value = NullPointerException.class)
     public ApiResponse exceptionHandler(HttpServletRequest req, NullPointerException e) {
         logger.error("发生空指针异常！原因是:{}", Json.pretty(e.getSuppressed()));
-        log.error("发生空指针异常！原因是:{}", Json.pretty(e.getSuppressed()));
+        log.error("发生空指针异常！原因是:{}", e);
         return CommonResult.error(ResultCode.DATA_ERROR);
     }
 

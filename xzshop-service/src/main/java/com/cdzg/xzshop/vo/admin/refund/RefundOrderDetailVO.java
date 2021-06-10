@@ -123,9 +123,9 @@ public class RefundOrderDetailVO {
     @ApiModelProperty(value = "物流单号")
     private String logisticsNumber;
     /**
-     * 处理时间
+     * 处理退货时间
      */
-    @ApiModelProperty(value = "处理时间")
+    @ApiModelProperty(value = "处理退货时间")
     private String dealTime;
     /**
      * 买家发货时间
@@ -138,9 +138,9 @@ public class RefundOrderDetailVO {
     @ApiModelProperty(value = "商家处理收货时间")
     private String sellerDealGoodsTime;
     /**
-     * 商家退款时间
+     * 商家处理退款时间
      */
-    @ApiModelProperty(value = "商家退款时间")
+    @ApiModelProperty(value = "商家处理退款时间")
     private String returnMoneyTime;
 
 }

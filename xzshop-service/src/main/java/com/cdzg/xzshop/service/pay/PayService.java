@@ -29,7 +29,7 @@ public interface PayService {
      * @return 返回的信息直接发给客户端即可
      * @throws IOException
      */
-    String pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception;
+    Object pay(String ipAddress, List<GoodsSpu> spus, Order order) throws Exception;
 
     /**
      * 微信服务器调用该接口，进行数据异步传回作用

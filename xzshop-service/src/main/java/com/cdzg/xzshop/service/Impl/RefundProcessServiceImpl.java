@@ -15,9 +15,7 @@ public class RefundProcessServiceImpl extends ServiceImpl<RefundProcessMapper, R
 
     @Override
     public List<RefundProcess> getByRefundOrderId(Long refundOrderId) {
-        LambdaQueryChainWrapper<RefundProcess> wrapper = lambdaQuery();
-        wrapper.eq(RefundProcess::getRefundOrderId, refundOrderId);
-        return this.list(wrapper);
+        return lambdaQuery().eq(RefundProcess::getRefundOrderId, refundOrderId).list();
     }
 
 }
