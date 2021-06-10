@@ -257,29 +257,14 @@ public class AppOrderController {
         return ApiResponse.buildSuccessResponse(result);
     }
 
-    /**
-     * 计算处理倒计时
-     * @param result
-     */
-    private void dealRemainingTime(AppOrderDetailRespVO result) {
-        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
-        long now = System.currentTimeMillis();
-        if (result.getOrderStatus() == 1) {
-            //待支付订单
-            long createTime = result.getCreateTime().getTime();
-            result.setRemainingTime(now - createTime - systemTimeConfig.getCancelOrder() * 60 *1000);
-        }else {
-            //待收货订单
-            long deliverTime = result.getDeliverTime().getTime();
-            result.setRemainingTime(now - deliverTime - systemTimeConfig.getSureOrder() * 60 *1000);
-        }
-    }
 
     @MobileApi
     @GetMapping("/cancelOrder/{orderId}")
     @ApiOperation("31006-取消订单")
-    public ApiResponse cancelOrder(@PathVariable("orderId") String orderId) {
+    public ApiResponse<String> cancelOrder(@PathVariable("orderId") String orderId) {
+        //取消订单
 
+        //归还库存，减销量
 
         return null;
     }
@@ -287,7 +272,7 @@ public class AppOrderController {
     @MobileApi
     @GetMapping("/deleteOrder/{orderId}")
     @ApiOperation("31007-删除订单")
-    public ApiResponse deleteOrder(@PathVariable("orderId") String orderId) {
+    public ApiResponse<String> deleteOrder(@PathVariable("orderId") String orderId) {
 
 
         return null;
@@ -296,7 +281,7 @@ public class AppOrderController {
     @MobileApi
     @GetMapping("/confirmOrder/{orderId}")
     @ApiOperation("31008-确认订单(确认收货)")
-    public ApiResponse confirmOrder(@PathVariable("orderId") String orderId) {
+    public ApiResponse<String> confirmOrder(@PathVariable("orderId") String orderId) {
 
 
         return null;
@@ -324,6 +309,24 @@ public class AppOrderController {
             }
         }
         return null;
+    }
+
+    /**
+     * 计算处理倒计时
+     * @param result
+     */
+    private void dealRemainingTime(AppOrderDetailRespVO result) {
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        long now = System.currentTimeMillis();
+        if (result.getOrderStatus() == 1) {
+            //待支付订单
+            long createTime = result.getCreateTime().getTime();
+            result.setRemainingTime(now - createTime - systemTimeConfig.getCancelOrder() * 60 *1000);
+        }else {
+            //待收货订单
+            long deliverTime = result.getDeliverTime().getTime();
+            result.setRemainingTime(now - deliverTime - systemTimeConfig.getSureOrder() * 60 *1000);
+        }
     }
 
 }
