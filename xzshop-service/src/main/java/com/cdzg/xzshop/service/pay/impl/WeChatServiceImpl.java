@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -130,6 +131,7 @@ public class WeChatServiceImpl implements PayService {
 
             //Todo:支付失败后的业务处理
             //  return updateRecord(info, false, receiveMap);
+
             addHistoryRecord(out_trade_no,totalFee,order.getTotalMoney(),notifyResult.getTransactionId(),false);
             String errCode = notifyResult.getErrCode();
             String errCodeDes = notifyResult.getErrCodeDes();
@@ -138,6 +140,10 @@ public class WeChatServiceImpl implements PayService {
         } else {
             // 可在此持久化微信传回的该 map 数据
             //Todo:支付成功后的业务处理
+            order.setOrderStatus(2);
+            order.setPayMethod(2);
+            order.setPayTime(new Date());
+            orderMapper.updateById(order);
             //return updateRecord(info, true, receiveMap);
             addHistoryRecord(out_trade_no,totalFee,order.getTotalMoney(),notifyResult.getTransactionId(),true);
             log.debug("-------------------------微信支付回调成功----------------------------");

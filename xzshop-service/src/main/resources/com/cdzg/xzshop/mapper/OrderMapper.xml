@@ -77,4 +77,31 @@
         from order
         where id=#{id}
     </select>
+    <select id="listForApp" resultType="com.cdzg.xzshop.vo.order.response.UserOrderListRespVO">
+        SELECT
+            t1.id,
+            t1.order_type orderType,
+            t1.goods_price goodsPrice,
+            t1.freight,
+            t1.total_money totalMoney,
+            t1.pay_money payMoney,
+            t1.shop_id shopId,
+            t2.shop_name shopName,
+            t1.create_time createTime,
+            t1.order_status orderStatus
+        FROM
+            `order` t1
+            LEFT JOIN shop_info t2 ON t1.shop_id = t2.id
+        WHERE
+            t1.deleted = 0
+        <if test="param != null and param.customerId != null">
+            AND t1.customer_id = #{param.customerId}
+        </if>
+        <if test="param != null and param.orderStatus != null and param.orderStatus > 0">
+            AND t1.order_status = #{param.orderStatus}
+        </if>
+        ORDER BY create_time DESC
+
+
+    </select>
 </mapper>

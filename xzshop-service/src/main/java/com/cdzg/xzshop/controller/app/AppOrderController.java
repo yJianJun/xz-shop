@@ -1,6 +1,7 @@
 package com.cdzg.xzshop.controller.app;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cdzg.cms.api.constants.StringUtil;
 import com.cdzg.cms.api.vo.xzunion.ApiRes;
 import com.cdzg.customer.vo.response.CustomerBaseInfoVo;
@@ -14,12 +15,16 @@ import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.*;
 import com.cdzg.xzshop.service.Impl.UserPointsService;
 import com.cdzg.xzshop.vo.admin.SystemTimeConfigVO;
+import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.*;
+import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
 import com.cdzg.xzshop.vo.order.response.CommitOrderRespVO;
 import com.cdzg.xzshop.vo.order.response.SettlementRespVo;
+import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
 import com.framework.utils.core.api.ApiResponse;
 import io.netty.util.internal.ObjectUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Range;
@@ -33,6 +38,7 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -68,8 +74,6 @@ public class AppOrderController {
     @Autowired
     private SystemTimeConfigService systemTimeConfigService;
 
-    @Autowired
-    private GoodsSpuSalesService goodsSpuSalesService;
 
 
 //    @MobileApi
@@ -220,9 +224,64 @@ public class AppOrderController {
     }
 
     @MobileApi
-    @GetMapping("/list")
+    @PostMapping("/list")
     @ApiOperation("31004-订单列表")
-    public ApiResponse list() {
+    public ApiResponse<PageResultVO<UserOrderListRespVO>> list(@RequestBody @Valid AppQueryOrderListReqVO reqVO) {
+        CustomerBaseInfoVo appUserInfo = getAppUserInfo();
+        if (Objects.isNull(appUserInfo)) {
+            return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
+        }
+        reqVO.setCustomerId(appUserInfo.getId() + "");
+        PageResultVO<UserOrderListRespVO> result = orderService.listForApp(reqVO);
+        return ApiResponse.buildSuccessResponse(result);
+    }
+
+    @MobileApi
+    @GetMapping("/getById/{orderId}")
+    @ApiOperation("31005-订单详情")
+    public ApiResponse<AppOrderDetailRespVO> getById(@PathVariable("orderId") String orderId) {
+        CustomerBaseInfoVo appUserInfo = getAppUserInfo();
+        if (Objects.isNull(appUserInfo)) {
+            return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
+        }
+        AppOrderDetailRespVO result = orderService.getByIdForApp(orderId,appUserInfo.getId());
+        if (Objects.isNull(result)) {
+            return ApiResponse.buildCommonErrorResponse("订单不存在或已删除");
+        }
+        //处理倒计时 & shopName
+        ShopInfo shopInfo = shopInfoService.getById(result.getShopId());
+        result.setShopName(shopInfo.getShopName());
+        if (result.getOrderStatus() == 1 || result.getOrderStatus() == 3) {
+            dealRemainingTime(result);
+        }
+        return ApiResponse.buildSuccessResponse(result);
+    }
+
+
+    @MobileApi
+    @GetMapping("/cancelOrder/{orderId}")
+    @ApiOperation("31006-取消订单")
+    public ApiResponse<String> cancelOrder(@PathVariable("orderId") String orderId) {
+        //取消订单
+
+        //归还库存，减销量
+
+        return null;
+    }
+
+    @MobileApi
+    @GetMapping("/deleteOrder/{orderId}")
+    @ApiOperation("31007-删除订单")
+    public ApiResponse<String> deleteOrder(@PathVariable("orderId") String orderId) {
+
+
+        return null;
+    }
+
+    @MobileApi
+    @GetMapping("/confirmOrder/{orderId}")
+    @ApiOperation("31008-确认订单(确认收货)")
+    public ApiResponse<String> confirmOrder(@PathVariable("orderId") String orderId) {
 
 
         return null;
@@ -250,6 +309,24 @@ public class AppOrderController {
             }
         }
         return null;
+    }
+
+    /**
+     * 计算处理倒计时
+     * @param result
+     */
+    private void dealRemainingTime(AppOrderDetailRespVO result) {
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        long now = System.currentTimeMillis();
+        if (result.getOrderStatus() == 1) {
+            //待支付订单
+            long createTime = result.getCreateTime().getTime();
+            result.setRemainingTime(now - createTime - systemTimeConfig.getCancelOrder() * 60 *1000);
+        }else {
+            //待收货订单
+            long deliverTime = result.getDeliverTime().getTime();
+            result.setRemainingTime(now - deliverTime - systemTimeConfig.getSureOrder() * 60 *1000);
+        }
     }
 
 }

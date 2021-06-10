@@ -174,6 +174,10 @@ public class ALiPayServiceImpl implements PayService {
         if ("TRADE_FINISHED".equals(tradeStatus) || "TRADE_SUCCESS".equals(tradeStatus)) {
 
             //todo:支付成功后的业务处理
+            order.setOrderStatus(2);
+            order.setPayMethod(1);
+            order.setPayTime(new Date());
+            orderMapper.updateById(order);
             //return updateRecord(info, true, receiveMap);
             addHistoryRecord(out_trade_no,total_amount,order.getTotalMoney(),trade_no,true);
             log.debug("-------------------------阿里支付回调成功----------------------------");
