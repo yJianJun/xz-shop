@@ -83,8 +83,8 @@ public class WeChatServiceImpl implements PayService {
             log.error("微信客户端初始化失败:{}", Json.pretty(e.getSuppressed()));
             return WxPayNotifyResponse.fail(e.getMessage());
         }
-        Order order = orderMapper.findById(Long.parseLong(out_trade_no));
-        ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Wechat);
+        Order order = orderMapper.findById(Long.valueOf(out_trade_no));
+        ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.valueOf(order.getShopId()), ReceivePaymentType.Wechat);
         try {
             String xml = WxUtils.readRequest(request);
             notifyResult = wxService.parseOrderNotifyResult(xml);
@@ -214,7 +214,7 @@ public class WeChatServiceImpl implements PayService {
     private void addHistoryRecord(String out_trade_no, String total_amount, BigDecimal orderMoney, String trade_no, Boolean status) {
 
         OrderPayHistory history = OrderPayHistory.builder()
-                .orderNumber(Long.parseLong(out_trade_no))
+                .orderNumber(Long.valueOf(out_trade_no))
                 .paymentAmount(new BigDecimal(total_amount))
                 .payNumber(trade_no)
                 .theTotalAmountOfOrders(orderMoney)

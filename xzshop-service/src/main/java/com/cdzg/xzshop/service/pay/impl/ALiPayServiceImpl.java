@@ -101,7 +101,8 @@ public class ALiPayServiceImpl implements PayService {
         Map<String, String> receiveMap = getReceiveMap(request);
         //商品订单号
         String out_trade_no = receiveMap.get("out_trade_no");
-        Order order = orderMapper.findById(Long.parseLong(out_trade_no));
+        log.debug("阿里支付回调out_trade_no={}",out_trade_no);
+        Order order = orderMapper.findById(Long.valueOf(out_trade_no));
 
         // 1.商户需要验证该通知数据中的 out_trade_no 是否为商户系统中创建的订单号；
         if (Objects.isNull(order)) {
@@ -110,7 +111,7 @@ public class ALiPayServiceImpl implements PayService {
             return "failure";
         }
 
-        ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Alipay);
+        ReceivePaymentInfo receivePaymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.valueOf(order.getShopId()), ReceivePaymentType.Alipay);
         boolean signVerified = false;
         try {
             //3.签名验证(对支付宝返回的数据验证，确定是支付宝返回的)
@@ -160,7 +161,7 @@ public class ALiPayServiceImpl implements PayService {
         }
 
         //4.验证 app_id 是否为该商户本身。
-        ReceivePaymentInfo paymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.parseLong(order.getShopId()), ReceivePaymentType.Alipay);
+        ReceivePaymentInfo paymentInfo = paymentInfoMapper.findOneByShopIdAndType(Long.valueOf(order.getShopId()), ReceivePaymentType.Alipay);
         if (!paymentInfo.getAppid().equals(app_id)) {
             log.error("订单号:" + out_trade_no + "对应店家收款信息与实际收款账号信息不符");
             return "failure";
