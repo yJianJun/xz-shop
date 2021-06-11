@@ -59,6 +59,7 @@ public class PayController {
     @ApiOperation("微信支付异步通知回调")
     @RequestMapping(value = "/wechat/notify", method = {RequestMethod.POST, RequestMethod.GET})
     @IgnoreAuth
+    @MobileApi
     public String wxNotify(HttpServletRequest request, HttpServletResponse response) {
         return wxPayService.callBack(request, response);
     }
@@ -66,6 +67,7 @@ public class PayController {
     @ApiOperation("支付宝支付异步通知回调")
     @RequestMapping(value = "/ali/notify", method = {RequestMethod.POST, RequestMethod.GET})
     @IgnoreAuth
+    @MobileApi
     public String aliNotify(HttpServletRequest request, HttpServletResponse response) {
         return aliPayService.callBack(request, response);
     }
