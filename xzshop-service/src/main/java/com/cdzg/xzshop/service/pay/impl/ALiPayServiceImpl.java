@@ -35,6 +35,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -199,6 +200,8 @@ public class ALiPayServiceImpl implements PayService {
                 .payNumber(trade_no)
                 .theTotalAmountOfOrders(orderMoney)
                 .type(ReceivePaymentType.Alipay)
+                .gmtCreate(LocalDateTime.now())
+                .gmtUpdate(LocalDateTime.parse("1000-01-01T00:00:00"))
                 .status(status)
                 .remark("")
                 .build();
