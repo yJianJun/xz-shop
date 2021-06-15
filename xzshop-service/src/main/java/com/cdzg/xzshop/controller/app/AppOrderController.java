@@ -307,7 +307,7 @@ public class AppOrderController {
             return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
         }
         Order order = orderService.getById(orderId);
-        if (order.getOrderStatus() != 4 || order.getOrderStatus() != 5) {
+        if (order.getOrderStatus() != 4 && order.getOrderStatus() != 5) {
             return ApiResponse.buildCommonErrorResponse("该订单尚未完成，无法删除");
         }
         order.setDeleted(1);
@@ -355,7 +355,7 @@ public class AppOrderController {
         SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
         long now = System.currentTimeMillis();
         long createTime = order.getCreateTime().getTime();
-        long remainingTime = now - createTime - systemTimeConfig.getCancelOrder() * 60 * 1000;
+        long remainingTime = createTime + (systemTimeConfig.getCancelOrder() * 60 * 1000) - now;
         String result = remainingTime >= 0 ? remainingTime + "" : "0";
         return ApiResponse.buildSuccessResponse(result);
     }
@@ -388,11 +388,13 @@ public class AppOrderController {
         if (result.getOrderStatus() == 1) {
             //待支付订单
             long createTime = result.getCreateTime().getTime();
-            result.setRemainingTime(now - createTime - systemTimeConfig.getCancelOrder() * 60 * 1000);
+            long time = createTime + (systemTimeConfig.getCancelOrder() * 60 * 1000) - now;
+            result.setRemainingTime(time >= 0 ? time : 0L);
         } else {
             //待收货订单
             long deliverTime = result.getDeliverTime().getTime();
-            result.setRemainingTime(now - deliverTime - systemTimeConfig.getSureOrder() * 60 * 1000);
+            long time = deliverTime + (systemTimeConfig.getCancelOrder() * 60 * 1000) - now;
+            result.setRemainingTime(time >= 0 ? time : 0L);
         }
     }
 
