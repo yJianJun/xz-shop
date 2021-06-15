@@ -302,9 +302,22 @@ public class AppOrderController {
     @GetMapping("/deleteOrder/{orderId}")
     @ApiOperation("31007-删除订单")
     public ApiResponse<String> deleteOrder(@PathVariable("orderId") String orderId) {
-
-
-        return null;
+        CustomerBaseInfoVo appUserInfo = getAppUserInfo();
+        if (Objects.isNull(appUserInfo)) {
+            return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
+        }
+        Order order = orderService.getById(orderId);
+        if (order.getOrderStatus() != 4 || order.getOrderStatus() !=5) {
+            return ApiResponse.buildCommonErrorResponse("该订单尚未完成，无法删除");
+        }
+        order.setDeleted(1);
+        order.setUpdateBy(appUserInfo.getId() + "");
+        order.setUpdateTime( new Date());
+        boolean b = orderService.updateById(order);
+        if (b) {
+            return ApiResponse.buildSuccessResponse("删除成功");
+        }
+        return ApiResponse.buildCommonErrorResponse("删除失败，请稍后重试");
     }
 
     @MobileApi
