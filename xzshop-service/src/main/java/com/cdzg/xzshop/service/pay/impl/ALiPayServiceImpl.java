@@ -72,7 +72,8 @@ public class ALiPayServiceImpl implements PayService {
         // 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
         model.setTimeoutExpress("30m");
         //todo:测试:订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
-        model.setTotalAmount("0.01");
+//        model.setTotalAmount("0.01");
+        model.setTotalAmount(order.getPayMoney().toString());
         //销售产品码，商家和支付宝签约的产品码
         model.setProductCode("QUICK_MSECURITY_PAY");
         request.setBizModel(model);

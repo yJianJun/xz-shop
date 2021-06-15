@@ -30,6 +30,11 @@ public class RefundOrderListVO {
     @ApiModelProperty(value = "订单编号")
     private Long orderId;
     /**
+     * 退款类型 1退款 2退货退款
+     */
+    @ApiModelProperty(value = "退款类型 1退款 2退货退款")
+    private Integer refundType;
+    /**
      * 退款金额（元）
      */
     @ApiModelProperty(value = "退款金额")

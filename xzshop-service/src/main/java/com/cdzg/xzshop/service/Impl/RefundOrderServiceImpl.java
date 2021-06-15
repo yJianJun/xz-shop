@@ -1,13 +1,13 @@
 package com.cdzg.xzshop.service.Impl;
 
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.customer.vo.response.CustomerLoginResponse;
 import com.cdzg.universal.vo.response.user.UserLoginResponse;
+import com.cdzg.xzshop.componet.pay.PayDecoration;
+import com.cdzg.xzshop.constant.PaymentMethod;
 import com.cdzg.xzshop.domain.*;
 import com.cdzg.xzshop.enums.RefundTypeEnum;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
@@ -21,6 +21,7 @@ import com.cdzg.xzshop.vo.app.refund.BuyerShipVO;
 import com.cdzg.xzshop.vo.app.refund.SellerRefuseReceiptVO;
 import com.cdzg.xzshop.vo.common.BasePageRequest;
 import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.cdzg.xzshop.vo.pay.RefundParam;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +57,8 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     private ReturnGoodsInfoService returnGoodsInfoService;
     @Autowired
     private SystemTimeConfigService systemTimeConfigService;
+    @Autowired
+    private PayDecoration payDecoration;
 
 
     @Override
@@ -240,9 +243,17 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 modify.getStatus(), adminUser.getUserId()));
         // 退款最后操作，其他代码异常不能影响退款，退款异常回滚所有
         if (refundOrder.getStatus().equals(7)) {
-            // TODO 支付退款接口
-            Order order = orderService.getById(refundOrder.getOrderId());
-
+            RefundParam refundParam = new RefundParam();
+            refundParam.setOrderno(refundOrder.getOrderId());
+            refundParam.setRefundFee(refundOrder.getRefundAmount().toString());
+            refundParam.setRefundId(refundOrder.getId());
+            refundParam.setType(refundOrder.getPayType() == 1 ? PaymentMethod.Alipay : PaymentMethod.Wechat);
+            try {
+                payDecoration.refund(refundParam);
+            } catch (Exception e) {
+                log.error("RefundOrderServiceImpl-agreeRefund", e);
+                return e.getMessage();
+            }
         }
         return null;
     }
@@ -281,8 +292,6 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "卖家已收货。",
                 modify.getStatus(), adminUser.getUserId()));
-        // TODO 支付退款
-
         return null;
     }
 
@@ -577,27 +586,38 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
 
     /**
      * 系统自动处理时批量修改退款订单状态和流程记录
-     * @param orderIds
+     * @param refundOrderIds
      */
-    private void autoBatchOrderAndProcess(List<Long> orderIds, Integer status){
-        if (CollectionUtils.isEmpty(orderIds)) {
+    private void autoBatchOrderAndProcess(List<Long> refundOrderIds, Integer status){
+        if (CollectionUtils.isEmpty(refundOrderIds)) {
             return;
         }
         // 修改退款单状态
         LambdaUpdateWrapper<RefundOrder> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.in(RefundOrder::getId, orderIds);
+        updateWrapper.in(RefundOrder::getId, refundOrderIds);
         updateWrapper.set(RefundOrder::getStatus, status);
         this.update(updateWrapper);
         // 新增流程记录
         List<RefundProcess> list = Lists.newArrayList();
-        for (Long orderId : orderIds) {
+        for (Long orderId : refundOrderIds) {
             list.add(new RefundProcess(orderId, "流程超时系统自动处理。", status, 1L));
         }
         refundProcessService.saveBatch(list, list.size());
         // 自动退款的状态
         if (status.equals(9)) {
-            // TODO 调用退款
-
+            List<RefundOrder> refundOrders = lambdaQuery().in(RefundOrder::getId, refundOrderIds).list();
+            for (RefundOrder refundOrder : refundOrders) {
+                RefundParam refundParam = new RefundParam();
+                refundParam.setOrderno(refundOrder.getOrderId());
+                refundParam.setRefundFee(refundOrder.getRefundAmount().toString());
+                refundParam.setRefundId(refundOrder.getId());
+                refundParam.setType(refundOrder.getPayType() == 1 ? PaymentMethod.Alipay : PaymentMethod.Wechat);
+                try {
+                    payDecoration.refund(refundParam);
+                } catch (Exception e) {
+                    log.error("RefundOrderServiceImpl-autoBatchOrderAndProcess", e);
+                }
+            }
         }
     }
 
