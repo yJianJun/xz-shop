@@ -1,5 +1,7 @@
 package com.cdzg.xzshop.vo.admin.refund;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,6 +15,7 @@ public class RefundOrderListVO {
     /**
      * 退款编号
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "退款编号")
     private Long id;
     /**
@@ -23,6 +26,7 @@ public class RefundOrderListVO {
     /**
      * 订单编号
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "订单编号")
     private Long orderId;
     /**
