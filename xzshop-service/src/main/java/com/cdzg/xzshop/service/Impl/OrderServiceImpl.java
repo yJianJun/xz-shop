@@ -129,6 +129,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 List<OrderGoodsListRespVO> orderGoodsList = orderItemMapper.getListByOrderId(p.getId());
                 //处理商品图片，获取第一张
                 dealGoodsPic(orderGoodsList);
+                orderGoodsList.forEach(o->o.setPaymentMethod(p.getOrderType()));
                 p.setOrderGoodsList(orderGoodsList);
             });
             result.setData(pageList);
@@ -158,6 +159,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             result.setId(orderId);
             List<OrderGoodsListRespVO> orderGoodsList = orderItemMapper.getListByOrderId(orderId);
             dealGoodsPic(orderGoodsList);
+            orderGoodsList.forEach(o->o.setPaymentMethod(order.getOrderType()));
             result.setOrderGoodsList(orderGoodsList);
             return result;
         }

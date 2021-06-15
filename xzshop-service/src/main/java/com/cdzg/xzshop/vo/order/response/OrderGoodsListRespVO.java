@@ -40,4 +40,7 @@ public class OrderGoodsListRespVO implements Serializable {
 
     @ApiModelProperty(value = "状态 0正常 1.退款中2.已退款3.退货中4.已退货5.拒绝退款6.拒绝退货")
     private Integer status;
+
+    @ApiModelProperty(value = "支付方式:1:积分换购商品 2:线上支付商品")
+    private Integer paymentMethod;
 }
