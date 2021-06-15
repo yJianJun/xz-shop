@@ -10,6 +10,7 @@ import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.constant.PaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
+import com.cdzg.xzshop.domain.OrderItem;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.*;
@@ -27,7 +28,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.common.recycler.Recycler;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +63,9 @@ public class AppOrderController {
     private OrderService orderService;
 
     @Autowired
+    private OrderItemService orderItemService;
+
+    @Autowired
     private GoodsSpuService goodsSpuService;
 
     @Autowired
@@ -73,7 +79,6 @@ public class AppOrderController {
 
     @Autowired
     private SystemTimeConfigService systemTimeConfigService;
-
 
 
 //    @MobileApi
@@ -176,7 +181,7 @@ public class AppOrderController {
                 //积分商品单商品结算
                 payPointsReqVO.setGoodsName(commitGoodsList.get(0).getGoodsName());
                 payPointsReqVO.setGoodsCount(commitGoodsList.get(0).getGoodsCount());
-                JSONObject response = userPointsService.payPoint(LoginSessionUtils.getAppUser().getTicketString(),payPointsReqVO);
+                JSONObject response = userPointsService.payPoint(LoginSessionUtils.getAppUser().getTicketString(), payPointsReqVO);
                 if (Objects.isNull(response)) {
                     orderService.rollbackCommitOrder(order.getId());
                     return ApiResponse.buildCommonErrorResponse("系统错误，请稍后重新下单");
@@ -244,7 +249,7 @@ public class AppOrderController {
         if (Objects.isNull(appUserInfo)) {
             return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
         }
-        AppOrderDetailRespVO result = orderService.getByIdForApp(orderId,appUserInfo.getId());
+        AppOrderDetailRespVO result = orderService.getByIdForApp(orderId, appUserInfo.getId());
         if (Objects.isNull(result)) {
             return ApiResponse.buildCommonErrorResponse("订单不存在或已删除");
         }
@@ -262,37 +267,98 @@ public class AppOrderController {
     @GetMapping("/cancelOrder/{orderId}")
     @ApiOperation("31006-取消订单")
     public ApiResponse<String> cancelOrder(@PathVariable("orderId") String orderId) {
+        CustomerBaseInfoVo appUserInfo = getAppUserInfo();
+        if (Objects.isNull(appUserInfo)) {
+            return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
+        }
         //取消订单
-
-        //归还库存，减销量
-
-        return null;
+        Order order = orderService.getById(orderId);
+        if (order.getOrderStatus() != 1) {
+            return ApiResponse.buildCommonErrorResponse("该状态订单无法取消订单");
+        }
+        Date date = new Date();
+        order.setOrderStatus(5);
+        order.setUpdateBy(appUserInfo.getId() + "");
+        order.setUpdateTime(date);
+        boolean b = orderService.updateById(order);
+        if (b) {
+            //归还库存，减销量
+            List<OrderItem> itemList = orderItemService.getByOrderId(order.getId());
+            if (!CollectionUtils.isEmpty(itemList)) {
+                List<CommitOrderGoodsReqVO> commitGoodsList = new ArrayList<>();
+                itemList.forEach(i -> {
+                    CommitOrderGoodsReqVO param = new CommitOrderGoodsReqVO();
+                    param.setGoodsId(i.getGoodsId() + "");
+                    param.setGoodsCount(-i.getGoodsCount());
+                    commitGoodsList.add(param);
+                });
+                goodsSpuService.updateGoodsStockAndSales(commitGoodsList);
+            }
+        }
+        return ApiResponse.buildSuccessResponse("取消成功");
     }
 
     @MobileApi
     @GetMapping("/deleteOrder/{orderId}")
     @ApiOperation("31007-删除订单")
     public ApiResponse<String> deleteOrder(@PathVariable("orderId") String orderId) {
-
-
-        return null;
+        CustomerBaseInfoVo appUserInfo = getAppUserInfo();
+        if (Objects.isNull(appUserInfo)) {
+            return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
+        }
+        Order order = orderService.getById(orderId);
+        if (order.getOrderStatus() != 4 || order.getOrderStatus() != 5) {
+            return ApiResponse.buildCommonErrorResponse("该订单尚未完成，无法删除");
+        }
+        order.setDeleted(1);
+        order.setUpdateBy(appUserInfo.getId() + "");
+        order.setUpdateTime(new Date());
+        boolean b = orderService.updateById(order);
+        if (b) {
+            return ApiResponse.buildSuccessResponse("删除成功");
+        }
+        return ApiResponse.buildCommonErrorResponse("删除失败，请稍后重试");
     }
 
     @MobileApi
     @GetMapping("/confirmOrder/{orderId}")
     @ApiOperation("31008-确认订单(确认收货)")
     public ApiResponse<String> confirmOrder(@PathVariable("orderId") String orderId) {
-
-
-        return null;
+        CustomerBaseInfoVo appUserInfo = getAppUserInfo();
+        if (Objects.isNull(appUserInfo)) {
+            return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
+        }
+        Order order = orderService.getById(orderId);
+        if (order.getOrderStatus() != 3) {
+            return ApiResponse.buildCommonErrorResponse("只有已发货状态的订单才能确认收货");
+        }
+        Date date = new Date();
+        order.setOrderStatus(4);
+        order.setDealTime(date);
+        order.setUpdateBy(appUserInfo.getId() + "");
+        order.setUpdateTime(date);
+        boolean b = orderService.updateById(order);
+        if (b) {
+            return ApiResponse.buildSuccessResponse("确认收货成功");
+        }
+        return ApiResponse.buildCommonErrorResponse("确认收货失败，请稍后重试");
     }
 
-
-
-
-
-
-
+    @MobileApi
+    @GetMapping("/getRemainingTime/{orderId}")
+    @ApiOperation("31009-返回订单支付剩余时间，单位ms")
+    public ApiResponse<String> getRemainingTime(@PathVariable("orderId") String orderId) {
+        Order order = orderService.getById(orderId);
+        if (order.getOrderStatus() != 1) {
+            return ApiResponse.buildCommonErrorResponse("该订单当前状态不能支付");
+        }
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        long now = System.currentTimeMillis();
+        long createTime = order.getCreateTime().getTime();
+        long remainingTime = now - createTime - systemTimeConfig.getCancelOrder() * 60 * 1000;
+        String result = remainingTime >= 0 ? remainingTime + "" : "0";
+        return ApiResponse.buildSuccessResponse(result);
+    }
 
 
     /**
@@ -313,6 +379,7 @@ public class AppOrderController {
 
     /**
      * 计算处理倒计时
+     *
      * @param result
      */
     private void dealRemainingTime(AppOrderDetailRespVO result) {
@@ -321,11 +388,11 @@ public class AppOrderController {
         if (result.getOrderStatus() == 1) {
             //待支付订单
             long createTime = result.getCreateTime().getTime();
-            result.setRemainingTime(now - createTime - systemTimeConfig.getCancelOrder() * 60 *1000);
-        }else {
+            result.setRemainingTime(now - createTime - systemTimeConfig.getCancelOrder() * 60 * 1000);
+        } else {
             //待收货订单
             long deliverTime = result.getDeliverTime().getTime();
-            result.setRemainingTime(now - deliverTime - systemTimeConfig.getSureOrder() * 60 *1000);
+            result.setRemainingTime(now - deliverTime - systemTimeConfig.getSureOrder() * 60 * 1000);
         }
     }
 
