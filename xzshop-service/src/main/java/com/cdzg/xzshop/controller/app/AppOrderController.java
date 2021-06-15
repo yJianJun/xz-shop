@@ -10,6 +10,7 @@ import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.constant.PaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
+import com.cdzg.xzshop.domain.OrderItem;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.*;
@@ -27,6 +28,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.common.recycler.Recycler;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -58,6 +60,9 @@ public class AppOrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderItemService orderItemService;
 
     @Autowired
     private GoodsSpuService goodsSpuService;
@@ -262,11 +267,35 @@ public class AppOrderController {
     @GetMapping("/cancelOrder/{orderId}")
     @ApiOperation("31006-取消订单")
     public ApiResponse<String> cancelOrder(@PathVariable("orderId") String orderId) {
+        CustomerBaseInfoVo appUserInfo = getAppUserInfo();
+        if (Objects.isNull(appUserInfo)) {
+            return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
+        }
         //取消订单
-
-        //归还库存，减销量
-
-        return null;
+        Order order = orderService.getById(orderId);
+        if (order.getOrderStatus() != 1) {
+            return ApiResponse.buildCommonErrorResponse("该状态订单无法取消订单");
+        }
+        Date date = new Date();
+        order.setOrderStatus(5);
+        order.setUpdateBy(appUserInfo.getId() + "");
+        order.setUpdateTime(date);
+        boolean b = orderService.updateById(order);
+        if (b) {
+            //归还库存，减销量
+            List<OrderItem> itemList = orderItemService.getByOrderId(order.getId());
+            if (!CollectionUtils.isEmpty(itemList)) {
+                List<CommitOrderGoodsReqVO> commitGoodsList = new ArrayList<>();
+                itemList.forEach(i->{
+                    CommitOrderGoodsReqVO param = new CommitOrderGoodsReqVO();
+                    param.setGoodsId(i.getGoodsId() + "");
+                    param.setGoodsCount(- i.getGoodsCount());
+                    commitGoodsList.add(param);
+                });
+                goodsSpuService.updateGoodsStockAndSales(commitGoodsList);
+            }
+        }
+        return ApiResponse.buildSuccessResponse("取消成功");
     }
 
     @MobileApi
