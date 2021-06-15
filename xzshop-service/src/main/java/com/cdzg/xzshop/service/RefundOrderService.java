@@ -9,6 +9,8 @@ import com.cdzg.xzshop.vo.app.refund.SellerRefuseReceiptVO;
 import com.cdzg.xzshop.vo.common.BasePageRequest;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 
+import javax.servlet.http.HttpServletResponse;
+
 public interface RefundOrderService extends IService<RefundOrder> {
 
     /**
@@ -119,4 +121,11 @@ public interface RefundOrderService extends IService<RefundOrder> {
      * @return
      */
     String sellerNotReceipt(SellerRefuseReceiptVO vo);
+
+    /**
+     * 导出
+     * @param queryVO
+     * @param response
+     */
+    void export(RefundOrderQueryVO queryVO, HttpServletResponse response);
 }

@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RestController
 @RequestMapping("admin/refundOrder")
@@ -106,4 +108,11 @@ public class RefundOrderAdminController {
         return ApiResponse.buildSuccessResponse(info);
     }
 
+    @WebApi
+    @PostMapping("/export")
+    @ApiOperation("05009-导出")
+    public void export(@RequestBody RefundOrderQueryVO queryVO, HttpServletResponse response) {
+        log.info("RefundOrderAdminController-export: queryVO:{}", queryVO);
+        refundOrderService.export(queryVO, response);
+    }
 }

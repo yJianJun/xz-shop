@@ -14,6 +14,7 @@ import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.mapper.RefundOrderMapper;
 import com.cdzg.xzshop.service.*;
 import com.cdzg.xzshop.utils.DateUtil;
+import com.cdzg.xzshop.utils.ExcelExportUtils;
 import com.cdzg.xzshop.vo.admin.SystemTimeConfigVO;
 import com.cdzg.xzshop.vo.admin.refund.*;
 import com.cdzg.xzshop.vo.app.refund.ApplyRefundVO;
@@ -30,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -563,6 +566,81 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "卖家拒绝收货。",
                 modify.getStatus(), adminUser.getUserId()));
         return null;
+    }
+
+    @Override
+    public void export(RefundOrderQueryVO queryVO, HttpServletResponse response) {
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        LambdaQueryWrapper<RefundOrder> wrapper = new LambdaQueryWrapper<>();
+        if (!adminUser.getIsAdmin()) {
+            wrapper.eq(RefundOrder::getOrgId, adminUser.getUserBaseInfo().getOrganizationId().longValue());
+        }
+        if (StringUtils.isNotEmpty(queryVO.getId())) {
+            wrapper.eq(RefundOrder::getId, queryVO.getId());
+        }
+        if (StringUtils.isNotEmpty(queryVO.getShopName())) {
+            wrapper.like(RefundOrder::getShopName, queryVO.getShopName());
+        }
+        if (StringUtils.isNotEmpty(queryVO.getUserPhone())) {
+            wrapper.like(RefundOrder::getUserPhone, queryVO.getUserPhone());
+        }
+        if (Objects.nonNull(queryVO.getStatus())) {
+            wrapper.eq(RefundOrder::getStatus, queryVO.getStatus());
+        }
+        if (StringUtils.isNotEmpty(queryVO.getStartTime())) {
+            wrapper.ge(RefundOrder::getCreateTime, queryVO.getStartTime());
+        }
+        if (StringUtils.isNotEmpty(queryVO.getEndTime())) {
+            wrapper.le(RefundOrder::getCreateTime, queryVO.getEndTime());
+        }
+        wrapper.orderByDesc(RefundOrder::getCreateTime).ge(RefundOrder::getStatus, 0);
+        List<RefundOrder> list = this.list(wrapper);
+        List<RefundOrderExportVO> collect = list.stream().map(o -> {
+            RefundOrderExportVO vo = new RefundOrderExportVO();
+            BeanUtils.copyProperties(o, vo);
+            vo.setId(o.getId().toString());
+            vo.setOrderId(o.getOrderId().toString());
+            vo.setRefundType(o.getRefundType().equals(1) ? "退款" : "退货退款");
+            String status = null;
+            switch (o.getStatus()) {
+                case 1:
+                    status = "退货处理中";
+                    break;
+                case 2:
+                    status = "拒绝退货";
+                    break;
+                case 3:
+                    status = "买家待发货";
+                    break;
+                case 4:
+                    status = "卖家待收货";
+                    break;
+                case 5:
+                    status = "收货拒绝";
+                    break;
+                case 6:
+                    status = "未收到货";
+                    break;
+                case 7:
+                    status = "退款处理中";
+                    break;
+                case 8:
+                    status = "拒绝退款";
+                    break;
+                case 9:
+                    status = "退款成功";
+                    break;
+            }
+            vo.setStatus(status);
+            vo.setCreateTime(DateUtil.formatDateTime(o.getCreateTime()));
+            return vo;
+        }).collect(Collectors.toList());
+
+        try {
+            ExcelExportUtils.export("退款订单列表", "退款订单列表", collect, RefundOrderExportVO.class, response);
+        } catch (IOException e) {
+            log.error("退款订单列表导出报错", e);
+        }
     }
 
     /**
