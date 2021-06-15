@@ -71,9 +71,8 @@ public class ALiPayServiceImpl implements PayService {
         //该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。
         // 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
         model.setTimeoutExpress("30m");
-        //todo:测试:订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
-//        model.setTotalAmount("0.01");
-        model.setTotalAmount(order.getPayMoney().toString());
+        //订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
+        model.setTotalAmount(order.getPayMoney().toPlainString());
         //销售产品码，商家和支付宝签约的产品码
         model.setProductCode("QUICK_MSECURITY_PAY");
         request.setBizModel(model);
@@ -155,8 +154,6 @@ public class ALiPayServiceImpl implements PayService {
         }
 
         // 3.判断 total_amount 是否确实为该订单的实际金额（即商户订单创建时的金额）；
-        // todo:订单的支付金额 测试阶段暂时设置为0.01元
-        order.setPayMoney(new BigDecimal("0.01"));
         if (order.getPayMoney().compareTo(new BigDecimal(total_amount)) != 0) {
             log.error("订单号:" + out_trade_no + "金额:" + "与实际支付金额不等");
             return "failure";
