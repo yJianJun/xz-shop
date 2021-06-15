@@ -270,8 +270,8 @@ public class ALiPayServiceImpl implements PayService {
             model.setOutTradeNo(outTradeNo+"");
             //	支付宝交易号，和商户订单号 out_trade_no 不能同时为空。
             model.setTradeNo(tradeNo);
-            //todo：测试时0.01 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
-            model.setRefundAmount("0.01");
+            //需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
+            model.setRefundAmount(refundAmount);
             //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
             model.setOutRequestNo(Long.toString(refundId));
             //	退款原因说明，商家自定义。
