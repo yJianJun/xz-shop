@@ -311,9 +311,24 @@ public class AppOrderController {
     @GetMapping("/confirmOrder/{orderId}")
     @ApiOperation("31008-确认订单(确认收货)")
     public ApiResponse<String> confirmOrder(@PathVariable("orderId") String orderId) {
-
-
-        return null;
+        CustomerBaseInfoVo appUserInfo = getAppUserInfo();
+        if (Objects.isNull(appUserInfo)) {
+            return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
+        }
+        Order order = orderService.getById(orderId);
+        if (order.getOrderStatus() != 3) {
+            return ApiResponse.buildCommonErrorResponse("只有已发货状态的订单才能确认收货");
+        }
+        Date date = new Date();
+        order.setOrderStatus(4);
+        order.setDealTime(date);
+        order.setUpdateBy(appUserInfo.getId() + "");
+        order.setUpdateTime(date);
+        boolean b = orderService.updateById(order);
+        if (b) {
+            return ApiResponse.buildSuccessResponse("确认收货成功");
+        }
+        return ApiResponse.buildCommonErrorResponse("确认收货失败，请稍后重试");
     }
 
 
