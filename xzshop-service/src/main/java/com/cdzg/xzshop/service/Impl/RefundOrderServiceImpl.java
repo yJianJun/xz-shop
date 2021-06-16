@@ -104,15 +104,28 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
 
     @Override
     public RefundOrderStatisticVO getRefundOrderStatistic() {
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         RefundOrderStatisticVO vo = new RefundOrderStatisticVO();
-        int total = lambdaQuery().ge(RefundOrder::getStatus, 0).count();
-        int returnToDo = lambdaQuery().ge(RefundOrder::getStatus, 1).count();
-        int refundToDo = lambdaQuery().ge(RefundOrder::getStatus, 7).count();
-        int refundSuccess = lambdaQuery().ge(RefundOrder::getStatus, 9).count();
-        vo.setTotal(total);
-        vo.setReturnToDo(returnToDo);
-        vo.setRefundToDo(refundToDo);
-        vo.setRefundSuccess(refundSuccess);
+
+        if (!adminUser.getIsAdmin()) {
+            int total = lambdaQuery().ge(RefundOrder::getStatus, 0).count();
+            int returnToDo = lambdaQuery().eq(RefundOrder::getStatus, 1).count();
+            int refundToDo = lambdaQuery().eq(RefundOrder::getStatus, 7).count();
+            int refundSuccess = lambdaQuery().eq(RefundOrder::getStatus, 9).count();
+            vo.setTotal(total);
+            vo.setReturnToDo(returnToDo);
+            vo.setRefundToDo(refundToDo);
+            vo.setRefundSuccess(refundSuccess);
+        } else {
+            int total = lambdaQuery().ge(RefundOrder::getStatus, 0).eq(RefundOrder::getOrgId, adminUser.getUserBaseInfo().getOrganizationId().longValue()).count();
+            int returnToDo = lambdaQuery().eq(RefundOrder::getStatus, 1).eq(RefundOrder::getOrgId, adminUser.getUserBaseInfo().getOrganizationId().longValue()).count();
+            int refundToDo = lambdaQuery().eq(RefundOrder::getStatus, 7).eq(RefundOrder::getOrgId, adminUser.getUserBaseInfo().getOrganizationId().longValue()).count();
+            int refundSuccess = lambdaQuery().eq(RefundOrder::getStatus, 9).eq(RefundOrder::getOrgId, adminUser.getUserBaseInfo().getOrganizationId().longValue()).count();
+            vo.setTotal(total);
+            vo.setReturnToDo(returnToDo);
+            vo.setRefundToDo(refundToDo);
+            vo.setRefundSuccess(refundSuccess);
+        }
         return vo;
     }
 
@@ -408,6 +421,12 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         long restTime = duration.toMinutes();
         long time = minute - restTime;
         vo.setRestTime(time > 0 ? time : 0);
+        // 流程状态
+        List<RefundProcess> processes = refundProcessService.lambdaQuery()
+                .eq(RefundProcess::getRefundOrderId, id)
+                .orderByAsc(RefundProcess::getCreateTime)
+                .list();
+        vo.setProcessList(processes.stream().map(RefundProcess::getStatus).collect(Collectors.toList()));
         return vo;
     }
 
