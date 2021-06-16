@@ -71,7 +71,7 @@ public class PayClientUtils {
         return wxPayService;
     }
 
-    public static WxPayService getWxClient (String out_trade_no) throws Exception{
+    public static WxPayService getWxClient (String out_trade_no){
 
         // 1.商户需要验证该通知数据中的 out_trade_no 是否为商户系统中创建的订单号；
         Order order = orderMapper.findById(Long.parseLong(out_trade_no));
@@ -90,7 +90,7 @@ public class PayClientUtils {
         return new DefaultAlipayClient(AlipayConfig.getServerUrl(), APP_ID, APP_PRIVATE_KEY,AlipayConfig.getFormat(),AlipayConfig.getCharset(), ALIPAY_PUBLIC_KEY,signType);
     }
 
-    public static AlipayClient getAliPayClient(String out_trade_no) throws Exception{
+    public static AlipayClient getAliPayClient(String out_trade_no){
 
         // 1.商户需要验证该通知数据中的 out_trade_no 是否为商户系统中创建的订单号；
         Order order = orderMapper.findById(Long.parseLong(out_trade_no));

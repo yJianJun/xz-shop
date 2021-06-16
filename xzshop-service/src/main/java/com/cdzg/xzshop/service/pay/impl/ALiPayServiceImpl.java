@@ -300,6 +300,8 @@ public class ALiPayServiceImpl implements PayService {
         refundTo.setOutRequestNo(refundId);
         refundTo.setOutTradeNo(response.getOutTradeNo());
         refundTo.setType(ReceivePaymentType.Alipay);
+        refundTo.setStatus(response.isSuccess());
+        refundTo.setErrCodeDesc(response.getSubMsg());
         return refundTo;
     }
 

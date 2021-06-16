@@ -23,4 +23,10 @@ public class RefundTo {
 
     @ApiModelProperty(value = "支付平台类型", required = true)
     private ReceivePaymentType type;
+
+    @ApiModelProperty(value = "退款是否成功", required = true)
+    private boolean status;
+
+    @ApiModelProperty(value = "错误信息描述,退款失败时有值",allowEmptyValue = true)
+    private String errCodeDesc;
 }

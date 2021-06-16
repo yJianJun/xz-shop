@@ -23,6 +23,7 @@ import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.constant.WxPayConstants;
+import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
@@ -244,21 +245,38 @@ public class WeChatServiceImpl implements PayService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public RefundTo refund(String tradeno, Long orderno, Long refundId, String refundFee) throws Exception {
+    public RefundTo refund(String tradeno, Long orderno, Long refundId, String refundFee){
 
-        WxPayService wxPayService = PayClientUtils.getWxClient(orderno+"");
-        WxPayRefundRequest request = WxPayRefundRequest.newBuilder()
-                .outRefundNo(Long.toString(refundId)) // 商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔。
-                .totalFee(1) //todo: 测试时设置1分钱 订单总金额，单位为分，只能为整数，详见支付金额
-                .refundFee(1) //todo: 测试时设置1分钱 退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
-                .outTradeNo(orderno + "") //商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。
-                // transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no
-                .transactionId(tradeno) //微信生成的订单号，在支付通知中有返回
-                .build();
-        WxPayRefundResult refundResult = wxPayService.refund(request);
+        WxPayService wxPayService = null;
+        WxPayRefundResult refundResult = null;
         RefundTo refundTo = new RefundTo();
+        try {
+            wxPayService = PayClientUtils.getWxClient(orderno+"");
+            WxPayRefundRequest request = WxPayRefundRequest.newBuilder()
+                    .outRefundNo(Long.toString(refundId)) // 商户系统内部的退款单号，商户系统内部唯一，只能是数字、大小写字母_-|*@ ，同一退款单号多次请求只退一笔。
+                    .totalFee(1) //todo: 测试时设置1分钱 订单总金额，单位为分，只能为整数，详见支付金额
+                    .refundFee(1) //todo: 测试时设置1分钱 退款总金额，订单总金额，单位为分，只能为整数，详见支付金额
+                    .outTradeNo(orderno + "") //商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。
+                    // transaction_id、out_trade_no二选一，如果同时存在优先级：transaction_id> out_trade_no
+                    .transactionId(tradeno) //微信生成的订单号，在支付通知中有返回
+                    .build();
+            refundResult= wxPayService.refund(request);
+
+        } catch (WxPayException e) {
+
+            refundTo.setRefundFee(refundFee);
+            refundTo.setOutRequestNo(Long.toString(refundId));
+            refundTo.setStatus(false);
+            refundTo.setOutTradeNo(orderno + "");
+            refundTo.setTradeNo(tradeno);
+            refundTo.setType(ReceivePaymentType.Wechat);
+            refundTo.setErrCodeDesc(e.getErrCodeDes());
+            return refundTo;
+        }
+
         refundTo.setRefundFee(BaseWxPayResult.fenToYuan(refundResult.getRefundFee()));
         refundTo.setOutRequestNo(refundResult.getOutRefundNo());
+        refundTo.setStatus(true);
         refundTo.setOutTradeNo(refundResult.getOutTradeNo());
         refundTo.setTradeNo(refundResult.getTransactionId());
         refundTo.setType(ReceivePaymentType.Wechat);
