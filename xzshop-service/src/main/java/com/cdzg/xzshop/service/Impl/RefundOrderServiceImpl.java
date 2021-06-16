@@ -13,6 +13,7 @@ import com.cdzg.xzshop.enums.RefundTypeEnum;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.mapper.RefundOrderMapper;
 import com.cdzg.xzshop.service.*;
+import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.utils.DateUtil;
 import com.cdzg.xzshop.utils.ExcelExportUtils;
 import com.cdzg.xzshop.vo.admin.SystemTimeConfigVO;
@@ -265,7 +266,12 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             refundParam.setRefundId(refundOrder.getId());
             refundParam.setType(refundOrder.getPayType() == 1 ? PaymentMethod.Alipay : PaymentMethod.Wechat);
             try {
-                payDecoration.refund(refundParam);
+                RefundTo refundTo = payDecoration.refund(refundParam);
+                RefundOrder modify1 = new RefundOrder();
+                modify1.setId(id);
+                modify1.setRefundStatus(refundTo.isStatus() ? 1 : 0);
+                modify1.setRefundFailReason(refundTo.getErrCodeDesc());
+                this.updateById(modify1);
             } catch (Exception e) {
                 log.error("RefundOrderServiceImpl-agreeRefund", e);
                 return e.getMessage();
@@ -703,6 +709,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         // 自动退款的状态
         if (status.equals(9)) {
             List<RefundOrder> refundOrders = lambdaQuery().in(RefundOrder::getId, refundOrderIds).list();
+            List<RefundOrder> modifyList = Lists.newArrayList();
             for (RefundOrder refundOrder : refundOrders) {
                 RefundParam refundParam = new RefundParam();
                 refundParam.setOrderno(refundOrder.getOrderId());
@@ -710,11 +717,17 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 refundParam.setRefundId(refundOrder.getId());
                 refundParam.setType(refundOrder.getPayType() == 1 ? PaymentMethod.Alipay : PaymentMethod.Wechat);
                 try {
-                    payDecoration.refund(refundParam);
+                    RefundTo refundTo = payDecoration.refund(refundParam);
+                    RefundOrder modify = new RefundOrder();
+                    modify.setId(refundOrder.getId());
+                    modify.setRefundStatus(refundTo.isStatus() ? 1 : 0);
+                    modify.setRefundFailReason(refundTo.getErrCodeDesc());
+                    modifyList.add(modify);
                 } catch (Exception e) {
                     log.error("RefundOrderServiceImpl-autoBatchOrderAndProcess", e);
                 }
             }
+            this.updateBatchById(modifyList);
         }
     }
 
