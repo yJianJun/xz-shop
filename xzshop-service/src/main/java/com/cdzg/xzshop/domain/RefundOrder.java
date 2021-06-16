@@ -105,10 +105,6 @@ public class RefundOrder {
      */
     private String refuseReceiptReason;
     /**
-     * 退款记录id
-     */
-    private Long refundRecordId;
-    /**
      * 物流公司
      */
     private String logisticsCompany;
