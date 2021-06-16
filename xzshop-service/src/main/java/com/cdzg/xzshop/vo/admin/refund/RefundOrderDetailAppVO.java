@@ -88,4 +88,7 @@ public class RefundOrderDetailAppVO {
     @ApiModelProperty(value = "剩余时间(分钟)")
     private Long restTime;
 
+    @ApiModelProperty(value = "处理流程的状态")
+    private List<Integer> processList;
+
 }
