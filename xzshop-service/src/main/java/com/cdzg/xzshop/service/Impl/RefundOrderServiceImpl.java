@@ -108,7 +108,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         RefundOrderStatisticVO vo = new RefundOrderStatisticVO();
 
-        if (!adminUser.getIsAdmin()) {
+        if (adminUser.getIsAdmin()) {
             int total = lambdaQuery().ge(RefundOrder::getStatus, 0).count();
             int returnToDo = lambdaQuery().eq(RefundOrder::getStatus, 1).count();
             int refundToDo = lambdaQuery().eq(RefundOrder::getStatus, 7).count();
