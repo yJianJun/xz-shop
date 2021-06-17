@@ -17,6 +17,11 @@ public class GoodsInfoVO {
     @ApiModelProperty(value = "商品id")
     private Long goodsId;
     /**
+     * 商品spuNo
+     */
+    @ApiModelProperty(value = "商品spuNo")
+    private Long spuNo;
+    /**
      * 商品图片
      */
     @ApiModelProperty(value = "商品图片")
