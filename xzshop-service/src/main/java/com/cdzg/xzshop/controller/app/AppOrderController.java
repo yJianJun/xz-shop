@@ -6,6 +6,7 @@ import com.cdzg.cms.api.constants.StringUtil;
 import com.cdzg.cms.api.vo.xzunion.ApiRes;
 import com.cdzg.customer.vo.response.CustomerBaseInfoVo;
 import com.cdzg.customer.vo.response.CustomerLoginResponse;
+import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.constant.PaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
@@ -15,6 +16,7 @@ import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.*;
 import com.cdzg.xzshop.service.Impl.UserPointsService;
+import com.cdzg.xzshop.utils.RabbitmqUtil;
 import com.cdzg.xzshop.vo.admin.SystemTimeConfigVO;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.*;
@@ -79,6 +81,9 @@ public class AppOrderController {
 
     @Autowired
     private SystemTimeConfigService systemTimeConfigService;
+
+    @Autowired
+    private RabbitmqUtil rabbitmqUtil;
 
 
 //    @MobileApi
@@ -205,11 +210,13 @@ public class AppOrderController {
             result.setShopId(request.getShopId());
             result.setShopName(request.getShopName());
             if (request.getOrderType() == 2) {
-                //计算付款倒计时 ms
+                //计算付款倒计时 ms，并发送mq消息，定时清理未付款的订单
                 SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
                 result.setRemainingTime((long) (systemTimeConfig.getCancelOrder() * 60 * 1000));
+                rabbitmqUtil.sendAutoCancelOrderDelayMessage(order.getId() + "", String.valueOf(systemTimeConfig.getCancelOrder() * 60 * 1000));
             } else {
-                result.setLaborUnionName("西藏自治区总工会");//TODO 查询用户所在工会
+                //TODO 查询用户所在工会
+                result.setLaborUnionName("西藏自治区总工会");
             }
             return ApiResponse.buildSuccessResponse(result);
         }
@@ -393,7 +400,7 @@ public class AppOrderController {
         } else {
             //待收货订单
             long deliverTime = result.getDeliverTime().getTime();
-            long time = deliverTime + (systemTimeConfig.getCancelOrder() * 60 * 1000) - now;
+            long time = deliverTime + (systemTimeConfig.getSureOrder() * 60 * 1000) - now;
             result.setRemainingTime(time >= 0 ? time : 0L);
         }
     }

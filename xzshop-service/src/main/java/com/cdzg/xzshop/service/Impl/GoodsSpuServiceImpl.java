@@ -346,7 +346,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
      */
     @Override
     @Async
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateGoodsStockAndSales(List<CommitOrderGoodsReqVO> commitGoodsList) {
         try {
             //批量修改库存
@@ -400,7 +400,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         } catch (Exception e) {
             //手动回滚事务
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error("下单成功批量修改库存销量error:{} , request: {}", e.getMessage(), JSONObject.toJSONString(commitGoodsList));
+            log.error("订单批量修改库存销量error:{} , request: {}", e.getMessage(), JSONObject.toJSONString(commitGoodsList));
         }
 
     }
