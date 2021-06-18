@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cdzg.xzshop.mapper.OrderItemMapper">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.cdzg.xzshop.domain.OrderItem" id="orderItemMap">
         <result property="id" column="id"/>
         <result property="orderId" column="order_id"/>
@@ -23,6 +23,7 @@
     </select>
     <select id="getListByOrderId" resultType="com.cdzg.xzshop.vo.order.response.OrderGoodsListRespVO">
         SELECT
+            t1.id orderItemId,
             t1.goods_id goodsId,
             t2.spu_no spuNo,
             t1.goods_name goodsName,

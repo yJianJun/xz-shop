@@ -115,4 +115,13 @@ public class CommitOrderReqVO implements Serializable {
     @ApiModelProperty(value = "shopName",hidden = true)
     private String shopName;
 
+    @ApiModelProperty(value = "customerAccount",hidden = true)
+    private String customerAccount;
+
+    /**
+     *用户下单时的系统自动取消订单配置时间(分钟)
+     */
+    @ApiModelProperty(value = "用户下单时的系统自动取消订单配置时间(分钟)",hidden = true)
+    private Integer sysCancelConfig;
+
 }

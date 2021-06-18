@@ -43,4 +43,7 @@ public class OrderGoodsListRespVO implements Serializable {
 
     @ApiModelProperty(value = "支付方式:1:积分换购商品 2:线上支付商品")
     private Integer paymentMethod;
+
+    @ApiModelProperty(value = "orderItemId,查看退货详情使用")
+    private String orderItemId;
 }

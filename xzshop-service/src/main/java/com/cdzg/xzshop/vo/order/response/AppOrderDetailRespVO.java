@@ -2,6 +2,7 @@ package com.cdzg.xzshop.vo.order.response;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -168,6 +169,18 @@ public class AppOrderDetailRespVO implements Serializable {
      */
     @ApiModelProperty(value = "收货人电话")
     private String consigneePhone;
+
+    /**
+     *用户下单时的系统自动取消订单配置时间(分钟)
+     */
+    @JsonIgnore
+    private Integer sysCancelConfig;
+
+    /**
+     *卖家发货后，买家未主动确认收货，确认收货时间设置（分钟）
+     */
+    @JsonIgnore
+    private Integer sysSureConfig;
 
 
 }

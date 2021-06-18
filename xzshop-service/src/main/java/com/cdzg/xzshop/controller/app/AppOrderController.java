@@ -123,6 +123,7 @@ public class AppOrderController {
             return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
         }
         request.setCustomerId(appUserInfo.getId());
+        request.setCustomerAccount(appUserInfo.getMobile());
         //提交订单校验 店铺信息校验
         ShopInfo shopInfo = shopInfoService.getById(request.getShopId());
         if (Objects.isNull(shopInfo) || !shopInfo.getStatus()) {
@@ -183,6 +184,8 @@ public class AppOrderController {
         }
 
         //提交订单
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        request.setSysCancelConfig(systemTimeConfig.getCancelOrder());
         Order order = orderService.commitOrder(request);
         if (Objects.nonNull(order)) {
             //如果积分订单扣除用户积分，扣除失败就删除积分订单
@@ -219,7 +222,6 @@ public class AppOrderController {
             result.setShopName(request.getShopName());
             if (request.getOrderType() == 2) {
                 //计算付款倒计时 ms，并发送mq消息，定时清理未付款的订单
-                SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
                 result.setRemainingTime((long) (systemTimeConfig.getCancelOrder() * 60 * 1000));
                 rabbitmqUtil.sendAutoCancelOrderDelayMessage(order.getId() + "", systemTimeConfig.getCancelOrder() * 60 * 1000);
             } else {
@@ -367,10 +369,9 @@ public class AppOrderController {
         if (order.getOrderStatus() != 1) {
             return ApiResponse.buildCommonErrorResponse("该订单当前状态不能支付");
         }
-        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
         long now = System.currentTimeMillis();
         long createTime = order.getCreateTime().getTime();
-        long remainingTime = createTime + (systemTimeConfig.getCancelOrder() * 60 * 1000) - now;
+        long remainingTime = createTime + (order.getSysCancelConfig() * 60 * 1000) - now;
         String result = remainingTime >= 0 ? remainingTime + "" : "0";
         return ApiResponse.buildSuccessResponse(result);
     }
@@ -398,17 +399,16 @@ public class AppOrderController {
      * @param result
      */
     private void dealRemainingTime(AppOrderDetailRespVO result) {
-        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
         long now = System.currentTimeMillis();
         if (result.getOrderStatus() == 1) {
             //待支付订单
             long createTime = result.getCreateTime().getTime();
-            long time = createTime + (systemTimeConfig.getCancelOrder() * 60 * 1000) - now;
+            long time = createTime + (result.getSysCancelConfig() * 60 * 1000) - now;
             result.setRemainingTime(time >= 0 ? time : 0L);
         } else {
             //待收货订单
             long deliverTime = result.getDeliverTime().getTime();
-            long time = deliverTime + (systemTimeConfig.getSureOrder() * 60 * 1000) - now;
+            long time = deliverTime + (result.getSysSureConfig() * 60 * 1000) - now;
             result.setRemainingTime(time >= 0 ? time : 0L);
         }
     }
