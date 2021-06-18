@@ -130,4 +130,21 @@ public class Order implements Serializable {
 	 */
 	private Integer deleted;
 
+    /**
+     * 用户账号（手机号）
+     */
+	private String customerAccount;
+
+    /**
+     *用户下单时的系统自动取消订单配置时间(分钟)
+     */
+	private Integer sysCancelConfig;
+
+    /**
+     *卖家发货后，买家未主动确认收货，确认收货时间设置（分钟）
+     */
+	private Integer sysSureConfig;
+
+
+
 }
