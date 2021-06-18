@@ -6,6 +6,7 @@ import com.cdzg.xzshop.vo.admin.refund.RefundOrderDetailAppVO;
 import com.cdzg.xzshop.vo.admin.refund.RefundOrderListAppVO;
 import com.cdzg.xzshop.vo.app.refund.ApplyRefundVO;
 import com.cdzg.xzshop.vo.app.refund.BuyerShipVO;
+import com.cdzg.xzshop.vo.app.refund.RefundOrderDetailQueryVO;
 import com.cdzg.xzshop.vo.common.BasePageRequest;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
@@ -52,12 +53,12 @@ public class RefundOrderAppController {
         return ApiResponse.buildSuccessResponse(null);
     }
 
-    @GetMapping("/getAppDetailById/{id}")
+    @PostMapping("/getAppDetailById")
     @ApiOperation("06003-获取退货退款详情")
     @MobileApi
-    public ApiResponse<RefundOrderDetailAppVO> getAppDetailById(@PathVariable Long id) {
-        log.info("RefundOrderAppController-getAppDetailById id:{}", id);
-        return ApiResponse.buildSuccessResponse(refundOrderService.getAppDetailById(id));
+    public ApiResponse<RefundOrderDetailAppVO> getAppDetailById(@RequestBody RefundOrderDetailQueryVO queryVO) {
+        log.info("RefundOrderAppController-getAppDetailById queryVO:{}", queryVO);
+        return ApiResponse.buildSuccessResponse(refundOrderService.getAppDetailById(queryVO));
     }
 
     @PostMapping("/getRefundAppPage")
