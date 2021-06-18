@@ -5,6 +5,7 @@ import com.cdzg.xzshop.domain.RefundOrder;
 import com.cdzg.xzshop.vo.admin.refund.*;
 import com.cdzg.xzshop.vo.app.refund.ApplyRefundVO;
 import com.cdzg.xzshop.vo.app.refund.BuyerShipVO;
+import com.cdzg.xzshop.vo.app.refund.RefundOrderDetailQueryVO;
 import com.cdzg.xzshop.vo.app.refund.SellerRefuseReceiptVO;
 import com.cdzg.xzshop.vo.common.BasePageRequest;
 import com.cdzg.xzshop.vo.common.PageResultVO;
@@ -77,10 +78,10 @@ public interface RefundOrderService extends IService<RefundOrder> {
 
     /**
      * 根据id获取退款详情app
-     * @param id
+     * @param queryVO
      * @return
      */
-    RefundOrderDetailAppVO getAppDetailById(Long id);
+    RefundOrderDetailAppVO getAppDetailById(RefundOrderDetailQueryVO queryVO);
 
     /**
      * app获取退款分页

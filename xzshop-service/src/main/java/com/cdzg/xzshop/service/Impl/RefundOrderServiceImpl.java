@@ -20,6 +20,7 @@ import com.cdzg.xzshop.vo.admin.SystemTimeConfigVO;
 import com.cdzg.xzshop.vo.admin.refund.*;
 import com.cdzg.xzshop.vo.app.refund.ApplyRefundVO;
 import com.cdzg.xzshop.vo.app.refund.BuyerShipVO;
+import com.cdzg.xzshop.vo.app.refund.RefundOrderDetailQueryVO;
 import com.cdzg.xzshop.vo.app.refund.SellerRefuseReceiptVO;
 import com.cdzg.xzshop.vo.common.BasePageRequest;
 import com.cdzg.xzshop.vo.common.PageResultVO;
@@ -385,9 +386,29 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     }
 
     @Override
-    public RefundOrderDetailAppVO getAppDetailById(Long id) {
+    public RefundOrderDetailAppVO getAppDetailById(RefundOrderDetailQueryVO queryVO) {
+        RefundOrder refundOrder = null;
+        // 根据传入的参数是否包含退款单id走逻辑，没有就查
+        Long refundId = queryVO.getRefundId();
+        if (Objects.isNull(refundId)) {
+            Long orderItemId = queryVO.getOrderItemId();
+            if (Objects.isNull(orderItemId)) {
+                refundOrder = lambdaQuery().eq(RefundOrder::getOrderId, queryVO.getOrderId())
+                        .orderByDesc(RefundOrder::getCreateTime)
+                        .last(" limit 1").one();
+            } else {
+                refundOrder = lambdaQuery().eq(RefundOrder::getOrderId, queryVO.getOrderId())
+                        .eq(RefundOrder::getOrderItemId, orderItemId)
+                        .orderByDesc(RefundOrder::getCreateTime)
+                        .last(" limit 1").one();
+            }
+        } else {
+            refundOrder = this.getById(refundId);
+        }
+        if (Objects.isNull(refundOrder)) {
+            return null;
+        }
         RefundOrderDetailAppVO vo = new RefundOrderDetailAppVO();
-        RefundOrder refundOrder = this.getById(id);
         BeanUtils.copyProperties(refundOrder, vo);
         Order order = orderService.getById(refundOrder.getOrderId());
         vo.setGoodsInfoVOS(getGoodsInfoVOS(refundOrder));
@@ -401,7 +422,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         Integer status = refundOrder.getStatus();
         Integer minute = 0;
         RefundProcess process = refundProcessService.lambdaQuery()
-                .eq(RefundProcess::getRefundOrderId, id)
+                .eq(RefundProcess::getRefundOrderId, refundId)
                 .eq(RefundProcess::getStatus, status)
                 .one();
         LocalDateTime startTime = process.getCreateTime();
@@ -429,7 +450,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         vo.setRestTime(time > 0 ? time : 0);
         // 流程状态
         List<RefundProcess> processes = refundProcessService.lambdaQuery()
-                .eq(RefundProcess::getRefundOrderId, id)
+                .eq(RefundProcess::getRefundOrderId, refundId)
                 .orderByAsc(RefundProcess::getCreateTime)
                 .list();
         vo.setProcessList(processes.stream().map(RefundProcess::getStatus).collect(Collectors.toList()));
