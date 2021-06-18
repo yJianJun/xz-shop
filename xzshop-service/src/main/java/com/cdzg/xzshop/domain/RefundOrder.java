@@ -112,13 +112,5 @@ public class RefundOrder {
      * 物流单号
      */
     private String logisticsNumber;
-    /**
-     * 支付退款是否成功 1是 0否
-     */
-    private Integer refundStatus;
-    /**
-     * 支付退款失败的原因
-     */
-    private String refundFailReason;
 
 }

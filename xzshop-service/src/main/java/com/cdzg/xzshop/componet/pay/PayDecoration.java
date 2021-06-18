@@ -12,6 +12,7 @@ import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
+import com.cdzg.xzshop.service.RefundRecordService;
 import com.cdzg.xzshop.service.pay.PayService;
 import com.cdzg.xzshop.to.app.QueryOrderTo;
 import com.cdzg.xzshop.to.app.RefundTo;
@@ -54,6 +55,9 @@ public class PayDecoration {
 
     @Resource
     private OrderItemService orderItemService;
+
+    @Autowired
+    private RefundRecordService refundRecordService;
 
     /**
      *
@@ -113,7 +117,9 @@ public class PayDecoration {
     }
 
     RefundTo refund(PayService payService, String tradeno, Long orderno, Long refundId, String refundFee) throws Exception {
-        return payService.refund(tradeno, orderno,refundId,refundFee);
+        RefundTo refundTo = payService.refund(tradeno, orderno, refundId, refundFee);
+        refundRecordService.addRecord(refundTo);
+        return refundTo;
     }
 
     QueryOrderTo query(PayService payService, String transactionId, String outTradeNo) throws Exception {
