@@ -369,10 +369,9 @@ public class AppOrderController {
         if (order.getOrderStatus() != 1) {
             return ApiResponse.buildCommonErrorResponse("该订单当前状态不能支付");
         }
-        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
         long now = System.currentTimeMillis();
         long createTime = order.getCreateTime().getTime();
-        long remainingTime = createTime + (systemTimeConfig.getCancelOrder() * 60 * 1000) - now;
+        long remainingTime = createTime + (order.getSysCancelConfig() * 60 * 1000) - now;
         String result = remainingTime >= 0 ? remainingTime + "" : "0";
         return ApiResponse.buildSuccessResponse(result);
     }
