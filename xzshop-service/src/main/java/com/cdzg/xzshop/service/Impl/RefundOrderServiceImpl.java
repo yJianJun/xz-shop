@@ -460,6 +460,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             goodsInfoVO.setTotalPrice(o.getGoodsUnitPrice().multiply(BigDecimal.valueOf(o.getGoodsCount())));
             GoodsSpu goodsSpu = goodsMap.get(o.getGoodsId());
             if (Objects.nonNull(goodsSpu) && CollectionUtils.isNotEmpty(goodsSpu.getShowImgs())) {
+                goodsInfoVO.setSpuNo(goodsSpu.getSpuNo());
                 goodsInfoVO.setImg(goodsSpu.getShowImgs().get(0));
             }
             return goodsInfoVO;
@@ -501,6 +502,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 goodsInfoVO.setTotalPrice(item.getGoodsUnitPrice().multiply(BigDecimal.valueOf(item.getGoodsCount())));
                 GoodsSpu goodsSpu = goodsMap.get(item.getId());
                 if (Objects.nonNull(goodsSpu) && CollectionUtils.isNotEmpty(goodsSpu.getShowImgs())) {
+                    goodsInfoVO.setSpuNo(goodsSpu.getSpuNo());
                     goodsInfoVO.setImg(goodsSpu.getShowImgs().get(0));
                 }
                 return goodsInfoVO;

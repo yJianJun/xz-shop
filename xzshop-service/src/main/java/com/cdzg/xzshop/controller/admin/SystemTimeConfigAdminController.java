@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping("admin/systemTimeConfig")
@@ -30,7 +32,7 @@ public class SystemTimeConfigAdminController {
     @WebApi
     @PostMapping("/updateSystemTimeConfig")
     @ApiOperation("03002-修改配置")
-    public ApiResponse<String> updateSystemTimeConfig(@RequestBody SystemTimeConfigVO vo){
+    public ApiResponse<String> updateSystemTimeConfig(@RequestBody @Valid SystemTimeConfigVO vo){
         log.info("SystemTimeConfigAdminController-updateSystemTimeConfig vo:{}", vo);
         return ApiResponse.buildSuccessResponse(systemTimeConfigService.updateConfig(vo));
     }
