@@ -5,6 +5,7 @@ import com.cdzg.xzshop.domain.OrderItem;
 import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
+import com.cdzg.xzshop.utils.DateUtil;
 import com.cdzg.xzshop.utils.RabbitmqUtil;
 import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import com.rabbitmq.client.Channel;
@@ -29,7 +30,7 @@ import java.util.*;
  */
 
 @Component
-@RabbitListener(queues = "auto_cancel_order_queue")
+@RabbitListener(queues = "delay_auto_cancel_order_queue")
 @Slf4j
 public class AutoCancelOrderDelayConsumer implements ChannelAwareMessageListener {
 
@@ -85,7 +86,7 @@ public class AutoCancelOrderDelayConsumer implements ChannelAwareMessageListener
             //手动回滚事务
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             //消息,重试时间一分钟
-            rabbitmqUtil.sendAutoCancelOrderDelayMessage(orderId, "60000");
+            rabbitmqUtil.sendAutoCancelOrderDelayMessage(orderId, 60000);
             //确认消息
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }
