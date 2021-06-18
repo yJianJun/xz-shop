@@ -105,6 +105,14 @@ public class AppOrderController {
 //        return null;
 //    }
 
+//    @IgnoreAuth
+//    @GetMapping("/mq")
+//    @ApiOperation("31001-mq")
+//    public Boolean mq(String msg, Integer time) {
+//        rabbitmqUtil.sendAutoCancelOrderDelayMessage(msg,time);
+//        return true;
+//    }
+
 
     @MobileApi
     @PostMapping("/commitOrder")
@@ -213,7 +221,7 @@ public class AppOrderController {
                 //计算付款倒计时 ms，并发送mq消息，定时清理未付款的订单
                 SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
                 result.setRemainingTime((long) (systemTimeConfig.getCancelOrder() * 60 * 1000));
-                rabbitmqUtil.sendAutoCancelOrderDelayMessage(order.getId() + "", String.valueOf(systemTimeConfig.getCancelOrder() * 60 * 1000));
+                rabbitmqUtil.sendAutoCancelOrderDelayMessage(order.getId() + "", systemTimeConfig.getCancelOrder() * 60 * 1000);
             } else {
                 //TODO 查询用户所在工会
                 result.setLaborUnionName("西藏自治区总工会");

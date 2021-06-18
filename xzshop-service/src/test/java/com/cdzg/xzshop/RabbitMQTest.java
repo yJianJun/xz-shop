@@ -18,11 +18,11 @@ public class RabbitMQTest extends BaseTest {
 
     @Test
     void sendMQTest(){
-        rabbitmqUtil.sendAutoCancelOrderDelayMessage("测试30秒","30000");
+        rabbitmqUtil.sendAutoCancelOrderDelayMessage("测试30秒",30000);
     }
 
     @Test
     void sendMQTest1(){
-        rabbitmqUtil.sendAutoCancelOrderDelayMessage("测试10秒","10000");
+        rabbitmqUtil.sendAutoCancelOrderDelayMessage("测试10秒",10000);
     }
 }

@@ -32,14 +32,14 @@ public class RabbitmqUtil {
      * @param orderId    订单主键id
      * @param expiration 过期时间 单位毫秒
      */
-    public void sendAutoCancelOrderDelayMessage(String orderId, String expiration) {
+    public void sendAutoCancelOrderDelayMessage(String orderId, Integer expiration) {
         // 消息发送时间
         log.info("下单成功后自动取消订单消息发送时间为: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:S")));
         try {
             CorrelationData correlationId = new CorrelationData(String.valueOf(ObjectId.get()));
             rabbitTemplate.convertAndSend(RabbitMQConfig.DELAY_AUTO_CANCEL_ORDER_EXCHANGE, RabbitMQConfig.AUTO_CANCEL_ORDER_KEY, orderId,
                     message -> {
-                        message.getMessageProperties().setExpiration(expiration);
+                        message.getMessageProperties().setDelay(expiration);
                         return message;
                     }, correlationId);
         } catch (AmqpException e) {
@@ -54,14 +54,14 @@ public class RabbitmqUtil {
      * @param orderId    订单主键id
      * @param expiration 过期时间 单位毫秒
      */
-    public void sendAutoSureOrderDelayMessage(String orderId, String expiration) {
+    public void sendAutoSureOrderDelayMessage(String orderId, Integer expiration) {
         // 消息发送时间
         log.info("卖家发货后自动收货消息发送时间为: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:S")));
         try {
             CorrelationData correlationId = new CorrelationData(String.valueOf(ObjectId.get()));
             rabbitTemplate.convertAndSend(RabbitMQConfig.DELAY_AUTO_SURE_ORDER_EXCHANGE, RabbitMQConfig.AUTO_SURE_ORDER_KEY, orderId,
                     message -> {
-                        message.getMessageProperties().setExpiration(expiration);
+                        message.getMessageProperties().setDelay(expiration);
                         return message;
                     }, correlationId);
         } catch (AmqpException e) {
