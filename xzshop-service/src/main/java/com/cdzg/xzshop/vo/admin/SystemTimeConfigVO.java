@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+
 @Data
 @ApiModel("商城配置项")
 public class SystemTimeConfigVO {
@@ -11,11 +13,13 @@ public class SystemTimeConfigVO {
     /**
      * 用户下单后，订单未支付，取消时间设置（分钟）
      */
+    @Max(value = 2880, message = "订单未支付取消时间最大值2880")
     @ApiModelProperty("用户下单后，订单未支付，取消时间设置（分钟）")
     private Integer cancelOrder;
     /**
      * 卖家发货后，买家未主动确认收货，确认收货时间设置（分钟）
      */
+    @Max(value = 28800, message = "买家未主动确认收货，确认收货时间最大值28800")
     @ApiModelProperty("卖家发货后，买家未主动确认收货，确认收货时间设置（分钟）")
     private Integer sureOrder;
     /**
