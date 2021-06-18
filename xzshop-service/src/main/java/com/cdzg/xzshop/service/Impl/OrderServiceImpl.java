@@ -2,8 +2,9 @@ package com.cdzg.xzshop.service.Impl;
 
 import java.util.*;
 
+import ch.qos.logback.core.util.StringCollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.cms.api.constants.StringUtil;
@@ -14,12 +15,15 @@ import com.cdzg.xzshop.mapper.OrderMapper;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
 import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
+import com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO;
 import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
 import com.cdzg.xzshop.vo.order.response.OrderGoodsListRespVO;
 import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -164,6 +168,57 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return result;
         }
         return null;
+    }
+
+
+    /**
+     * admin查询订单列表
+     * @param reqVO
+     * @return
+     */
+    @Override
+    public PageResultVO<AdminOrderListRespVO> pageListForAdmin(AdminQueryOrderListReqVO reqVO) {
+        PageResultVO<AdminOrderListRespVO> result = new PageResultVO<>();
+        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
+        if (ObjectUtils.isNotNull(reqVO)) {
+            if (StringUtils.isNotBlank(reqVO.getOrderId())) {
+                queryWrapper.like(Order::getId,reqVO.getOrderId());
+            }
+            if (StringUtils.isNotBlank(reqVO.getShopId())) {
+                queryWrapper.eq(Order::getShopId,reqVO.getShopId());
+            }
+            if (StringUtils.isNotBlank(reqVO.getCustomerAccount())) {
+                queryWrapper.like(Order::getCustomerAccount,reqVO.getCustomerAccount());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getOrderStatus()) && reqVO.getOrderStatus() > 0) {
+                queryWrapper.eq(Order::getOrderStatus,reqVO.getOrderStatus());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getStartTime())) {
+                queryWrapper.gt(Order::getCreateTime,reqVO.getStartTime());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getEndTime())) {
+                queryWrapper.lt(Order::getCreateTime,reqVO.getEndTime());
+            }
+        }
+        Page<Order> page = new Page<>();
+        page.setCurrent(reqVO.getCurrentPage());
+        page.setPages(reqVO.getPageSize());
+        Page<Order> orderPage = baseMapper.selectPage(page, queryWrapper);
+        result.setPageParams(orderPage);
+        List<Order> records = orderPage.getRecords();
+        List<AdminOrderListRespVO> orderList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(records)) {
+            records.forEach(r->{
+                AdminOrderListRespVO order = new AdminOrderListRespVO();
+                BeanUtils.copyProperties(r,order);
+                order.setId(r.getId() + "");
+                order.setCustomerId(r.getCustomerId() + "");
+                order.setPayMoney(r.getPayMoney().toString());
+                orderList.add(order);
+            });
+        }
+        result.setData(orderList);
+        return result;
     }
 
 
