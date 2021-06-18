@@ -266,7 +266,7 @@ public class AppOrderController {
         if (Objects.isNull(appUserInfo)) {
             return ApiResponse.buildCommonErrorResponse("登录信息失效，请先登录");
         }
-        AppOrderDetailRespVO result = orderService.getByIdForApp(orderId, appUserInfo.getId());
+        AppOrderDetailRespVO result = orderService.getByIdForApp(orderId, appUserInfo.getId(),null);
         if (Objects.isNull(result)) {
             return ApiResponse.buildCommonErrorResponse("订单不存在或已删除");
         }

@@ -146,20 +146,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
     /**
-     * app用户查看订单详情
+     * app用户查看订单详情(admin同时使用)
      *
      * @param orderId
      * @param customerId
+     * @param shopId
      * @return
      */
     @Override
-    public AppOrderDetailRespVO getByIdForApp(String orderId, Long customerId) {
+    public AppOrderDetailRespVO getByIdForApp(String orderId, Long customerId,Long shopId) {
         LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Order::getId, orderId).eq(Order::getCustomerId, customerId).eq(Order::getDeleted, 0);
+        wrapper.eq(Order::getId, orderId).eq(Order::getDeleted, 0);
+        if (ObjectUtils.isNotNull(customerId)) {
+            wrapper.eq(Order::getCustomerId, customerId);
+        }
+        if (ObjectUtils.isNotNull(shopId)) {
+            wrapper.eq(Order::getShopId, shopId);
+        }
         Order order = baseMapper.selectOne(wrapper);
         if (Objects.nonNull(order)) {
             AppOrderDetailRespVO result = new AppOrderDetailRespVO();
             BeanUtils.copyProperties(order, result);
+            result.setCustomerId(order.getCustomerId() + "");
             result.setId(orderId);
             List<OrderGoodsListRespVO> orderGoodsList = orderItemMapper.getListByOrderId(orderId);
             dealGoodsPic(orderGoodsList);

@@ -55,9 +55,10 @@ public interface OrderService extends IService<Order> {
      * app用户查看订单详情
      * @param orderId
      * @param customerId
+     * @param shopId
      * @return
      */
-    AppOrderDetailRespVO getByIdForApp(String orderId,Long customerId);
+    AppOrderDetailRespVO getByIdForApp(String orderId,Long customerId,Long shopId);
 
     /**
      * admin查看订单列表

@@ -13,6 +13,7 @@ import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO;
+import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
 import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
 import com.framework.utils.core.api.ApiResponse;
 import io.netty.util.internal.ObjectUtil;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * @ClassName : AdminOrderController
@@ -66,12 +68,27 @@ public class AdminOrderController {
     }
 
     @WebApi
-    @GetMapping("/getById")
+    @GetMapping("/getById/{orderId}")
     @ApiOperation("32002-订单详情")
-    public ApiResponse getById() {
-
-
-        return null;
+    public ApiResponse<AppOrderDetailRespVO> getById(@PathVariable("orderId") String orderId) {
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        if (ObjectUtils.isNull(adminUser)) {
+            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
+        }
+        Long shopId = null;
+        if (!adminUser.getIsAdmin()) {
+            //非超管，查询本店铺的数据
+            ShopInfo shopInfo = shopInfoService.findOneByShopUnion(adminUser.getUserBaseInfo().getOrganizationId().toString());
+            if (ObjectUtils.isNull(shopInfo)) {
+                return ApiResponse.buildCommonErrorResponse("您的公会尚未创建店铺");
+            }
+            shopId = shopInfo.getId();
+        }
+        AppOrderDetailRespVO result = orderService.getByIdForApp(orderId, null, shopId);
+        if (Objects.isNull(result)) {
+            return ApiResponse.buildCommonErrorResponse("订单不存在或已删除");
+        }
+        return ApiResponse.buildSuccessResponse(result);
     }
 
 
