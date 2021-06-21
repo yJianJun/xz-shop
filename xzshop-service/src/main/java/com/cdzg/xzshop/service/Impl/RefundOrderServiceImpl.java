@@ -41,6 +41,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 @Service
@@ -418,6 +419,10 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         refundId = refundOrder.getId();
         RefundOrderDetailAppVO vo = new RefundOrderDetailAppVO();
         BeanUtils.copyProperties(refundOrder, vo);
+        if (StringUtils.isNotEmpty(refundOrder.getImg())) {
+            vo.setImg(Stream.of(refundOrder.getImg().split(",")).collect(Collectors.toList()));
+        }
+
         Order order = orderService.getById(refundOrder.getOrderId());
         vo.setGoodsInfoVOS(getGoodsInfoVOS(refundOrder));
         // 商家收货地址
@@ -719,6 +724,13 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }
         updateWrapper.set(OrderItem::getStatus, status);
         orderItemService.update(updateWrapper);
+        // 退货完成修改订单状态为交易关闭
+        if (status.equals(2) || status.equals(4)) {
+            Order order = new Order();
+            order.setId(refundOrder.getOrderId());
+            order.setOrderStatus(5);
+            orderService.updateById(order);
+        }
     }
 
     /**
