@@ -14,14 +14,14 @@ import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.AdminDeliverReqVO;
 import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
-import com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO;
-import com.cdzg.xzshop.vo.order.response.AdminOrderStatisticsRespVO;
-import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
-import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
+import com.cdzg.xzshop.vo.order.response.*;
+import com.framework.utils.core.api.ApiConst;
 import com.framework.utils.core.api.ApiResponse;
 import com.google.common.annotations.VisibleForTesting;
 import io.netty.util.internal.ObjectUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -125,13 +126,25 @@ public class AdminOrderController {
         return null;
     }
 
+    @ApiOperation("32005-快递公司查询")
+    @GetMapping(value = "/logisticsList")
+    public ApiResponse<List<ExpressCodingRespVO>> logisticsList() {
+        List<ExpressCodingRespVO> result = orderService.logisticsList();
+        if (result != null) {
+            return ApiResponse.buildSuccessResponse(result);
+        }
+        return ApiResponse.buildCommonErrorResponse("查询失败");
+    }
+
+
     @WebApi
     @PostMapping("/deliver")
-    @ApiOperation("32005-发货")
+    @ApiOperation("32006-发货")
     public ApiResponse<String> deliver(@RequestBody @Valid AdminDeliverReqVO request) {
 
         return null;
     }
+
 
 
 

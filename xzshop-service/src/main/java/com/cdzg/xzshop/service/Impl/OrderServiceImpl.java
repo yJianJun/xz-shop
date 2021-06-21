@@ -233,6 +233,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return ApiResponse.buildSuccessResponse(result);
     }
 
+    @Override
+    public List<ExpressCodingRespVO> logisticsList() {
+        return baseMapper.logisticsList();
+    }
+
 
     /**
      * 处理商品图片，获取第一张(数据库存储规则逗号隔开)

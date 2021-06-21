@@ -124,4 +124,11 @@
                 and shop_id = #{shopId}
             </if>
     </select>
+    <select id="logisticsList" resultType="com.cdzg.xzshop.vo.order.response.ExpressCodingRespVO">
+       SELECT
+            `name`,
+            `code` AS logisticsCompanyCode
+        FROM
+            express_coding
+    </select>
 </mapper>
