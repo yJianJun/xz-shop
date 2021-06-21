@@ -34,6 +34,10 @@ public class AppOrderDetailRespVO implements Serializable {
      */
     @ApiModelProperty(value = "app用户id")
     private String customerId;
+
+    @ApiModelProperty(value = "app用户账号(手机号)")
+    private String customerAccount;
+
     /**
      * 订单类型 1-积分订单 2-普通订单
      */
