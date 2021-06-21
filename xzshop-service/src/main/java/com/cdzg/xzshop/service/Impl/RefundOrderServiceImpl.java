@@ -502,7 +502,6 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         String userId = LoginSessionUtils.getAppUser().getCustomerId();
         LambdaQueryWrapper<RefundOrder> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RefundOrder::getUserId, userId)
-                .ge(RefundOrder::getStatus, 0)
                 .orderByDesc(RefundOrder::getCreateTime);
         Page<RefundOrder> page = this.page(new Page<>(request.getCurrentPage(), request.getPageSize()), wrapper);
         // 查订单明细
@@ -520,7 +519,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             BeanUtils.copyProperties(o, vo);
             List<OrderItem> refundOrderItems = null;
             if (RefundTypeEnum.REFUND.getCode().equals(o.getRefundType())) {
-                refundOrderItems = orderItems;
+                refundOrderItems = orderItems.stream().filter(a -> a.getOrderId().equals(o.getOrderId())).collect(Collectors.toList());
             } else {
                 refundOrderItems = orderItems.stream().filter(a -> a.getId().equals(o.getOrderItemId())).collect(Collectors.toList());
             }
@@ -528,7 +527,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 GoodsInfoVO goodsInfoVO = new GoodsInfoVO();
                 BeanUtils.copyProperties(item, goodsInfoVO);
                 goodsInfoVO.setTotalPrice(item.getGoodsUnitPrice().multiply(BigDecimal.valueOf(item.getGoodsCount())));
-                GoodsSpu goodsSpu = goodsMap.get(item.getId());
+                GoodsSpu goodsSpu = goodsMap.get(item.getGoodsId());
                 if (Objects.nonNull(goodsSpu) && CollectionUtils.isNotEmpty(goodsSpu.getShowImgs())) {
                     goodsInfoVO.setSpuNo(goodsSpu.getSpuNo());
                     goodsInfoVO.setImg(goodsSpu.getShowImgs().get(0));
@@ -545,11 +544,15 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     public String revokeRefund(Long id) {
         RefundOrder refundOrder = this.getById(id);
         Long userId = refundOrder.getUserId();
-        if (LoginSessionUtils.getAppUser().getUserBaseInfo().getId().equals(userId)) {
+        CustomerLoginResponse appUser = LoginSessionUtils.getAppUser();
+        if (appUser.getUserBaseInfo().getId().equals(userId)) {
             RefundOrder modify = new RefundOrder();
             modify.setId(id);
             modify.setStatus(0);
             this.updateById(modify);
+            // 流程记录
+            refundProcessService.save(new RefundProcess(id, appUser.getUserBaseInfo().getUserName() + "买家撤销申请。",
+                    modify.getStatus(), appUser.getUserBaseInfo().getId()));
             return null;
         }
         return "退款单号有误！";
