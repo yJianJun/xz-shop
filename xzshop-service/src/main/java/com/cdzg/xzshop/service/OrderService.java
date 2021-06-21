@@ -79,5 +79,12 @@ public interface OrderService extends IService<Order> {
      */
     List<ExpressCodingRespVO> logisticsList();
 
+    /**
+     * 订单导出数据
+     * @param reqVO
+     * @return
+     */
+    List<AdminOrderListExport> batchExportForAdmin(AdminQueryOrderListReqVO reqVO);
+
 }
 

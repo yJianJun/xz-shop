@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.controller.admin;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.config.annotations.api.MobileApi;
@@ -21,6 +22,7 @@ import com.cdzg.xzshop.vo.order.response.*;
 import com.framework.utils.core.api.ApiConst;
 import com.framework.utils.core.api.ApiResponse;
 import com.google.common.annotations.VisibleForTesting;
+import com.wuwenze.poi.ExcelKit;
 import io.netty.util.internal.ObjectUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -127,11 +129,29 @@ public class AdminOrderController {
     }
 
     @WebApi
-    @GetMapping("/exportExcel")
+    @PostMapping("/batchExport")
     @ApiOperation("32004-批量导出excel")
-    public ApiResponse<String> exportExcel(HttpServletRequest request, HttpServletResponse response) {
-
-        return null;
+    public ApiResponse<String> batchExport(@RequestBody @Valid AdminQueryOrderListReqVO reqVO, HttpServletResponse response) {
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        if (ObjectUtils.isNull(adminUser)) {
+            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
+        }
+        if (!adminUser.getIsAdmin()) {
+            //非超管，查询本店铺的数据
+            ShopInfo shopInfo = shopInfoService.findOneByShopUnion(adminUser.getUserBaseInfo().getOrganizationId().toString());
+            if (ObjectUtils.isNull(shopInfo)) {
+                return ApiResponse.buildCommonErrorResponse("您的公会尚未创建店铺");
+            }
+            reqVO.setShopId(shopInfo.getId() + "");
+        }
+        List<AdminOrderListExport> list = orderService.batchExportForAdmin(reqVO);
+        if (Objects.nonNull(list) && list.size() > 65533) {
+            return ApiResponse.buildCommonErrorResponse("导出订单数量最大不能超过65533条！");
+        }
+        // 导出
+        ExcelKit.$Export(AdminOrderListExport.class, response)
+                .downXlsx(list, false);
+        return ApiResponse.buildSuccessResponse("导出成功");
     }
 
     @ApiOperation("32005-快递公司码表查询")

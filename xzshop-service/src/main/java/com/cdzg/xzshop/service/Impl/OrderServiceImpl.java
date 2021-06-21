@@ -185,27 +185,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public PageResultVO<AdminOrderListRespVO> pageListForAdmin(AdminQueryOrderListReqVO reqVO) {
         PageResultVO<AdminOrderListRespVO> result = new PageResultVO<>();
-        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
-        if (ObjectUtils.isNotNull(reqVO)) {
-            if (StringUtils.isNotBlank(reqVO.getOrderId())) {
-                queryWrapper.like(Order::getId,reqVO.getOrderId());
-            }
-            if (StringUtils.isNotBlank(reqVO.getShopId())) {
-                queryWrapper.eq(Order::getShopId,reqVO.getShopId());
-            }
-            if (StringUtils.isNotBlank(reqVO.getCustomerAccount())) {
-                queryWrapper.like(Order::getCustomerAccount,reqVO.getCustomerAccount());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getOrderStatus()) && reqVO.getOrderStatus() > 0) {
-                queryWrapper.eq(Order::getOrderStatus,reqVO.getOrderStatus());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getStartTime())) {
-                queryWrapper.gt(Order::getCreateTime,reqVO.getStartTime());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getEndTime())) {
-                queryWrapper.lt(Order::getCreateTime,reqVO.getEndTime());
-            }
-        }
+        LambdaQueryWrapper<Order> queryWrapper = getListQueryWrapper(reqVO);
         Page<Order> page = new Page<>();
         page.setCurrent(reqVO.getCurrentPage());
         page.setPages(reqVO.getPageSize());
@@ -238,6 +218,49 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return baseMapper.logisticsList();
     }
 
+    @Override
+    public List<AdminOrderListExport> batchExportForAdmin(AdminQueryOrderListReqVO reqVO) {
+        List<AdminOrderListExport> result = new ArrayList<>();
+        LambdaQueryWrapper<Order> queryWrapper = getListQueryWrapper(reqVO);
+        List<Order> ordersList = baseMapper.selectList(queryWrapper);
+        if (!CollectionUtils.isEmpty(ordersList)) {
+            ordersList.forEach(r->{
+                AdminOrderListExport order = new AdminOrderListExport();
+                BeanUtils.copyProperties(r,order);
+                order.setId(r.getId() + "");
+                order.setCustomerId(r.getCustomerId() + "");
+                order.setPayMoney(r.getPayMoney().toString());
+                order.setAddress(order.getProvince() + order.getCity() + order.getArea() + order.getAddress());
+                result.add(order);
+            });
+        }
+        return result;
+    }
+
+    private LambdaQueryWrapper<Order> getListQueryWrapper(AdminQueryOrderListReqVO reqVO){
+        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
+        if (ObjectUtils.isNotNull(reqVO)) {
+            if (StringUtils.isNotBlank(reqVO.getOrderId())) {
+                queryWrapper.like(Order::getId,reqVO.getOrderId());
+            }
+            if (StringUtils.isNotBlank(reqVO.getShopId())) {
+                queryWrapper.eq(Order::getShopId,reqVO.getShopId());
+            }
+            if (StringUtils.isNotBlank(reqVO.getCustomerAccount())) {
+                queryWrapper.like(Order::getCustomerAccount,reqVO.getCustomerAccount());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getOrderStatus()) && reqVO.getOrderStatus() > 0) {
+                queryWrapper.eq(Order::getOrderStatus,reqVO.getOrderStatus());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getStartTime())) {
+                queryWrapper.gt(Order::getCreateTime,reqVO.getStartTime());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getEndTime())) {
+                queryWrapper.lt(Order::getCreateTime,reqVO.getEndTime());
+            }
+        }
+        return queryWrapper;
+    }
 
     /**
      * 处理商品图片，获取第一张(数据库存储规则逗号隔开)
