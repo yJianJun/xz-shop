@@ -502,7 +502,6 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         String userId = LoginSessionUtils.getAppUser().getCustomerId();
         LambdaQueryWrapper<RefundOrder> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RefundOrder::getUserId, userId)
-                .ge(RefundOrder::getStatus, 0)
                 .orderByDesc(RefundOrder::getCreateTime);
         Page<RefundOrder> page = this.page(new Page<>(request.getCurrentPage(), request.getPageSize()), wrapper);
         // 查订单明细
