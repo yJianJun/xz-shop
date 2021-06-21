@@ -7,9 +7,8 @@ import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
-import com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO;
-import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
-import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
+import com.cdzg.xzshop.vo.order.response.*;
+import com.framework.utils.core.api.ApiResponse;
 
 
 /**
@@ -66,5 +65,26 @@ public interface OrderService extends IService<Order> {
      * @return
      */
     PageResultVO<AdminOrderListRespVO> pageListForAdmin(AdminQueryOrderListReqVO reqVO);
+
+    /**
+     * admin顶部统计
+     * @param shopId
+     * @return
+     */
+    ApiResponse<AdminOrderStatisticsRespVO> topStatisticsForAdmin(Long shopId);
+
+    /**
+     * 物流公司列表查询
+     * @return
+     */
+    List<ExpressCodingRespVO> logisticsList();
+
+    /**
+     * 订单导出数据
+     * @param reqVO
+     * @return
+     */
+    List<AdminOrderListExport> batchExportForAdmin(AdminQueryOrderListReqVO reqVO);
+
 }
 

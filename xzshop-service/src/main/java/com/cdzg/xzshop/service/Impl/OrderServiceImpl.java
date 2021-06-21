@@ -19,10 +19,8 @@ import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
-import com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO;
-import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
-import com.cdzg.xzshop.vo.order.response.OrderGoodsListRespVO;
-import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
+import com.cdzg.xzshop.vo.order.response.*;
+import com.framework.utils.core.api.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,27 +185,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public PageResultVO<AdminOrderListRespVO> pageListForAdmin(AdminQueryOrderListReqVO reqVO) {
         PageResultVO<AdminOrderListRespVO> result = new PageResultVO<>();
-        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
-        if (ObjectUtils.isNotNull(reqVO)) {
-            if (StringUtils.isNotBlank(reqVO.getOrderId())) {
-                queryWrapper.like(Order::getId,reqVO.getOrderId());
-            }
-            if (StringUtils.isNotBlank(reqVO.getShopId())) {
-                queryWrapper.eq(Order::getShopId,reqVO.getShopId());
-            }
-            if (StringUtils.isNotBlank(reqVO.getCustomerAccount())) {
-                queryWrapper.like(Order::getCustomerAccount,reqVO.getCustomerAccount());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getOrderStatus()) && reqVO.getOrderStatus() > 0) {
-                queryWrapper.eq(Order::getOrderStatus,reqVO.getOrderStatus());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getStartTime())) {
-                queryWrapper.gt(Order::getCreateTime,reqVO.getStartTime());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getEndTime())) {
-                queryWrapper.lt(Order::getCreateTime,reqVO.getEndTime());
-            }
-        }
+        LambdaQueryWrapper<Order> queryWrapper = getListQueryWrapper(reqVO);
         Page<Order> page = new Page<>();
         page.setCurrent(reqVO.getCurrentPage());
         page.setPages(reqVO.getPageSize());
@@ -229,6 +207,60 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return result;
     }
 
+    @Override
+    public ApiResponse<AdminOrderStatisticsRespVO> topStatisticsForAdmin(Long shopId) {
+        AdminOrderStatisticsRespVO result = baseMapper.topStatisticsForAdmin(shopId);
+        return ApiResponse.buildSuccessResponse(result);
+    }
+
+    @Override
+    public List<ExpressCodingRespVO> logisticsList() {
+        return baseMapper.logisticsList();
+    }
+
+    @Override
+    public List<AdminOrderListExport> batchExportForAdmin(AdminQueryOrderListReqVO reqVO) {
+        List<AdminOrderListExport> result = new ArrayList<>();
+        LambdaQueryWrapper<Order> queryWrapper = getListQueryWrapper(reqVO);
+        List<Order> ordersList = baseMapper.selectList(queryWrapper);
+        if (!CollectionUtils.isEmpty(ordersList)) {
+            ordersList.forEach(r->{
+                AdminOrderListExport order = new AdminOrderListExport();
+                BeanUtils.copyProperties(r,order);
+                order.setId(r.getId() + "");
+                order.setCustomerId(r.getCustomerId() + "");
+                order.setPayMoney(r.getPayMoney().toString());
+                order.setAddress(order.getProvince() + order.getCity() + order.getArea() + order.getAddress());
+                result.add(order);
+            });
+        }
+        return result;
+    }
+
+    private LambdaQueryWrapper<Order> getListQueryWrapper(AdminQueryOrderListReqVO reqVO){
+        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
+        if (ObjectUtils.isNotNull(reqVO)) {
+            if (StringUtils.isNotBlank(reqVO.getOrderId())) {
+                queryWrapper.like(Order::getId,reqVO.getOrderId());
+            }
+            if (StringUtils.isNotBlank(reqVO.getShopId())) {
+                queryWrapper.eq(Order::getShopId,reqVO.getShopId());
+            }
+            if (StringUtils.isNotBlank(reqVO.getCustomerAccount())) {
+                queryWrapper.like(Order::getCustomerAccount,reqVO.getCustomerAccount());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getOrderStatus()) && reqVO.getOrderStatus() > 0) {
+                queryWrapper.eq(Order::getOrderStatus,reqVO.getOrderStatus());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getStartTime())) {
+                queryWrapper.gt(Order::getCreateTime,reqVO.getStartTime());
+            }
+            if (ObjectUtils.isNotNull(reqVO.getEndTime())) {
+                queryWrapper.lt(Order::getCreateTime,reqVO.getEndTime());
+            }
+        }
+        return queryWrapper;
+    }
 
     /**
      * 处理商品图片，获取第一张(数据库存储规则逗号隔开)

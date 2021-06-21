@@ -1,6 +1,8 @@
 package com.cdzg.xzshop.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
+import com.cdzg.xzshop.vo.order.response.AdminOrderStatisticsRespVO;
+import com.cdzg.xzshop.vo.order.response.ExpressCodingRespVO;
 import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,4 +35,18 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @return
      */
     List<UserOrderListRespVO> listForApp(Page<Order> page, @Param("param") AppQueryOrderListReqVO reqVO);
+
+    /**
+     * 订单列表顶部统计
+     * @param shopId
+     * @return
+     */
+    AdminOrderStatisticsRespVO topStatisticsForAdmin(Long shopId);
+
+    /**
+     * 物流公司列表
+     * @return
+     */
+    List<ExpressCodingRespVO> logisticsList();
+
 }

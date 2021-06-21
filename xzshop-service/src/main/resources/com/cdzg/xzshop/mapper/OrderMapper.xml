@@ -110,4 +110,25 @@
 
 
     </select>
+    <select id="topStatisticsForAdmin"
+            resultType="com.cdzg.xzshop.vo.order.response.AdminOrderStatisticsRespVO">
+            SELECT
+            COUNT(*) AS totalNum,
+            IFNULL( SUM( CASE WHEN order_status = 2 THEN 1 ELSE 0 END ), 0 ) waitNum,
+            IFNULL( SUM( CASE WHEN order_status = 3 THEN 1 ELSE 0 END ), 0 ) alreadyNum
+            FROM
+            `order`
+            WHERE
+            deleted = 0
+            <if test="shopId != null and shopId != ''" >
+                and shop_id = #{shopId}
+            </if>
+    </select>
+    <select id="logisticsList" resultType="com.cdzg.xzshop.vo.order.response.ExpressCodingRespVO">
+       SELECT
+            `name`,
+            `code` AS logisticsCompanyCode
+        FROM
+            express_coding
+    </select>
 </mapper>
