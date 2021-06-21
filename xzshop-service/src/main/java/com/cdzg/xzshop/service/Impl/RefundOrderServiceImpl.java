@@ -527,7 +527,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 GoodsInfoVO goodsInfoVO = new GoodsInfoVO();
                 BeanUtils.copyProperties(item, goodsInfoVO);
                 goodsInfoVO.setTotalPrice(item.getGoodsUnitPrice().multiply(BigDecimal.valueOf(item.getGoodsCount())));
-                GoodsSpu goodsSpu = goodsMap.get(item.getId());
+                GoodsSpu goodsSpu = goodsMap.get(item.getGoodsId());
                 if (Objects.nonNull(goodsSpu) && CollectionUtils.isNotEmpty(goodsSpu.getShowImgs())) {
                     goodsInfoVO.setSpuNo(goodsSpu.getSpuNo());
                     goodsInfoVO.setImg(goodsSpu.getShowImgs().get(0));
