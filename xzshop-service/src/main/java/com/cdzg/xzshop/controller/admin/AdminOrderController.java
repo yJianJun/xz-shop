@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
+import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
 import com.cdzg.xzshop.service.ShopInfoService;
+import com.cdzg.xzshop.service.SystemTimeConfigService;
 import com.cdzg.xzshop.utils.RabbitmqUtil;
+import com.cdzg.xzshop.vo.admin.SystemTimeConfigVO;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.AdminDeliverReqVO;
 import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
@@ -23,12 +26,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,6 +57,9 @@ public class AdminOrderController {
 
     @Autowired
     private RabbitmqUtil rabbitmqUtil;
+
+    @Autowired
+    private SystemTimeConfigService systemTimeConfigService;
 
     @WebApi
     @PostMapping("/list")
@@ -126,7 +134,7 @@ public class AdminOrderController {
         return null;
     }
 
-    @ApiOperation("32005-快递公司查询")
+    @ApiOperation("32005-快递公司码表查询")
     @GetMapping(value = "/logisticsList")
     public ApiResponse<List<ExpressCodingRespVO>> logisticsList() {
         List<ExpressCodingRespVO> result = orderService.logisticsList();
@@ -141,13 +149,42 @@ public class AdminOrderController {
     @PostMapping("/deliver")
     @ApiOperation("32006-发货")
     public ApiResponse<String> deliver(@RequestBody @Valid AdminDeliverReqVO request) {
-
-        return null;
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        if (ObjectUtils.isNull(adminUser)) {
+            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
+        }
+        Long shopId = null;
+        if (!adminUser.getIsAdmin()) {
+            //非超管，查询本店铺的数据
+            ShopInfo shopInfo = shopInfoService.findOneByShopUnion(adminUser.getUserBaseInfo().getOrganizationId().toString());
+            if (ObjectUtils.isNull(shopInfo)) {
+                return ApiResponse.buildCommonErrorResponse("您的公会尚未创建店铺");
+            }
+            shopId = shopInfo.getId();
+        }
+        Order order = orderService.getById(request.getOrderId());
+        if (order.getOrderStatus() != 2) {
+            return ApiResponse.buildCommonErrorResponse("当前订单状态不能发货!");
+        }
+        if (Objects.nonNull(shopId) && !order.getShopId().equals(shopId + "")) {
+            return ApiResponse.buildCommonErrorResponse("非本店铺订单无法发货!");
+        }
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        Date date = new Date();
+        BeanUtils.copyProperties(request, order);
+        order.setDeliverTime(date);
+        //如果无配置，默认15天，单位分钟
+        order.setSysSureConfig(Objects.nonNull(systemTimeConfig) ? systemTimeConfig.getSureOrder() : 21600);
+        order.setUpdateBy(adminUser.getUserId() + "");
+        order.setUpdateTime(date);
+        boolean b = orderService.updateById(order);
+        if (b) {
+            //发送定时自动确认收货的mq消息
+            rabbitmqUtil.sendAutoSureOrderDelayMessage(request.getOrderId(), order.getSysSureConfig() * 60 * 1000);
+            return ApiResponse.buildSuccessResponse("发货成功！");
+        }
+        return ApiResponse.buildCommonErrorResponse("发货失败，请联系管理员！");
     }
-
-
-
-
 
 
 }
