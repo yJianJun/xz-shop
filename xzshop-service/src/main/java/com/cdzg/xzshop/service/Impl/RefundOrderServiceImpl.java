@@ -415,6 +415,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         if (Objects.isNull(refundOrder)) {
             return null;
         }
+        refundId = refundOrder.getId();
         RefundOrderDetailAppVO vo = new RefundOrderDetailAppVO();
         BeanUtils.copyProperties(refundOrder, vo);
         Order order = orderService.getById(refundOrder.getOrderId());
