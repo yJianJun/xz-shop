@@ -467,6 +467,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 .orderByAsc(RefundProcess::getCreateTime)
                 .list();
         vo.setProcessList(processes.stream().map(RefundProcess::getStatus).collect(Collectors.toList()));
+        // 退款时间
+        Optional<RefundProcess> first = processes.stream().filter(o -> o.getStatus().equals(9)).findFirst();
+        first.ifPresent(o -> vo.setRefundTime(DateUtil.formatDateTime(o.getCreateTime())));
         return vo;
     }
 
