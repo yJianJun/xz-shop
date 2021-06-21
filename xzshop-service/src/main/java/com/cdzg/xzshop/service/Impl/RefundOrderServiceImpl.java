@@ -519,7 +519,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             BeanUtils.copyProperties(o, vo);
             List<OrderItem> refundOrderItems = null;
             if (RefundTypeEnum.REFUND.getCode().equals(o.getRefundType())) {
-                refundOrderItems = orderItems;
+                refundOrderItems = orderItems.stream().filter(a -> a.getOrderId().equals(o.getOrderId())).collect(Collectors.toList());
             } else {
                 refundOrderItems = orderItems.stream().filter(a -> a.getId().equals(o.getOrderItemId())).collect(Collectors.toList());
             }
