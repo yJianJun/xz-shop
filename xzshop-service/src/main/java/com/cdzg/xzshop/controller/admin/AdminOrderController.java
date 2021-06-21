@@ -9,19 +9,25 @@ import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
 import com.cdzg.xzshop.service.ShopInfoService;
+import com.cdzg.xzshop.utils.RabbitmqUtil;
 import com.cdzg.xzshop.vo.common.PageResultVO;
+import com.cdzg.xzshop.vo.order.request.AdminDeliverReqVO;
 import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO;
+import com.cdzg.xzshop.vo.order.response.AdminOrderStatisticsRespVO;
 import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
 import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
 import com.framework.utils.core.api.ApiResponse;
+import com.google.common.annotations.VisibleForTesting;
 import io.netty.util.internal.ObjectUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Objects;
 
@@ -40,12 +46,11 @@ public class AdminOrderController {
     @Autowired
     private OrderService orderService;
 
-
-    @Autowired
-    private OrderItemService orderItemService;
-
     @Autowired
     private ShopInfoService shopInfoService;
+
+    @Autowired
+    private RabbitmqUtil rabbitmqUtil;
 
     @WebApi
     @PostMapping("/list")
@@ -90,6 +95,46 @@ public class AdminOrderController {
         }
         return ApiResponse.buildSuccessResponse(result);
     }
+
+
+    @WebApi
+    @GetMapping("/topStatistics")
+    @ApiOperation("32003-订单列表顶部统计")
+    public ApiResponse<AdminOrderStatisticsRespVO> topStatistics() {
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
+        if (ObjectUtils.isNull(adminUser)) {
+            return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
+        }
+        Long shopId = null;
+        if (!adminUser.getIsAdmin()) {
+            //非超管，查询本店铺的数据
+            ShopInfo shopInfo = shopInfoService.findOneByShopUnion(adminUser.getUserBaseInfo().getOrganizationId().toString());
+            if (ObjectUtils.isNull(shopInfo)) {
+                return ApiResponse.buildCommonErrorResponse("您的公会尚未创建店铺");
+            }
+            shopId = shopInfo.getId();
+        }
+        return orderService.topStatisticsForAdmin(shopId);
+    }
+
+    @WebApi
+    @GetMapping("/exportExcel")
+    @ApiOperation("32004-批量导出excel")
+    public ApiResponse<String> exportExcel(HttpServletRequest request, HttpServletResponse response) {
+
+        return null;
+    }
+
+    @WebApi
+    @PostMapping("/deliver")
+    @ApiOperation("32005-发货")
+    public ApiResponse<String> deliver(@RequestBody @Valid AdminDeliverReqVO request) {
+
+        return null;
+    }
+
+
+
 
 
 }

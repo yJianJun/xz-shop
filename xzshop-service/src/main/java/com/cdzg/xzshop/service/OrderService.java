@@ -8,8 +8,10 @@ import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
 import com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO;
+import com.cdzg.xzshop.vo.order.response.AdminOrderStatisticsRespVO;
 import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
 import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
+import com.framework.utils.core.api.ApiResponse;
 
 
 /**
@@ -66,5 +68,12 @@ public interface OrderService extends IService<Order> {
      * @return
      */
     PageResultVO<AdminOrderListRespVO> pageListForAdmin(AdminQueryOrderListReqVO reqVO);
+
+    /**
+     * admin顶部统计
+     * @param shopId
+     * @return
+     */
+    ApiResponse<AdminOrderStatisticsRespVO> topStatisticsForAdmin(Long shopId);
 }
 

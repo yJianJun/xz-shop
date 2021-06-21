@@ -19,10 +19,8 @@ import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderReqVO;
-import com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO;
-import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
-import com.cdzg.xzshop.vo.order.response.OrderGoodsListRespVO;
-import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
+import com.cdzg.xzshop.vo.order.response.*;
+import com.framework.utils.core.api.ApiResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -227,6 +225,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         result.setData(orderList);
         return result;
+    }
+
+    @Override
+    public ApiResponse<AdminOrderStatisticsRespVO> topStatisticsForAdmin(Long shopId) {
+        AdminOrderStatisticsRespVO result = baseMapper.topStatisticsForAdmin(shopId);
+        return ApiResponse.buildSuccessResponse(result);
     }
 
 
