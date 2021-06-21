@@ -41,6 +41,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 @Service
@@ -415,8 +416,13 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         if (Objects.isNull(refundOrder)) {
             return null;
         }
+        refundId = refundOrder.getId();
         RefundOrderDetailAppVO vo = new RefundOrderDetailAppVO();
         BeanUtils.copyProperties(refundOrder, vo);
+        if (StringUtils.isNotEmpty(refundOrder.getImg())) {
+            vo.setImg(Stream.of(refundOrder.getImg().split(",")).collect(Collectors.toList()));
+        }
+
         Order order = orderService.getById(refundOrder.getOrderId());
         vo.setGoodsInfoVOS(getGoodsInfoVOS(refundOrder));
         // 商家收货地址
@@ -461,6 +467,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 .orderByAsc(RefundProcess::getCreateTime)
                 .list();
         vo.setProcessList(processes.stream().map(RefundProcess::getStatus).collect(Collectors.toList()));
+        // 退款时间
+        Optional<RefundProcess> first = processes.stream().filter(o -> o.getStatus().equals(9)).findFirst();
+        first.ifPresent(o -> vo.setRefundTime(DateUtil.formatDateTime(o.getCreateTime())));
         return vo;
     }
 
@@ -553,6 +562,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             // 流程记录
             refundProcessService.save(new RefundProcess(id, appUser.getUserBaseInfo().getUserName() + "买家撤销申请。",
                     modify.getStatus(), appUser.getUserBaseInfo().getId()));
+            revertOrderStatus(refundOrder, 0);
             return null;
         }
         return "退款单号有误！";
@@ -718,6 +728,13 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }
         updateWrapper.set(OrderItem::getStatus, status);
         orderItemService.update(updateWrapper);
+        // 退货完成修改订单状态为交易关闭
+        if (status.equals(2) || status.equals(4)) {
+            Order order = new Order();
+            order.setId(refundOrder.getOrderId());
+            order.setOrderStatus(5);
+            orderService.updateById(order);
+        }
     }
 
     /**
@@ -728,16 +745,10 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         if (CollectionUtils.isEmpty(refundOrderIds)) {
             return;
         }
-        // 新增流程记录
-        List<RefundProcess> list = Lists.newArrayList();
-        for (Long orderId : refundOrderIds) {
-            list.add(new RefundProcess(orderId, "流程超时系统自动处理。", status, 1L));
-        }
-        refundProcessService.saveBatch(list, list.size());
-        // 自动退款的状态
-        if (status.equals(9)) {
-            List<RefundOrder> refundOrders = lambdaQuery().in(RefundOrder::getId, refundOrderIds).list();
-            for (RefundOrder refundOrder : refundOrders) {
+        List<RefundOrder> refundOrders = lambdaQuery().in(RefundOrder::getId, refundOrderIds).list();
+        for (RefundOrder refundOrder : refundOrders) {
+            boolean flag = true;
+            if (status.equals(9)) {
                 RefundParam refundParam = new RefundParam();
                 refundParam.setOrderno(refundOrder.getOrderId());
                 refundParam.setRefundFee(refundOrder.getRefundAmount().toString());
@@ -750,7 +761,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                     log.error("RefundOrderServiceImpl-autoBatchOrderAndProcess", e);
                 }
                 if (Objects.isNull(refundTo) || !refundTo.isStatus()) {
-                    refundOrderIds.remove(refundOrder.getId());
+                    flag = false;
                 } else {
                     // 还原库存
                     List<OrderItem> orderItems = null;
@@ -762,12 +773,34 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                     this.returnStock(orderItems);
                 }
             }
+            if (flag) {
+                // 修改退款单
+                RefundOrder refundOrderModify = new RefundOrder();
+                refundOrderModify.setId(refundOrder.getId());
+                refundOrderModify.setStatus(status);
+                this.updateById(refundOrderModify);
+                // 增加流程
+                refundProcessService.save(new RefundProcess(refundOrder.getOrderId(), "流程超时系统自动处理。", status, 1L));
+                // 修改订单那边的状态
+                switch (status) {
+                    case 0: revertOrderStatus(refundOrder, 0); break;
+                    case 3:
+                        if (refundOrder.getRefundType().equals(1)) {
+                            revertOrderStatus(refundOrder, 1);
+                        } else {
+                            revertOrderStatus(refundOrder, 3);
+                        }
+                        break;
+                    case 9:
+                        if (refundOrder.getRefundType().equals(1)) {
+                            revertOrderStatus(refundOrder, 2);
+                        } else {
+                            revertOrderStatus(refundOrder, 4);
+                        }
+                        break;
+                }
+            }
         }
-        // 修改退款单状态
-        LambdaUpdateWrapper<RefundOrder> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.in(RefundOrder::getId, refundOrderIds);
-        updateWrapper.set(RefundOrder::getStatus, status);
-        this.update(updateWrapper);
     }
 
     /**

@@ -56,7 +56,7 @@ public class RefundOrderDetailAppVO {
      * 补充凭证
      */
     @ApiModelProperty(value = "补充凭证")
-    private String img;
+    private List<String> img;
     /**
      * 补充说明
      */
@@ -90,5 +90,10 @@ public class RefundOrderDetailAppVO {
 
     @ApiModelProperty(value = "处理流程的状态")
     private List<Integer> processList;
+    /**
+     * 退款时间
+     */
+    @ApiModelProperty(value = "退款时间")
+    private String refundTime;
 
 }
