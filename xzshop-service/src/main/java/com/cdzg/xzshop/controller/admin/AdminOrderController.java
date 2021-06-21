@@ -154,6 +154,7 @@ public class AdminOrderController {
         return ApiResponse.buildSuccessResponse("导出成功");
     }
 
+    @WebApi
     @ApiOperation("32005-快递公司码表查询")
     @GetMapping(value = "/logisticsList")
     public ApiResponse<List<ExpressCodingRespVO>> logisticsList() {
