@@ -58,6 +58,66 @@ public class RabbitMQConfig {
      */
     public final static String DELAY_AUTO_SURE_ORDER_QUEUE = "delay_auto_sure_order_queue";
 
+    /**
+     * 申请退款商家未处理延时队列
+     */
+    public final static String DELAY_AUTO_REFUND_EXCHANGE = "delay_auto_refund_exchange";
+
+    /**
+     * 申请退款商家未处理路由键
+     */
+    public final static String AUTO_REFUND_KEY = "auto_refund";
+
+    /**
+     * 到达该队列的消息会在一定时间后过期，并在过期后被消费，每个消息都可以自定义自己的过期时间
+     */
+    public final static String DELAY_AUTO_REFUND_QUEUE = "delay_auto_refund_queue";
+
+    /**
+     * 买家提交退货退款申请，卖家未处理延时队列
+     */
+    public final static String DELAY_SYSTEM_AUTO_DEAL_EXCHANGE = "delay_system_auto_deal_exchange";
+
+    /**
+     * 买家提交退货退款申请，卖家未处理路由键
+     */
+    public final static String SYSTEM_AUTO_DEAL_KEY = "system_auto_deal";
+
+    /**
+     * 到达该队列的消息会在一定时间后过期，并在过期后被消费，每个消息都可以自定义自己的过期时间
+     */
+    public final static String DELAY_SYSTEM_AUTO_DEAL_QUEUE = "delay_system_auto_deal_queue";
+
+    /**
+     * 卖家同意退货，买家未处理延时队列
+     */
+    public final static String DELAY_SYSTEM_AUTO_FAIL_EXCHANGE = "delay_system_auto_fail_exchange";
+
+    /**
+     * 卖家同意退货，买家未处理路由键
+     */
+    public final static String SYSTEM_AUTO_FAIL_KEY = "system_auto_fail";
+
+    /**
+     * 到达该队列的消息会在一定时间后过期，并在过期后被消费，每个消息都可以自定义自己的过期时间
+     */
+    public final static String DELAY_SYSTEM_AUTO_FAIL_QUEUE = "delay_system_auto_fail_queue";
+
+    /**
+     * 卖家确认收货，未处理退款延时队列
+     */
+    public final static String DELAY_SYSTEM_AUTO_REFUND_EXCHANGE = "delay_system_auto_refund_exchange";
+
+    /**
+     * 卖家确认收货，未处理退款路由键
+     */
+    public final static String SYSTEM_AUTO_REFUND_KEY = "system_auto_refund";
+
+    /**
+     * 到达该队列的消息会在一定时间后过期，并在过期后被消费，每个消息都可以自定义自己的过期时间
+     */
+    public final static String DELAY_SYSTEM_AUTO_REFUND_QUEUE = "delay_system_auto_refund_queue";
+
     ///////////////////////////自动确认收货end//////////////////////////
 
     //////////////////////绑定关系////////////////////
@@ -136,5 +196,156 @@ public class RabbitMQConfig {
                 .with(AUTO_SURE_ORDER_KEY).noargs();
     }
 
+
+    /**
+     * 买家提交退款，卖家未处理，自动退款延时消息交换器
+     *
+     * @return
+     */
+    @Bean
+    public Exchange delayAutoRefundExchange() {
+        Map<String, Object> args = new HashMap<>(1);
+        args.put("x-delayed-type", "direct");
+        return new CustomExchange(DELAY_AUTO_REFUND_EXCHANGE, "x-delayed-message", true, false, args);
+    }
+
+
+    /**
+     * 延时队列
+     *
+     * @return
+     */
+    @Bean
+    public Queue delayAutoRefundQueue() {
+        return QueueBuilder.durable(DELAY_AUTO_REFUND_QUEUE)
+                .build();
+    }
+
+
+    /**
+     * 延时交换器和队列的绑定关系
+     *
+     * @return
+     */
+    @Bean
+    public Binding delayAutoRefundBiding() {
+        return BindingBuilder.bind(delayAutoRefundQueue())
+                .to(delayAutoRefundExchange())
+                .with(AUTO_REFUND_KEY).noargs();
+    }
+
+
+    /**
+     * 买家提交退货退款申请，卖家未处理延时消息交换器
+     *
+     * @return
+     */
+    @Bean
+    public Exchange delaySystemAutoDealExchange() {
+        Map<String, Object> args = new HashMap<>(1);
+        args.put("x-delayed-type", "direct");
+        return new CustomExchange(DELAY_SYSTEM_AUTO_DEAL_EXCHANGE, "x-delayed-message", true, false, args);
+    }
+
+
+    /**
+     * 延时队列
+     *
+     * @return
+     */
+    @Bean
+    public Queue delaySystemAutoDealQueue() {
+        return QueueBuilder.durable(DELAY_SYSTEM_AUTO_DEAL_QUEUE)
+                .build();
+    }
+
+
+    /**
+     * 延时交换器和队列的绑定关系
+     *
+     * @return
+     */
+    @Bean
+    public Binding delaySystemAutoDealBiding() {
+        return BindingBuilder.bind(delaySystemAutoDealQueue())
+                .to(delaySystemAutoDealExchange())
+                .with(SYSTEM_AUTO_DEAL_KEY).noargs();
+    }
+
+
+    /**
+     * 卖家同意退货，买家未处理延时消息交换器
+     *
+     * @return
+     */
+    @Bean
+    public Exchange delaySystemAutoFailExchange() {
+        Map<String, Object> args = new HashMap<>(1);
+        args.put("x-delayed-type", "direct");
+        return new CustomExchange(DELAY_SYSTEM_AUTO_FAIL_EXCHANGE, "x-delayed-message", true, false, args);
+    }
+
+
+    /**
+     * 延时队列
+     *
+     * @return
+     */
+    @Bean
+    public Queue delaySystemAutoFailQueue() {
+        return QueueBuilder.durable(DELAY_SYSTEM_AUTO_FAIL_QUEUE)
+                .build();
+    }
+
+
+    /**
+     * 延时交换器和队列的绑定关系
+     *
+     * @return
+     */
+    @Bean
+    public Binding delaySystemAutoFailBiding() {
+        return BindingBuilder.bind(delaySystemAutoDealQueue())
+                .to(delaySystemAutoDealExchange())
+                .with(SYSTEM_AUTO_FAIL_KEY).noargs();
+    }
+
+
+    /**
+     * 卖家同意退货，买家未处理延时消息交换器
+     *
+     * @return
+     */
+    @Bean
+    public Exchange delaySystemAutoRefundExchange() {
+        Map<String, Object> args = new HashMap<>(1);
+        args.put("x-delayed-type", "direct");
+        return new CustomExchange(DELAY_SYSTEM_AUTO_REFUND_EXCHANGE, "x-delayed-message", true, false, args);
+    }
+
+
+    /**
+     * 延时队列
+     *
+     * @return
+     */
+    @Bean
+    public Queue delaySystemAutoRefundQueue() {
+        return QueueBuilder.durable(DELAY_SYSTEM_AUTO_REFUND_QUEUE)
+                .build();
+    }
+
+
+    /**
+     * 延时交换器和队列的绑定关系
+     *
+     * @return
+     */
+    @Bean
+    public Binding delaySystemAutoRefundBiding() {
+        return BindingBuilder.bind(delaySystemAutoDealQueue())
+                .to(delaySystemAutoDealExchange())
+                .with(SYSTEM_AUTO_REFUND_KEY).noargs();
+    }
 
 }
