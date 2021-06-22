@@ -460,7 +460,8 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         Duration duration = Duration.between(startTime, LocalDateTime.now());
         long restTime = duration.toMinutes();
         long time = minute - restTime;
-        vo.setRestTime(time > 0 ? time : 0);
+        // TODO 暂时先用这个时间代替，后面再改
+        vo.setRestTime(time > 0 ? time * 60000 : 0);
         // 流程状态
         List<RefundProcess> processes = refundProcessService.lambdaQuery()
                 .eq(RefundProcess::getRefundOrderId, refundId)
