@@ -74,6 +74,11 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
      * @param commitGoodsList
      */
     void updateGoodsStockAndSales(List<CommitOrderGoodsReqVO> commitGoodsList);
+
+
+
+	GoodsSpu findOneBySpuNo(Long spuNo);
+
 }
 
 

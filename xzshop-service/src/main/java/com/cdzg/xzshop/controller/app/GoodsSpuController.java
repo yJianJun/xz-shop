@@ -64,7 +64,6 @@ public class GoodsSpuController {
     @ApiOperation("商城首页商品列表")
     public ApiResponse<PageResultVO<GoodsSpu>> homePage(@ApiParam(value = "商品分页参数模型", required = true) @RequestBody @Valid GoodsSpuHomePageVo vo) {
 
-        log.info("--------------------------------参数vo:{}", Json.pretty(vo));
         PaymentType paymentType = vo.getPaymentType();
         Boolean sort = vo.getSort();
         Boolean type = vo.getType();

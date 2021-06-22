@@ -165,7 +165,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     public void update(GoodsSpuUpdateVO vo) {
 
         Long spuNo = vo.getSpuNo();
-        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
+        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNo(spuNo);
 
         if (Objects.nonNull(goodsSpu)) {
 
@@ -413,6 +413,14 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         }
 
     }
+
+	@Override
+	public GoodsSpu findOneBySpuNo(Long spuNo){
+		 return goodsSpuMapper.findOneBySpuNo(spuNo);
+	}
+
+
+
 }
 
 

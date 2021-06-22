@@ -1,22 +1,15 @@
 package com.cdzg.xzshop.vo.admin;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.cdzg.xzshop.constant.PaymentType;
-import com.cdzg.xzshop.handler.ListTypeHandler;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 @Data
 @ApiModel(description = "商品添加参数模型")
@@ -30,6 +23,7 @@ public class GoodsSpuAddVo {
      * 商品广告词
      */
     @ApiModelProperty(value = "商品广告词",position = 2,allowEmptyValue = true)
+    @Size(max = 50)
     private String adWord;
 
     /**
@@ -79,5 +73,6 @@ public class GoodsSpuAddVo {
 
     @ApiModelProperty(value = "商品详情图片",position = 12,required = true)
     @NotBlank
+    @Size(max = 200)
     private String descImgs;
 }
