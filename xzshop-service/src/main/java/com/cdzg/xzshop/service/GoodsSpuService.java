@@ -79,6 +79,7 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
 
 	GoodsSpu findOneBySpuNo(Long spuNo);
 
+    List<GoodsSpu> findByPaymentMethodOrderByPrice(PaymentType paymentMethod, Boolean sort);
 }
 
 
