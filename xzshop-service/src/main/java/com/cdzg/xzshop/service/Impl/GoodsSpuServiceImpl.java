@@ -133,6 +133,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         goodsSpu.setShopId(shopInfo.getId());
         goodsSpu.setGmtCreate(LocalDateTime.now());
         goodsSpuMapper.insert(goodsSpu);
+        goodsSpuRepository.save(goodsSpu);
     }
 
     @Override
@@ -149,6 +150,13 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection) {
+        Iterable<GoodsSpu> goodsSpus = goodsSpuRepository.findAllById(idCollection);
+        for (Iterator<GoodsSpu> iter = goodsSpus.iterator(); iter.hasNext();) {
+            GoodsSpu spu = (GoodsSpu)iter.next();
+            spu.setStatus(updatedStatus);
+            spu.setGmtPutOnTheShelf(updatedGmtPutOnTheShelf);
+            goodsSpuRepository.save(spu);
+        }
         return goodsSpuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus, updatedGmtPutOnTheShelf, idCollection);
     }
 
@@ -163,6 +171,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
             BeanUtils.copyProperties(vo, goodsSpu, "spuNo");
             goodsSpuMapper.insertOrUpdate(goodsSpu);
+            goodsSpuRepository.save(goodsSpu);
         } else {
             throw new BaseException(ResultCode.DATA_ERROR);
         }
