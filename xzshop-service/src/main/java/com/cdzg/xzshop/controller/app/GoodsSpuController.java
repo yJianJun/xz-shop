@@ -28,6 +28,8 @@ import com.cdzg.xzshop.vo.app.homepage.GoodsSpuShopPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
 import io.swagger.annotations.*;
+import io.swagger.util.Json;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -41,6 +43,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController("app_goodsSpuController")
+@Slf4j
 @RequestMapping("app/goods")
 @Validated
 @Api(tags = "app_商品相关")
@@ -61,6 +64,7 @@ public class GoodsSpuController {
     @ApiOperation("商城首页商品列表")
     public ApiResponse<PageResultVO<GoodsSpu>> homePage(@ApiParam(value = "商品分页参数模型", required = true) @RequestBody @Valid GoodsSpuHomePageVo vo) {
 
+        log.info("参数vo:{}", Json.pretty(vo));
         PaymentType paymentType = vo.getPaymentType();
         Boolean sort = vo.getSort();
         Boolean type = vo.getType();
