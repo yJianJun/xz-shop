@@ -58,6 +58,7 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
 
         //Boolean
         converters.add(IntToBoolean.INSTANCE);
+        converters.add(BooleanToInt.INSTANCE);
 
         return new ElasticsearchCustomConversions(converters);
     }
@@ -131,6 +132,21 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
         @Override
         public String convert(List<String> source) {
             return Joiner.on(",").skipNulls().join(source);
+        }
+    }
+
+    // Direction: Java -> ES
+    @WritingConverter
+    enum BooleanToInt implements Converter<Boolean,Integer> {
+
+        INSTANCE;
+
+        @Override
+        public Integer convert(Boolean source) {
+            if (source){
+                return 1;
+            }
+            return 0;
         }
     }
 
