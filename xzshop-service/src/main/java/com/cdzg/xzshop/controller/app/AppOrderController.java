@@ -1,14 +1,9 @@
 package com.cdzg.xzshop.controller.app;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cdzg.cms.api.constants.StringUtil;
-import com.cdzg.cms.api.vo.xzunion.ApiRes;
 import com.cdzg.customer.vo.response.CustomerBaseInfoVo;
 import com.cdzg.customer.vo.response.CustomerLoginResponse;
-import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.MobileApi;
-import com.cdzg.xzshop.constant.PaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.OrderItem;
@@ -22,26 +17,17 @@ import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.*;
 import com.cdzg.xzshop.vo.order.response.AppOrderDetailRespVO;
 import com.cdzg.xzshop.vo.order.response.CommitOrderRespVO;
-import com.cdzg.xzshop.vo.order.response.SettlementRespVo;
 import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
 import com.framework.utils.core.api.ApiResponse;
-import io.netty.util.internal.ObjectUtil;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.common.recycler.Recycler;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -400,17 +386,19 @@ public class AppOrderController {
      */
     private void dealRemainingTime(AppOrderDetailRespVO result) {
         long now = System.currentTimeMillis();
+        long beginTime;
+        int sysTime;
         if (result.getOrderStatus() == 1) {
             //待支付订单
-            long createTime = result.getCreateTime().getTime();
-            long time = createTime + (result.getSysCancelConfig() * 60 * 1000) - now;
-            result.setRemainingTime(time >= 0 ? time : 0L);
+            beginTime = result.getCreateTime().getTime();
+            sysTime = result.getSysCancelConfig() == null ? 0 : result.getSysCancelConfig();
         } else {
             //待收货订单
-            long deliverTime = result.getDeliverTime().getTime();
-            long time = deliverTime + (result.getSysSureConfig() * 60 * 1000) - now;
-            result.setRemainingTime(time >= 0 ? time : 0L);
+            beginTime = result.getDeliverTime().getTime();
+            sysTime = result.getSysSureConfig() == null ? 0 : result.getSysSureConfig();
         }
+        long time = beginTime + (sysTime * 60 * 1000) - now;
+        result.setRemainingTime(time >= 0 ? time : 0L);
     }
 
 }

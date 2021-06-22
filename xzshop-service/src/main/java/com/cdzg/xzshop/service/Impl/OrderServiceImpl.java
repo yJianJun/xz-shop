@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.service.Impl;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import ch.qos.logback.core.util.StringCollectionUtil;
@@ -224,6 +225,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         LambdaQueryWrapper<Order> queryWrapper = getListQueryWrapper(reqVO);
         List<Order> ordersList = baseMapper.selectList(queryWrapper);
         if (!CollectionUtils.isEmpty(ordersList)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             ordersList.forEach(r->{
                 AdminOrderListExport order = new AdminOrderListExport();
                 BeanUtils.copyProperties(r,order);
@@ -231,6 +233,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 order.setCustomerId(r.getCustomerId() + "");
                 order.setPayMoney(r.getPayMoney().toString());
                 order.setAddress(order.getProvince() + order.getCity() + order.getArea() + order.getAddress());
+                order.setCreateTime(sdf.format(r.getCreateTime()));
                 result.add(order);
             });
         }

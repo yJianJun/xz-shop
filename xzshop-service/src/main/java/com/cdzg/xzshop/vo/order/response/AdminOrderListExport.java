@@ -1,15 +1,12 @@
 package com.cdzg.xzshop.vo.order.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wuwenze.poi.annotation.Excel;
 import com.wuwenze.poi.annotation.ExcelField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @ClassName : AdminOrderListExport
@@ -18,7 +15,7 @@ import java.util.Date;
  * @Date: 2021-06-21 14:30
  */
 @Data
-@Excel("互助金申请管理列表")
+@Excel("订单数据导出")
 @ApiModel("订单导出数据")
 public class AdminOrderListExport implements Serializable {
     private static final long serialVersionUID = -3686646690019809345L;
@@ -108,8 +105,6 @@ public class AdminOrderListExport implements Serializable {
      * 订单生成时间
      */
     @ApiModelProperty(value = "创建时间")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ExcelField("下单时间")
-    private Date createTime;
+    private String createTime;
 }
