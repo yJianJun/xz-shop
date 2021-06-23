@@ -67,6 +67,11 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     @Autowired
     private RabbitmqUtil rabbitmqUtil;
 
+    // 正常同意退款流程
+    private static final List<Integer> normalRefundProcessList = Stream.of(7, 9).collect(Collectors.toList());
+    // 正常同意退货流程
+    private static final List<Integer> normalReturnProcessList = Stream.of(1, 3, 4, 7, 9).collect(Collectors.toList());
+
 
     @Override
     public PageResultVO<RefundOrderListVO> getRefundOrderPage(RefundOrderQueryVO queryVO) {
@@ -447,14 +452,19 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         Duration duration = Duration.between(startTime, LocalDateTime.now());
         long restTime = duration.toMillis();
         long time = minute * 60000 - restTime;
-        // TODO 暂时先用这个时间代替，后面再改
         vo.setRestTime(time > 0 ? time : 0);
         // 流程状态
         List<RefundProcess> processes = refundProcessService.lambdaQuery()
                 .eq(RefundProcess::getRefundOrderId, refundId)
                 .orderByAsc(RefundProcess::getCreateTime)
                 .list();
-        vo.setProcessList(processes.stream().map(RefundProcess::getStatus).collect(Collectors.toList()));
+        List<Integer> processList = processes.stream().map(RefundProcess::getStatus).collect(Collectors.toList());
+        if (refundOrder.getRefundType().equals(1)) {
+            fillRefundProcessList(processList);
+        } else {
+            fillReturnProcessList(processList);
+        }
+        vo.setProcessList(processList);
         // 退款时间
         Optional<RefundProcess> first = processes.stream().filter(o -> o.getStatus().equals(9)).findFirst();
         first.ifPresent(o -> vo.setRefundTime(DateUtil.formatDateTime(o.getCreateTime())));
@@ -787,5 +797,35 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }
         return refundTo;
     }
+
+    /**
+     * 填充退款流程列表
+     * @param list
+     */
+    private void fillRefundProcessList(List<Integer> list) {
+        fillProcessList(list, normalRefundProcessList);
+    }
+
+    /**
+     * 填充退货流程列表
+     * @param list
+     */
+    private void fillReturnProcessList(List<Integer> list) {
+        fillProcessList(list, normalReturnProcessList);
+    }
+
+    /**
+     * 填充流程列表,只再全同意流程才填充
+     * @param list
+     * @param normalProcessList
+     */
+    private void fillProcessList(List<Integer> list, List<Integer> normalProcessList) {
+        Integer last = list.get(list.size() - 1);
+        int index = normalProcessList.indexOf(last);
+        for (int i = index; i < normalProcessList.size(); i++) {
+            list.add(normalProcessList.get(i));
+        }
+    }
+
 
 }
