@@ -59,7 +59,7 @@ public class AutoRefundDelayConsumer implements ChannelAwareMessageListener {
             //手动确认消息
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
-            log.info("==> 自动取消订单数据处理出现异常，重新发送到队列");
+            log.info("==> 家提交退款，卖家未处理，自动退款处理出现异常，重新发送到队列");
             //手动回滚事务
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             //消息,重试时间一分钟
