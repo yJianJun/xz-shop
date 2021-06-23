@@ -208,9 +208,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         // 提交mq
         SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
         if (RefundTypeEnum.REFUND.getCode().equals(type)) {
-            rabbitmqUtil.sendAutoRefundDelayMessage(refundOrder.getId(), systemTimeConfig.getAutoRefund());
+            rabbitmqUtil.sendAutoRefundDelayMessage(refundOrder.getId(), systemTimeConfig.getAutoRefund() * 60000);
         } else {
-            rabbitmqUtil.sendSystemAutoDealDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoDeal());
+            rabbitmqUtil.sendSystemAutoDealDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoDeal() * 60000);
         }
         // 保存流程
         refundProcessService.save(new RefundProcess(refundOrder.getId(), processContent, refundOrder.getStatus(), Long.parseLong(appUser.getCustomerId())));
@@ -259,7 +259,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                     modify.getStatus(), adminUser.getUserId()));
             // 提交mq
             SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
-            rabbitmqUtil.sendSystemAutoFailDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoFail());
+            rabbitmqUtil.sendSystemAutoFailDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoFail() * 60000);
         } else if (refundOrder.getStatus().equals(7)) {
             // 退款
             RefundTo refundTo = payRefund(refundOrder, adminUser);
@@ -308,7 +308,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 modify.getStatus(), adminUser.getUserId()));
         // 提交mq
         SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
-        rabbitmqUtil.sendSystemAutoRefundDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoRefund());
+        rabbitmqUtil.sendSystemAutoRefundDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoRefund() * 60000);
         return null;
     }
 
@@ -445,9 +445,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         }
         Duration duration = Duration.between(startTime, LocalDateTime.now());
         long restTime = duration.toMillis();
-        long time = minute * 60 - restTime;
+        long time = minute * 60000 - restTime;
         // TODO 暂时先用这个时间代替，后面再改
-        vo.setRestTime(time > 0 ? time * 1000 : 0);
+        vo.setRestTime(time > 0 ? time : 0);
         // 流程状态
         List<RefundProcess> processes = refundProcessService.lambdaQuery()
                 .eq(RefundProcess::getRefundOrderId, refundId)
