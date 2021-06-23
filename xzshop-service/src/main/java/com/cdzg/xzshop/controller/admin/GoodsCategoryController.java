@@ -57,6 +57,9 @@ public class GoodsCategoryController {
     @WebApi
     @PostMapping("/update")
     @ApiOperation("编辑商品分类")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse update(@ApiParam(value = "商品分类编辑参数模型", required = true) @RequestBody @Valid GoodsCategoryUpdateVo updateVo) {
 
         GoodsCategory goodsCategory = goodsCategoryService.selectByPrimaryKey(updateVo.getId());
@@ -78,6 +81,9 @@ public class GoodsCategoryController {
     @WebApi
     @PostMapping("/list")
     @ApiOperation("查询商品类别列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse<List<GoodsCategoryTo>> list(@ApiParam(value = "商品类别参数模型", required = true) @RequestBody @Valid GoodsCategoryPageVo vo) {
 
         List<GoodsCategoryTo> resultVO = goodsCategoryService.list(vo.getLevel(), vo.getName());
@@ -87,6 +93,9 @@ public class GoodsCategoryController {
     @WebApi
     @GetMapping("/list/{status}/{level}")
     @ApiOperation("根据是否启用查询商品类别列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse<List<GoodsCategoryTo>> listByStatus(@Valid @PathVariable("status") @NotNull @ApiParam(value = "分类状态", required = true, allowableValues = "true,false") Boolean status,
                                                            @Valid @PathVariable("level") @NotNull @ApiParam(value = "分类等级", required = true, allowableValues = "1,2") Integer level) {
 
@@ -98,6 +107,9 @@ public class GoodsCategoryController {
     @WebApi
     @PostMapping("/sub/page")
     @ApiOperation("分页查询二级分类列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse<PageResultVO<GoodsCategory>> getSub(@ApiParam(value = "商品二级分类分页参数模型", required = true) @RequestBody @Valid GoodsCategorySubPageVo vo) {
 
         PageResultVO<GoodsCategory> resultVO = goodsCategoryService.pageSub(vo.getCurrentPage(), vo.getPageSize(), vo.getId(), 2);
@@ -107,6 +119,9 @@ public class GoodsCategoryController {
     @WebApi
     @GetMapping("/delete")
     @ApiOperation("商品分类删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse delete(@Valid @RequestParam("id") @NotNull @ApiParam(value = "商品分类id", required = true) Long id) {
 
         int delete = goodsCategoryService.deleteByPrimaryKey(id);
@@ -116,6 +131,9 @@ public class GoodsCategoryController {
     @WebApi
     @GetMapping("/get")
     @ApiOperation("商品分类详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse<GoodsCategory> get(@Valid @RequestParam("id") @NotNull @ApiParam(value = "商品分类id", required = true) Long id) {
 
         GoodsCategory goodsCategory = goodsCategoryService.selectByPrimaryKey(id);
@@ -126,6 +144,9 @@ public class GoodsCategoryController {
     @WebApi
     @PostMapping("/batch/switch")
     @ApiOperation("商品分类批量禁用启用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse batchPutOnDown(@ApiParam(value = "商品分类批量禁用启用参数", required = true) @RequestBody @Valid GoodsCategorySwitchStatusVo statusVO) {
 
         List<Long> list = statusVO.getList();

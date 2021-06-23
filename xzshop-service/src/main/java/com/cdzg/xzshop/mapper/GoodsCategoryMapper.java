@@ -79,6 +79,8 @@ public interface GoodsCategoryMapper {
 
     String findCategoryNameByIdAndLevel(@Param("id")Long id,@Param("level")Integer level);
 
+    GoodsCategory findOneById(@Param("id")Long id);
+
 
 
     List<GoodsCategory> findByStatusAndLevel(@Param("status")Boolean status,@Param("level")Integer level);

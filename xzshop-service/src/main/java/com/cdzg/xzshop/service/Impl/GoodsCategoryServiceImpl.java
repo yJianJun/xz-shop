@@ -2,6 +2,7 @@ package com.cdzg.xzshop.service.Impl;
 import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
+import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
 import com.cdzg.xzshop.vo.admin.GoodsCategoryAddVo;
 import com.cdzg.xzshop.utils.PageUtil;
@@ -33,6 +34,16 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int deleteByPrimaryKey(Long id) {
+        GoodsCategory category = goodsCategoryMapper.findOneById(id);
+        if (Objects.nonNull(category)){
+            if (category.getLevel()==1){
+
+                List<GoodsCategory> sons = goodsCategoryMapper.findByParentIdAndLevel(category.getId(), 2);
+                if (CollectionUtils.isNotEmpty(sons)){
+                    throw new BaseException("该分类下已有上架商品，无法删除");
+                }
+            }
+        }
         return goodsCategoryMapper.deleteByPrimaryKey(id);
     }
 
@@ -268,6 +279,14 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
 	public String findCategoryNameByIdAndLevel(Long id,Integer level){
 		 return goodsCategoryMapper.findCategoryNameByIdAndLevel(id,level);
 	}
+
+	@Override
+	public GoodsCategory findOneById(Long id){
+		 return goodsCategoryMapper.findOneById(id);
+	}
+
+
+
 
 
 

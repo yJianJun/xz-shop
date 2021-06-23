@@ -75,6 +75,11 @@ public interface GoodsCategoryService {
 
 
 
+	GoodsCategory findOneById(Long id);
+
+
+
+
 
 }
 
