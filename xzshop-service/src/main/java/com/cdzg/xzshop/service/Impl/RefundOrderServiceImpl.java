@@ -254,6 +254,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             // 退货
             RefundOrder modify = new RefundOrder();
             modify.setId(id);
+            modify.setStatus(3);
             this.updateById(modify);
             refundProcessService.save(new RefundProcess(refundOrder.getId(), adminUser.getUserBaseInfo().getUserName() + "同意退货。",
                     modify.getStatus(), adminUser.getUserId()));
