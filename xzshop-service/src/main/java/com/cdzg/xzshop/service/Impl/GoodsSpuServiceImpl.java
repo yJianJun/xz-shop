@@ -165,7 +165,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     public void update(GoodsSpuUpdateVO vo) {
 
         Long spuNo = vo.getSpuNo();
-        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
+        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNo(spuNo);
 
         if (Objects.nonNull(goodsSpu)) {
 
@@ -213,11 +213,11 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
                 return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod, sort)));
             }
             PageHelper.startPage(page, pageSize);
-            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod, sort)));
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByPrice(paymentMethod, sort)));
 
         } else {
             PageHelper.startPage(page, pageSize);
-            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByGmtPutOnTheShelf(paymentMethod, sort)));
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByGmtPutOnTheShelf(paymentMethod,sort)));
         }
     }
 
@@ -413,6 +413,22 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         }
 
     }
+
+	@Override
+	public GoodsSpu findOneBySpuNo(Long spuNo){
+		 return goodsSpuMapper.findOneBySpuNo(spuNo);
+	}
+
+	@Override
+	public List<GoodsSpu> findByPaymentMethodOrderByPrice(PaymentType paymentMethod,Boolean sort){
+		 return goodsSpuMapper.findByPaymentMethodOrderByPrice(paymentMethod,sort);
+	}
+
+
+
+
+
+
 }
 
 

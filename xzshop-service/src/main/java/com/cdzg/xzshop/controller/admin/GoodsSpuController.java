@@ -15,9 +15,7 @@ import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +45,9 @@ public class GoodsSpuController {
     @WebApi
     @PostMapping("/add")
     @ApiOperation("新建商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse add(@ApiParam(value = "商品添加参数模型", required = true) @RequestBody @Valid GoodsSpuAddVo addVo) {
 
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
@@ -57,6 +58,9 @@ public class GoodsSpuController {
     @WebApi
     @PostMapping("/batch/switch")
     @ApiOperation("商品批量上下架")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse batchPutOnDown(@ApiParam(value = "商品批量上下架参数", required = true) @RequestBody @Valid GoodsSpuSwitchStatusVO statusVO) {
 
         List<Long> list = statusVO.getList();
@@ -68,6 +72,9 @@ public class GoodsSpuController {
     @WebApi
     @GetMapping("/get")
     @ApiOperation("商品详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse<GoodsSpuUpdateVO> get(@Valid @RequestParam("spuNo") @NotNull @ApiParam(value = "商品编号", required = true) Long spuNo ) {
 
         GoodsSpu goodsSpu = goodsSpuService.findOneBySpuNoAndIsDeleteFalse(spuNo);
@@ -87,6 +94,9 @@ public class GoodsSpuController {
     @WebApi
     @PostMapping("/update")
     @ApiOperation("编辑商品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse update(@ApiParam(value = "商品编辑参数模型", required = true)@RequestBody @Valid GoodsSpuUpdateVO vo ) {
 
         goodsSpuService.update(vo);
@@ -96,6 +106,9 @@ public class GoodsSpuController {
     @WebApi
     @PostMapping("/page")
     @ApiOperation("分页查询商品列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "Authorization token", required = false, dataType = "string", paramType = "header")
+    })
     public ApiResponse<PageResultVO<GoodsSpuTo>> page(@ApiParam(value = "商品分页参数模型", required = true)@RequestBody @Valid GoodsSpuPageVo vo) {
 
         PageResultVO<GoodsSpuTo> page;
