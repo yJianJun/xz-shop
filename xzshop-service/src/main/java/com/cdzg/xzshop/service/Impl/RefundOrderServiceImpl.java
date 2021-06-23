@@ -734,7 +734,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         modify.setStatus(status);
         this.updateById(modify);
         // 增加流程
-        refundProcessService.save(new RefundProcess(refundOrder.getOrderId(), "流程超时系统自动处理。", status, 1L));
+        refundProcessService.save(new RefundProcess(refundOrder.getId(), "流程超时系统自动处理。", status, 1L));
     }
 
     /**
@@ -773,7 +773,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 modify.setStatus(9);
                 this.updateById(modify);
                 // 增加流程
-                refundProcessService.save(new RefundProcess(refundOrder.getOrderId(), adminUser.getUserBaseInfo().getUserName() + "同意退款",
+                refundProcessService.save(new RefundProcess(refundOrder.getId(), adminUser.getUserBaseInfo().getUserName() + "同意退款",
                         9, adminUser.getUserId()));
             }
 
