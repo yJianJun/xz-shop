@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -220,9 +221,13 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
 
         @Override
         public LocalDateTime convert(String source) {
-            ZonedDateTime zdt = ZonedDateTime.parse(source);
-            return zdt.toLocalDateTime();
+            try {
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                return LocalDateTime.parse(source,df);
+            } catch (DateTimeParseException e) {
+                ZonedDateTime parsedDate = ZonedDateTime.parse(source);
+                return parsedDate.toLocalDateTime();
+            }
         }
     }
-
 }
