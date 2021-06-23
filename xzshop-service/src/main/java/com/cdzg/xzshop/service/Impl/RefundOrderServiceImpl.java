@@ -822,8 +822,10 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     private void fillProcessList(List<Integer> list, List<Integer> normalProcessList) {
         Integer last = list.get(list.size() - 1);
         int index = normalProcessList.indexOf(last);
-        for (int i = index; i < normalProcessList.size(); i++) {
-            list.add(normalProcessList.get(i));
+        if (index != -1) {
+            for (int i = index + 1; i < normalProcessList.size(); i++) {
+                list.add(normalProcessList.get(i));
+            }
         }
     }
 
