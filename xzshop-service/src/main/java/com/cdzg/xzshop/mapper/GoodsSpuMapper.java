@@ -48,6 +48,11 @@ public interface GoodsSpuMapper extends BaseMapper<GoodsSpu> {
 
     List<GoodsSpu> findByShopIdAndIsDeleteFalseAndStatusTrue(@Param("shopId")Long shopId);
 
+    List<GoodsSpu> findByCategoryIdLevel2OrCategoryIdLevel1(@Param("categoryIdLevel2")Long categoryIdLevel2,@Param("categoryIdLevel1")Long categoryIdLevel1);
+
+    List<GoodsSpu> findByCategoryIdLevel2In(@Param("categoryIdLevel2Collection")Collection<Long> categoryIdLevel2Collection);
+
+
     /**
      * 批量库存的修改操作
      * @param commitGoodsList
