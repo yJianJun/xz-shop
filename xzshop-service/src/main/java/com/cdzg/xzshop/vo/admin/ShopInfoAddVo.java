@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Data
@@ -24,6 +25,7 @@ public class ShopInfoAddVo {
 
     @ApiModelProperty(value = "店鋪名称", position = 3, required = true)
     @NotEmpty
+    @Size(max = 30)
     private String shopName;
 
     @ApiModelProperty(value = "店鋪logo Url", position = 4, required = true)
@@ -32,10 +34,12 @@ public class ShopInfoAddVo {
 
     @ApiModelProperty(value = "店鋪联系人", position = 5, required = true)
     @NotEmpty
+    @Size(max = 30)
     private String person;
 
     @ApiModelProperty(value = "店鋪联系方式", position = 6, required = true)
     @NotEmpty
+    @Size(max = 30)
     private String contact;
 
    // @Valid yjjtodo 添加级联校验 字段会是必传
