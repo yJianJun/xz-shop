@@ -46,9 +46,9 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         if (CollectionUtils.isNotEmpty(goodsSpus)) {
             throw new BaseException("该分类已关联商品，无法删除");
         }
-
         GoodsCategory category = goodsCategoryMapper.findOneByIdAndLevel(id, 1);
         if (Objects.nonNull(category)) {
+
             List<Long> sons = goodsCategoryMapper.findByParentIdAndLevel(category.getId(), 2).stream().map(GoodsCategory::getId).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(sons)){
 
