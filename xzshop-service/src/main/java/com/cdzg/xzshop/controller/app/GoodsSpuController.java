@@ -31,6 +31,7 @@ import com.framework.utils.core.api.ApiResponse;
 import io.swagger.annotations.*;
 import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -129,6 +130,9 @@ public class GoodsSpuController {
 
         String customerId = LoginSessionUtils.getAppUser().getCustomerId();
         List<Long> spuNos = favoritesService.findByUserId(customerId).stream().map(UserGoodsFavorites::getSpuNo).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(spuNos)){
+            return CommonResult.buildSuccessResponse(new PageResultVO<GoodsSpu>());
+        }
         PageResultVO<GoodsSpu> page = goodsSpuService.findBySpuNoInwithPage(vo.getCurrentPage(), vo.getPageSize(), spuNos);
         return CommonResult.buildSuccessResponse(page);
     }
