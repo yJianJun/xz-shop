@@ -50,9 +50,12 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         GoodsCategory category = goodsCategoryMapper.findOneByIdAndLevel(id, 1);
         if (Objects.nonNull(category)) {
             List<Long> sons = goodsCategoryMapper.findByParentIdAndLevel(category.getId(), 2).stream().map(GoodsCategory::getId).collect(Collectors.toList());
-            goodsSpus = goodsSpuMapper.findByCategoryIdLevel2In(sons);
-            if (CollectionUtils.isNotEmpty(goodsSpus)) {
-                throw new BaseException("该分类下二级分类已关联商品，无法删除");
+            if (CollectionUtils.isNotEmpty(sons)){
+
+                goodsSpus = goodsSpuMapper.findByCategoryIdLevel2In(sons);
+                if (CollectionUtils.isNotEmpty(goodsSpus)) {
+                    throw new BaseException("该分类下二级分类已关联商品，无法删除");
+                }
             }
         }
 
