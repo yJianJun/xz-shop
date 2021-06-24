@@ -29,6 +29,8 @@ public interface GoodsSpuMapper extends BaseMapper<GoodsSpu> {
 
     GoodsSpu findOneBySpuNo(@Param("spuNo")Long spuNo);
 
+    List<GoodsSpu> findBySpuNoIn(@Param("spuNoCollection")Collection<Long> spuNoCollection);
+
     List<GoodsSpu> findByStatusAndGoodsNameAndGmtPutOnTheShelfBetweenEqualAndSpuNoAndCategoryIdLevel1AndCategoryIdLevel2AndIsDeleteFalse(@Param("status") Boolean status, @Param("goodsName") String goodsName, @Param("minGmtPutOnTheShelf") LocalDateTime minGmtPutOnTheShelf, @Param("maxGmtPutOnTheShelf") LocalDateTime maxGmtPutOnTheShelf, @Param("spuNo") Long spuNo, @Param("categoryIdLevel1") Long categoryIdLevel1, @Param("categoryIdLevel2") Long categoryIdLevel2, @Param("shopName") String shopName);
 
     List<GoodsSpu> findByGoodsNameLike(@Param("likeGoodsName")String likeGoodsName);

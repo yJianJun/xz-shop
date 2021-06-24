@@ -20,5 +20,10 @@ public interface UserGoodsFavoritesService extends IService<UserGoodsFavorites> 
 	UserGoodsFavorites findOneByUserIdAndSpuNo(String userId,Long spuNo);
 
 
+
+	List<UserGoodsFavorites> findByUserId(String userId);
+
+
+
 }
 

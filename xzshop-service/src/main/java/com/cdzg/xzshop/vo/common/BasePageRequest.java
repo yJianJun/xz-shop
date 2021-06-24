@@ -12,15 +12,15 @@ import java.io.Serializable;
 public class BasePageRequest implements Serializable {
     private static final long serialVersionUID = 7929720707782186157L;
 
-    @ApiModelProperty(value = "当前页码", position = 1,required = true)
+    @ApiModelProperty(value = "当前页码",required = true)
     @NotNull(message = "当前页码不能为空")
     private Integer currentPage = 1;
 
-    @ApiModelProperty(value = "每页条数", position = 2,required = true)
+    @ApiModelProperty(value = "每页条数", position = 1,required = true)
     @NotNull(message = "每页条数不能为空")
     private Integer pageSize = 20;
 
-    @ApiModelProperty(value = "数据总条数",allowEmptyValue = true)
+    @ApiModelProperty(value = "数据总条数",position = 2,allowEmptyValue = true)
     private Long totalNum;
 
     public BasePageRequest() {

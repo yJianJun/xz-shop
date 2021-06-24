@@ -424,11 +424,16 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 		 return goodsSpuMapper.findByPaymentMethodOrderByPrice(paymentMethod,sort);
 	}
 
+	@Override
+	public List<GoodsSpu> findBySpuNoIn(Collection<Long> spuNoCollection){
+		 return goodsSpuMapper.findBySpuNoIn(spuNoCollection);
+	}
 
-
-
-
-
+	@Override
+    public PageResultVO<GoodsSpu> findBySpuNoInwithPage(int page, int pageSize, Collection<Long> spuNoCollection) {
+        PageHelper.startPage(page, pageSize);
+        return PageUtil.transform(new PageInfo(goodsSpuMapper.findBySpuNoIn(spuNoCollection)));
+    }
 }
 
 

@@ -25,6 +25,7 @@ import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
 import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.app.homepage.GoodsSpuHomePageVo;
 import com.cdzg.xzshop.vo.app.homepage.GoodsSpuShopPageVo;
+import com.cdzg.xzshop.vo.common.BasePageRequest;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
 import io.swagger.annotations.*;
@@ -41,6 +42,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController("app_goodsSpuController")
 @Slf4j
@@ -118,6 +120,17 @@ public class GoodsSpuController {
             favoritesService.removeById(goodsFavorites.getId());
             return CommonResult.buildSuccessResponse(false);
         }
+    }
+
+    @MobileApi
+    @ApiOperation(value = "用户收藏商品列表")
+    @PostMapping("/collect/list")
+    public ApiResponse<PageResultVO<GoodsSpu>> listCollection(@ApiParam(value = "列表分页模型", required = true) @RequestBody @Valid BasePageRequest vo) {
+
+        String customerId = LoginSessionUtils.getAppUser().getCustomerId();
+        List<Long> spuNos = favoritesService.findByUserId(customerId).stream().map(UserGoodsFavorites::getSpuNo).collect(Collectors.toList());
+        PageResultVO<GoodsSpu> page = goodsSpuService.findBySpuNoInwithPage(vo.getCurrentPage(), vo.getPageSize(), spuNos);
+        return CommonResult.buildSuccessResponse(page);
     }
 
     @MobileApi
