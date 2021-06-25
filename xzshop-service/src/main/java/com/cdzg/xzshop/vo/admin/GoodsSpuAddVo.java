@@ -23,7 +23,7 @@ public class GoodsSpuAddVo {
      * 商品广告词
      */
     @ApiModelProperty(value = "商品广告词",position = 2,allowEmptyValue = true)
-    @Size(max = 50)
+    @Size(max = 50,message = "商品广告词最大字符长度50个")
     private String adWord;
 
     /**
