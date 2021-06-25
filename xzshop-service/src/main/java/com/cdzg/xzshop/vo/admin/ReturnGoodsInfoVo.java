@@ -16,7 +16,7 @@ public class ReturnGoodsInfoVo {
      */
     @ApiModelProperty(value = "退货收件人",required = true,position = 1)
     @NotBlank
-    @Size(max = 30)
+    @Size(max = 25,message = "收件人最大字符长度25")
     private String recipient;
 
     /**
@@ -24,7 +24,7 @@ public class ReturnGoodsInfoVo {
      */
     @ApiModelProperty(value = "退货联系方式",required = true,position = 2)
     @NotBlank
-    @Size(max = 30)
+    @Size(max = 50,message = "联系方式最大字符长度50")
     private String phone;
 
     /**
@@ -32,13 +32,12 @@ public class ReturnGoodsInfoVo {
      */
     @ApiModelProperty(value = "退货地址",required = true,position = 3)
     @NotBlank
-    @Size(max = 30)
+    @Size(max = 25,message = "地址最大字符长度25")
     private String address;
 
     /**
      * 退货注意事项
      */
     @ApiModelProperty(value = "退货注意事项",allowEmptyValue = true,position = 4)
-    @Size(max = 200)
     private String precautions;
 }

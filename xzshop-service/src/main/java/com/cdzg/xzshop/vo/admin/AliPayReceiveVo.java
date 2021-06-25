@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Data
 @ApiModel(description = "支付宝收款信息")
@@ -19,6 +20,7 @@ public class AliPayReceiveVo {
     //	支付宝分配给开发者的应用ID
     @ApiModelProperty(value = "支付宝分配给开发者的应用ID", position =2,required = true)
     @NotEmpty
+    @Size(max = 50,message = "应用ID最大字符长度50")
     private String appId;
 
     //应用私钥 生成公钥时对应的私钥（填自己的）
