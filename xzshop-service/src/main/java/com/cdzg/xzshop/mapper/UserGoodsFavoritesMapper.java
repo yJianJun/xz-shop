@@ -18,5 +18,9 @@ public interface UserGoodsFavoritesMapper extends BaseMapper<UserGoodsFavorites>
 
     UserGoodsFavorites findOneByUserIdAndSpuNo(@Param("userId")String userId,@Param("spuNo")Long spuNo);
 
+    List<UserGoodsFavorites> findByUserId(@Param("userId")String userId);
+
+
+
 
 }

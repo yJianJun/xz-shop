@@ -1,22 +1,15 @@
 package com.cdzg.xzshop.vo.admin;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.cdzg.xzshop.constant.PaymentType;
-import com.cdzg.xzshop.handler.ListTypeHandler;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 @Data
 @ApiModel(description = "商品添加参数模型")
@@ -24,12 +17,14 @@ public class GoodsSpuAddVo {
 
     @ApiModelProperty(value = "商品名字", position = 1,required = true)
     @NotBlank
+    @Size(max = 50,message = "商品名字最大字符长度50个")
     private String goodsName;
 
     /**
      * 商品广告词
      */
     @ApiModelProperty(value = "商品广告词",position = 2,allowEmptyValue = true)
+    @Size(max = 100,message = "商品广告词最大字符长度100个")
     private String adWord;
 
     /**
@@ -74,10 +69,10 @@ public class GoodsSpuAddVo {
 
     @ApiModelProperty(value = "商品展示图片",position = 11,required = true)
     @NotEmpty
-    @Size(max = 5)
+    @Size(max = 5,message = "商品展示图片最多5张")
     private List<String> showImgs;
 
-    @ApiModelProperty(value = "商品详情图片",position = 12,required = true)
+    @ApiModelProperty(value = "商品详情",position = 12,required = true)
     @NotBlank
     private String descImgs;
 }

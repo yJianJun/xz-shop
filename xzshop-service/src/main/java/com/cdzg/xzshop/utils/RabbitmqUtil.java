@@ -70,4 +70,92 @@ public class RabbitmqUtil {
         }
     }
 
+    /**
+     * 买家提交退款，卖家未处理的延时消息
+     * TTL粒度：每个消息都有自己的TTL
+     * @param refundOrderId    退款单主键id
+     * @param expiration 过期时间 单位毫秒
+     */
+    public void sendAutoRefundDelayMessage(Long refundOrderId, Integer expiration) {
+        // 消息发送时间
+        log.info("买家提交退款，卖家未处理消息发送时间为: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:S")));
+        try {
+            CorrelationData correlationId = new CorrelationData(String.valueOf(ObjectId.get()));
+            rabbitTemplate.convertAndSend(RabbitMQConfig.DELAY_AUTO_REFUND_EXCHANGE, RabbitMQConfig.AUTO_REFUND_KEY, refundOrderId,
+                    message -> {
+                        message.getMessageProperties().setDelay(expiration);
+                        return message;
+                    }, correlationId);
+        } catch (AmqpException e) {
+            e.printStackTrace();
+            log.error("买家提交退款，卖家未处理消息发送失败，refundOrderId： {}", refundOrderId);
+        }
+    }
+
+    /**
+     * 买家提交退货退款申请，卖家未处理的延时消息
+     * TTL粒度：每个消息都有自己的TTL
+     * @param refundOrderId    退款单主键id
+     * @param expiration 过期时间 单位毫秒
+     */
+    public void sendSystemAutoDealDelayMessage(Long refundOrderId, Integer expiration) {
+        // 消息发送时间
+        log.info("买家提交退货退款申请，卖家未处理消息发送时间为: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:S")));
+        try {
+            CorrelationData correlationId = new CorrelationData(String.valueOf(ObjectId.get()));
+            rabbitTemplate.convertAndSend(RabbitMQConfig.DELAY_SYSTEM_AUTO_DEAL_EXCHANGE, RabbitMQConfig.SYSTEM_AUTO_DEAL_KEY, refundOrderId,
+                    message -> {
+                        message.getMessageProperties().setDelay(expiration);
+                        return message;
+                    }, correlationId);
+        } catch (AmqpException e) {
+            e.printStackTrace();
+            log.error("买家提交退货退款申请，卖家未处理消息发送失败，refundOrderId： {}", refundOrderId);
+        }
+    }
+
+    /**
+     * 卖家同意退货，买家未处理的延时消息
+     * TTL粒度：每个消息都有自己的TTL
+     * @param refundOrderId    退款单主键id
+     * @param expiration 过期时间 单位毫秒
+     */
+    public void sendSystemAutoFailDelayMessage(Long refundOrderId, Integer expiration) {
+        // 消息发送时间
+        log.info("卖家同意退货，买家未处理消息发送时间为: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:S")));
+        try {
+            CorrelationData correlationId = new CorrelationData(String.valueOf(ObjectId.get()));
+            rabbitTemplate.convertAndSend(RabbitMQConfig.DELAY_SYSTEM_AUTO_FAIL_EXCHANGE, RabbitMQConfig.SYSTEM_AUTO_FAIL_KEY, refundOrderId,
+                    message -> {
+                        message.getMessageProperties().setDelay(expiration);
+                        return message;
+                    }, correlationId);
+        } catch (AmqpException e) {
+            e.printStackTrace();
+            log.error("卖家同意退货，买家未处理消息发送失败，refundOrderId： {}", refundOrderId);
+        }
+    }
+
+    /**
+     * 卖家确认收货，未处理退款的延时消息
+     * TTL粒度：每个消息都有自己的TTL
+     * @param refundOrderId    退款单主键id
+     * @param expiration 过期时间 单位毫秒
+     */
+    public void sendSystemAutoRefundDelayMessage(Long refundOrderId, Integer expiration) {
+        // 消息发送时间
+        log.info("卖家确认收货，未处理退款消息发送时间为: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:S")));
+        try {
+            CorrelationData correlationId = new CorrelationData(String.valueOf(ObjectId.get()));
+            rabbitTemplate.convertAndSend(RabbitMQConfig.DELAY_SYSTEM_AUTO_REFUND_EXCHANGE, RabbitMQConfig.SYSTEM_AUTO_REFUND_KEY, refundOrderId,
+                    message -> {
+                        message.getMessageProperties().setDelay(expiration);
+                        return message;
+                    }, correlationId);
+        } catch (AmqpException e) {
+            e.printStackTrace();
+            log.error("卖家确认收货，未处理退款消息发送失败，refundOrderId： {}", refundOrderId);
+        }
+    }
+
 }

@@ -40,6 +40,14 @@ public class UserGoodsFavoritesServiceImpl extends ServiceImpl<UserGoodsFavorite
 		 return userGoodsFavoritesMapper.findOneByUserIdAndSpuNo(userId,spuNo);
 	}
 
+	@Override
+	public List<UserGoodsFavorites> findByUserId(String userId){
+		 return userGoodsFavoritesMapper.findByUserId(userId);
+	}
+
+
+
+
 
 
 }

@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,7 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
 
         //Boolean
         converters.add(IntToBoolean.INSTANCE);
+        converters.add(BooleanToInt.INSTANCE);
 
         return new ElasticsearchCustomConversions(converters);
     }
@@ -136,6 +138,21 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
 
     // Direction: Java -> ES
     @WritingConverter
+    enum BooleanToInt implements Converter<Boolean,Integer> {
+
+        INSTANCE;
+
+        @Override
+        public Integer convert(Boolean source) {
+            if (source){
+                return 1;
+            }
+            return 0;
+        }
+    }
+
+    // Direction: Java -> ES
+    @WritingConverter
     enum LocalDateTimeToStringConverter implements Converter<LocalDateTime,String> {
 
         INSTANCE;
@@ -204,9 +221,13 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
 
         @Override
         public LocalDateTime convert(String source) {
-            ZonedDateTime zdt = ZonedDateTime.parse(source);
-            return zdt.toLocalDateTime();
+            try {
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                return LocalDateTime.parse(source,df);
+            } catch (DateTimeParseException e) {
+                ZonedDateTime parsedDate = ZonedDateTime.parse(source);
+                return parsedDate.toLocalDateTime();
+            }
         }
     }
-
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Data
@@ -16,14 +17,17 @@ public class ShopInfoAddVo {
 
     @ApiModelProperty(value = "店铺所属工会", position = 1, required = true)
     @NotEmpty
+    @Size(max = 50,message = "工会最大字符长度50")
     private String union;
 
     @ApiModelProperty(value = "店铺运营部门", position = 2, required = true)
     @NotEmpty
+    @Size(max = 50,message = "部门最大字符长度50")
     private String department;
 
     @ApiModelProperty(value = "店鋪名称", position = 3, required = true)
     @NotEmpty
+    @Size(max = 50,message = "店铺名称最大字符长度50")
     private String shopName;
 
     @ApiModelProperty(value = "店鋪logo Url", position = 4, required = true)
@@ -32,10 +36,12 @@ public class ShopInfoAddVo {
 
     @ApiModelProperty(value = "店鋪联系人", position = 5, required = true)
     @NotEmpty
+    @Size(max = 50,message = "联系人最大字符长度50")
     private String person;
 
     @ApiModelProperty(value = "店鋪联系方式", position = 6, required = true)
     @NotEmpty
+    @Size(max = 50,message = "联系方式最大字符长度50")
     private String contact;
 
    // @Valid yjjtodo 添加级联校验 字段会是必传

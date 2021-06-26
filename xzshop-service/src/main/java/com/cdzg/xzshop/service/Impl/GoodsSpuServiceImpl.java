@@ -133,6 +133,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         goodsSpu.setShopId(shopInfo.getId());
         goodsSpu.setGmtCreate(LocalDateTime.now());
         goodsSpuMapper.insert(goodsSpu);
+        goodsSpuRepository.save(goodsSpu);
     }
 
     @Override
@@ -149,6 +150,13 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection) {
+        Iterable<GoodsSpu> goodsSpus = goodsSpuRepository.findAllById(idCollection);
+        for (Iterator<GoodsSpu> iter = goodsSpus.iterator(); iter.hasNext();) {
+            GoodsSpu spu = (GoodsSpu)iter.next();
+            spu.setStatus(updatedStatus);
+            spu.setGmtPutOnTheShelf(updatedGmtPutOnTheShelf);
+            goodsSpuRepository.save(spu);
+        }
         return goodsSpuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus, updatedGmtPutOnTheShelf, idCollection);
     }
 
@@ -157,12 +165,13 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     public void update(GoodsSpuUpdateVO vo) {
 
         Long spuNo = vo.getSpuNo();
-        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNoAndIsDeleteFalse(spuNo);
+        GoodsSpu goodsSpu = goodsSpuMapper.findOneBySpuNo(spuNo);
 
         if (Objects.nonNull(goodsSpu)) {
 
             BeanUtils.copyProperties(vo, goodsSpu, "spuNo");
             goodsSpuMapper.insertOrUpdate(goodsSpu);
+            goodsSpuRepository.save(goodsSpu);
         } else {
             throw new BaseException(ResultCode.DATA_ERROR);
         }
@@ -204,11 +213,11 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
                 return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByFractionPrice(paymentMethod, sort)));
             }
             PageHelper.startPage(page, pageSize);
-            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderBySales(paymentMethod, sort)));
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByPrice(paymentMethod, sort)));
 
         } else {
             PageHelper.startPage(page, pageSize);
-            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByGmtPutOnTheShelf(paymentMethod, sort)));
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByGmtPutOnTheShelf(paymentMethod,sort)));
         }
     }
 
@@ -403,6 +412,27 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
             log.error("订单批量修改库存销量error:{} , request: {}", e.getMessage(), JSONObject.toJSONString(commitGoodsList));
         }
 
+    }
+
+	@Override
+	public GoodsSpu findOneBySpuNo(Long spuNo){
+		 return goodsSpuMapper.findOneBySpuNo(spuNo);
+	}
+
+	@Override
+	public List<GoodsSpu> findByPaymentMethodOrderByPrice(PaymentType paymentMethod,Boolean sort){
+		 return goodsSpuMapper.findByPaymentMethodOrderByPrice(paymentMethod,sort);
+	}
+
+	@Override
+	public List<GoodsSpu> findBySpuNoIn(Collection<Long> spuNoCollection){
+		 return goodsSpuMapper.findBySpuNoIn(spuNoCollection);
+	}
+
+	@Override
+    public PageResultVO<GoodsSpu> findBySpuNoInwithPage(int page, int pageSize, Collection<Long> spuNoCollection) {
+        PageHelper.startPage(page, pageSize);
+        return PageUtil.transform(new PageInfo(goodsSpuMapper.findBySpuNoIn(spuNoCollection)));
     }
 }
 

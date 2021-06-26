@@ -74,6 +74,14 @@ public interface GoodsSpuService extends IService<GoodsSpu> {
      * @param commitGoodsList
      */
     void updateGoodsStockAndSales(List<CommitOrderGoodsReqVO> commitGoodsList);
+
+	GoodsSpu findOneBySpuNo(Long spuNo);
+
+    List<GoodsSpu> findByPaymentMethodOrderByPrice(PaymentType paymentMethod, Boolean sort);
+
+	List<GoodsSpu> findBySpuNoIn(Collection<Long> spuNoCollection);
+
+    PageResultVO<GoodsSpu> findBySpuNoInwithPage(int page, int pageSize, Collection<Long> spuNoCollection);
 }
 
 

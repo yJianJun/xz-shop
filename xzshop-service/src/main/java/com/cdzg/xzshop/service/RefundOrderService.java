@@ -99,22 +99,17 @@ public interface RefundOrderService extends IService<RefundOrder> {
     /**
      * 买家提交退款，卖家未处理，自动退款
      */
-    void autoRefund();
+    void autoRefund(Long refundOrderId);
 
     /**
      * 买家提交退货退款/换货申请，卖家未处理，系统自动处理
      */
-    void systemAutoDeal();
+    void systemAutoDeal(Long refundOrderId);
 
     /**
      * 卖家同意退货/换货，买家未处理，系统自动失败
      */
-    void systemAutoFail();
-
-    /**
-     * 卖家确认收货，未处理退款，系统自动退款
-     */
-    void systemAutoRefund();
+    void systemAutoFail(Long refundOrderId);
 
     /**
      * 卖家未收到货

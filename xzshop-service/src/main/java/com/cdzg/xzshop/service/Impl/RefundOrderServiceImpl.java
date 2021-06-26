@@ -16,6 +16,7 @@ import com.cdzg.xzshop.service.*;
 import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.utils.DateUtil;
 import com.cdzg.xzshop.utils.ExcelExportUtils;
+import com.cdzg.xzshop.utils.RabbitmqUtil;
 import com.cdzg.xzshop.vo.admin.SystemTimeConfigVO;
 import com.cdzg.xzshop.vo.admin.refund.*;
 import com.cdzg.xzshop.vo.app.refund.ApplyRefundVO;
@@ -63,6 +64,13 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     private SystemTimeConfigService systemTimeConfigService;
     @Autowired
     private PayDecoration payDecoration;
+    @Autowired
+    private RabbitmqUtil rabbitmqUtil;
+
+    // 正常同意退款流程
+    private static final List<Integer> normalRefundProcessList = Stream.of(7, 9).collect(Collectors.toList());
+    // 正常同意退货流程
+    private static final List<Integer> normalReturnProcessList = Stream.of(1, 3, 4, 7, 9).collect(Collectors.toList());
 
 
     @Override
@@ -202,6 +210,13 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             revertOrderStatus(refundOrder, 3);
         }
         this.save(refundOrder);
+        // 提交mq
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        if (RefundTypeEnum.REFUND.getCode().equals(type)) {
+            rabbitmqUtil.sendAutoRefundDelayMessage(refundOrder.getId(), systemTimeConfig.getAutoRefund() * 60000);
+        } else {
+            rabbitmqUtil.sendSystemAutoDealDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoDeal() * 60000);
+        }
         // 保存流程
         refundProcessService.save(new RefundProcess(refundOrder.getId(), processContent, refundOrder.getStatus(), Long.parseLong(appUser.getCustomerId())));
         return null;
@@ -239,53 +254,27 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     @Override
     public String agreeRefund(Long id) {
         RefundOrder refundOrder = this.getById(id);
-        RefundOrder modify = new RefundOrder();
-        modify.setId(id);
+        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         if (refundOrder.getStatus().equals(1)) {
+            // 退货
+            RefundOrder modify = new RefundOrder();
+            modify.setId(id);
             modify.setStatus(3);
+            this.updateById(modify);
+            refundProcessService.save(new RefundProcess(refundOrder.getId(), adminUser.getUserBaseInfo().getUserName() + "同意退货。",
+                    modify.getStatus(), adminUser.getUserId()));
+            // 提交mq
+            SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+            rabbitmqUtil.sendSystemAutoFailDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoFail() * 60000);
         } else if (refundOrder.getStatus().equals(7)) {
-            modify.setStatus(9);
-            if (refundOrder.getRefundType().equals(RefundTypeEnum.REFUND.getCode())) {
-                revertOrderStatus(refundOrder, 2);
-            } else {
-                revertOrderStatus(refundOrder, 4);
+            // 退款
+            RefundTo refundTo = payRefund(refundOrder, adminUser);
+            if (!refundTo.isStatus()) {
+                return refundTo.getErrCodeDesc();
             }
         } else {
             return "该退款订单状态有误，操作无效！";
         }
-        // 流程记录
-        UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
-        String message = refundOrder.getRefundType().equals(1) ? "同意退款。" : "同意退货。";
-        refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + message,
-                modify.getStatus(), adminUser.getUserId()));
-        // 退款
-        if (refundOrder.getStatus().equals(7)) {
-            RefundParam refundParam = new RefundParam();
-            refundParam.setOrderno(refundOrder.getOrderId());
-            refundParam.setRefundFee(refundOrder.getRefundAmount().toString());
-            refundParam.setRefundId(refundOrder.getId());
-            refundParam.setType(refundOrder.getPayType() == 1 ? PaymentMethod.Alipay : PaymentMethod.Wechat);
-            RefundTo refundTo = null;
-            try {
-                refundTo = payDecoration.refund(refundParam);
-            } catch (Exception e) {
-                log.error("RefundOrderServiceImpl-agreeRefund", e);
-                return e.getMessage();
-            }
-            if (refundTo.isStatus()) {
-                // 还原库存
-                List<OrderItem> orderItems = null;
-                if (refundOrder.getRefundType().equals(1)) {
-                    orderItems = orderItemService.getByOrderId(refundOrder.getOrderId());
-                } else {
-                    orderItems = Lists.newArrayList(orderItemService.getById(refundOrder.getOrderItemId()));
-                }
-                this.returnStock(orderItems);
-            } else {
-                return refundTo.getErrCodeDesc();
-            }
-        }
-        this.updateById(modify);
         return null;
     }
 
@@ -323,6 +312,9 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         UserLoginResponse adminUser = LoginSessionUtils.getAdminUser();
         refundProcessService.save(new RefundProcess(id, adminUser.getUserBaseInfo().getUserName() + "卖家已收货。",
                 modify.getStatus(), adminUser.getUserId()));
+        // 提交mq
+        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
+        rabbitmqUtil.sendSystemAutoRefundDelayMessage(refundOrder.getId(), systemTimeConfig.getSystemAutoRefund() * 60000);
         return null;
     }
 
@@ -458,15 +450,21 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
                 break;
         }
         Duration duration = Duration.between(startTime, LocalDateTime.now());
-        long restTime = duration.toMinutes();
-        long time = minute - restTime;
+        long restTime = duration.toMillis();
+        long time = minute * 60000 - restTime;
         vo.setRestTime(time > 0 ? time : 0);
         // 流程状态
         List<RefundProcess> processes = refundProcessService.lambdaQuery()
                 .eq(RefundProcess::getRefundOrderId, refundId)
                 .orderByAsc(RefundProcess::getCreateTime)
                 .list();
-        vo.setProcessList(processes.stream().map(RefundProcess::getStatus).collect(Collectors.toList()));
+        List<Integer> processList = processes.stream().map(RefundProcess::getStatus).collect(Collectors.toList());
+        if (refundOrder.getRefundType().equals(1)) {
+            fillRefundProcessList(processList);
+        } else {
+            fillReturnProcessList(processList);
+        }
+        vo.setProcessList(processList);
         // 退款时间
         Optional<RefundProcess> first = processes.stream().filter(o -> o.getStatus().equals(9)).findFirst();
         first.ifPresent(o -> vo.setRefundTime(DateUtil.formatDateTime(o.getCreateTime())));
@@ -569,50 +567,31 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     }
 
     @Override
-    public void autoRefund() {
-        LocalDateTime now = LocalDateTime.now();
-        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
-        Integer autoRefund = systemTimeConfig.getAutoRefund();
+    public void autoRefund(Long refundOrderId) {
         // 查询买家提交退款，卖家未处理的退款单id
-        List<Long> ids = this.baseMapper.findAutoRefund(7, 1, now.minusMinutes(autoRefund));
-        if (CollectionUtils.isNotEmpty(ids)) {
-            autoBatchOrderAndProcess(ids, 9);
+        RefundOrder refundOrder = this.getById(refundOrderId);
+        // 如果超时,状态还未修改
+        if (refundOrder.getStatus().equals(7)) {
+            payRefund(refundOrder, null);
         }
     }
 
     @Override
-    public void systemAutoDeal() {
-        LocalDateTime now = LocalDateTime.now();
-        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
-        Integer systemAutoDeal = systemTimeConfig.getSystemAutoDeal();
+    public void systemAutoDeal(Long refundOrderId) {
         // 买家提交退货退款申请，卖家未处理的退款单id
-        List<Long> ids = this.baseMapper.findAutoRefund(1, 2, now.minusMinutes(systemAutoDeal));
-        if (CollectionUtils.isNotEmpty(ids)) {
-            autoBatchOrderAndProcess(ids, 3);
+        RefundOrder refundOrder = this.getById(refundOrderId);
+        if (refundOrder.getStatus().equals(1)) {
+            updateRefundOrderStatus(refundOrder, 3);
         }
     }
 
     @Override
-    public void systemAutoFail() {
-        LocalDateTime now = LocalDateTime.now();
-        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
-        Integer systemAutoFail = systemTimeConfig.getSystemAutoFail();
+    public void systemAutoFail(Long refundOrderId) {
         // 卖家同意退货，买家未处理的退款单id，改为撤销状态
-        List<Long> ids = this.baseMapper.findAutoRefund(3, 2, now.minusMinutes(systemAutoFail));
-        if (CollectionUtils.isNotEmpty(ids)) {
-            autoBatchOrderAndProcess(ids, 0);
-        }
-    }
-
-    @Override
-    public void systemAutoRefund() {
-        LocalDateTime now = LocalDateTime.now();
-        SystemTimeConfigVO systemTimeConfig = systemTimeConfigService.getSystemTimeConfig();
-        Integer systemAutoRefund = systemTimeConfig.getSystemAutoRefund();
-        // 卖家确认收货，未处理退款的退款单id
-        List<Long> ids = this.baseMapper.findAutoRefund(3, 2, now.minusMinutes(systemAutoRefund));
-        if (CollectionUtils.isNotEmpty(ids)) {
-            autoBatchOrderAndProcess(ids, 9);
+        RefundOrder refundOrder = this.getById(refundOrderId);
+        if (refundOrder.getStatus().equals(3)) {
+            updateRefundOrderStatus(refundOrder, 0);
+            revertOrderStatus(refundOrder, 0);
         }
     }
 
@@ -714,8 +693,8 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     /**
      * 修改订单明细的状态
      *
-     * @param refundOrder
-     * @param status
+     * @param refundOrder 退款订单
+     * @param status 要修改的orderitem状态
      */
     private void revertOrderStatus(RefundOrder refundOrder, Integer status) {
         boolean refund = refundOrder.getRefundType().equals(RefundTypeEnum.REFUND.getCode());
@@ -738,74 +717,8 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
     }
 
     /**
-     * 系统自动处理时批量修改退款订单状态和流程记录
-     * @param refundOrderIds
-     */
-    private void autoBatchOrderAndProcess(List<Long> refundOrderIds, Integer status){
-        if (CollectionUtils.isEmpty(refundOrderIds)) {
-            return;
-        }
-        List<RefundOrder> refundOrders = lambdaQuery().in(RefundOrder::getId, refundOrderIds).list();
-        for (RefundOrder refundOrder : refundOrders) {
-            boolean flag = true;
-            if (status.equals(9)) {
-                RefundParam refundParam = new RefundParam();
-                refundParam.setOrderno(refundOrder.getOrderId());
-                refundParam.setRefundFee(refundOrder.getRefundAmount().toString());
-                refundParam.setRefundId(refundOrder.getId());
-                refundParam.setType(refundOrder.getPayType() == 1 ? PaymentMethod.Alipay : PaymentMethod.Wechat);
-                RefundTo refundTo = null;
-                try {
-                    refundTo = payDecoration.refund(refundParam);
-                } catch (Exception e) {
-                    log.error("RefundOrderServiceImpl-autoBatchOrderAndProcess", e);
-                }
-                if (Objects.isNull(refundTo) || !refundTo.isStatus()) {
-                    flag = false;
-                } else {
-                    // 还原库存
-                    List<OrderItem> orderItems = null;
-                    if (refundOrder.getRefundType().equals(1)) {
-                        orderItems = orderItemService.getByOrderId(refundOrder.getOrderId());
-                    } else {
-                        orderItems = Lists.newArrayList(orderItemService.getById(refundOrder.getOrderItemId()));
-                    }
-                    this.returnStock(orderItems);
-                }
-            }
-            if (flag) {
-                // 修改退款单
-                RefundOrder refundOrderModify = new RefundOrder();
-                refundOrderModify.setId(refundOrder.getId());
-                refundOrderModify.setStatus(status);
-                this.updateById(refundOrderModify);
-                // 增加流程
-                refundProcessService.save(new RefundProcess(refundOrder.getOrderId(), "流程超时系统自动处理。", status, 1L));
-                // 修改订单那边的状态
-                switch (status) {
-                    case 0: revertOrderStatus(refundOrder, 0); break;
-                    case 3:
-                        if (refundOrder.getRefundType().equals(1)) {
-                            revertOrderStatus(refundOrder, 1);
-                        } else {
-                            revertOrderStatus(refundOrder, 3);
-                        }
-                        break;
-                    case 9:
-                        if (refundOrder.getRefundType().equals(1)) {
-                            revertOrderStatus(refundOrder, 2);
-                        } else {
-                            revertOrderStatus(refundOrder, 4);
-                        }
-                        break;
-                }
-            }
-        }
-    }
-
-    /**
      * 归还库存，减销量
-     * @param itemList
+     * @param itemList 要归还库存的的订单明细列表
      */
     private void returnStock(List<OrderItem> itemList) {
         //归还库存，减销量
@@ -820,5 +733,101 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             goodsSpuService.updateGoodsStockAndSales(commitGoodsList);
         }
     }
+
+    /**
+     * 系统处理退款单状态,同时添加流程
+     * @param refundOrder 退款订单
+     * @param status 要修改的状态
+     */
+    private void updateRefundOrderStatus(RefundOrder refundOrder, Integer status) {
+        RefundOrder modify = new RefundOrder();
+        modify.setId(refundOrder.getId());
+        modify.setStatus(status);
+        this.updateById(modify);
+        // 增加流程
+        refundProcessService.save(new RefundProcess(refundOrder.getId(), "流程超时系统自动处理。", status, 1L));
+    }
+
+    /**
+     * 支付退款
+     * @param refundOrder 退款订单
+     * @param adminUser 操作人
+     * @return 退款信息
+     */
+    private RefundTo payRefund(RefundOrder refundOrder, UserLoginResponse adminUser){
+        RefundParam refundParam = new RefundParam();
+        refundParam.setOrderno(refundOrder.getOrderId());
+        refundParam.setRefundFee(refundOrder.getRefundAmount().toString());
+        refundParam.setRefundId(refundOrder.getId());
+        refundParam.setType(refundOrder.getPayType() == 1 ? PaymentMethod.Alipay : PaymentMethod.Wechat);
+        RefundTo refundTo = null;
+        try {
+            refundTo = payDecoration.refund(refundParam);
+        } catch (Exception e) {
+            log.error("RefundOrderServiceImpl-autoBatchOrderAndProcess", e);
+        }
+        if (Objects.nonNull(refundTo) && refundTo.isStatus()) {
+            // 还原库存
+            List<OrderItem> orderItems = null;
+            if (refundOrder.getRefundType().equals(1)) {
+                orderItems = orderItemService.getByOrderId(refundOrder.getOrderId());
+            } else {
+                orderItems = Lists.newArrayList(orderItemService.getById(refundOrder.getOrderItemId()));
+            }
+            this.returnStock(orderItems);
+            // 修改退款单状态
+            if (Objects.isNull(adminUser)) {
+                updateRefundOrderStatus(refundOrder, 9);
+            } else {
+                RefundOrder modify = new RefundOrder();
+                modify.setId(refundOrder.getId());
+                modify.setStatus(9);
+                this.updateById(modify);
+                // 增加流程
+                refundProcessService.save(new RefundProcess(refundOrder.getId(), adminUser.getUserBaseInfo().getUserName() + "同意退款",
+                        9, adminUser.getUserId()));
+            }
+
+            // 修改订单状态
+            if (refundOrder.getRefundType().equals(1)) {
+                revertOrderStatus(refundOrder, 2);
+            } else {
+                revertOrderStatus(refundOrder, 4);
+            }
+        }
+        return refundTo;
+    }
+
+    /**
+     * 填充退款流程列表
+     * @param list
+     */
+    private void fillRefundProcessList(List<Integer> list) {
+        fillProcessList(list, normalRefundProcessList);
+    }
+
+    /**
+     * 填充退货流程列表
+     * @param list
+     */
+    private void fillReturnProcessList(List<Integer> list) {
+        fillProcessList(list, normalReturnProcessList);
+    }
+
+    /**
+     * 填充流程列表,只再全同意流程才填充
+     * @param list
+     * @param normalProcessList
+     */
+    private void fillProcessList(List<Integer> list, List<Integer> normalProcessList) {
+        Integer last = list.get(list.size() - 1);
+        int index = normalProcessList.indexOf(last);
+        if (index != -1) {
+            for (int i = index + 1; i < normalProcessList.size(); i++) {
+                list.add(normalProcessList.get(i));
+            }
+        }
+    }
+
 
 }
