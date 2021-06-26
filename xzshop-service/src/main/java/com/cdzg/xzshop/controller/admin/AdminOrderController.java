@@ -238,6 +238,7 @@ public class AdminOrderController {
         Date date = new Date();
         BeanUtils.copyProperties(request, order);
         order.setDeliverTime(date);
+        order.setOrderStatus(OrderStatusEnum.ALREADY_SEND.getCode());
         //如果无配置，默认15天，单位分钟
         order.setSysSureConfig(Objects.nonNull(systemTimeConfig) ? systemTimeConfig.getSureOrder() : 21600);
         order.setUpdateBy(adminUser.getUserId() + "");
