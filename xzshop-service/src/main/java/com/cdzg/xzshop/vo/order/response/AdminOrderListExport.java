@@ -43,15 +43,23 @@ public class AdminOrderListExport implements Serializable {
      * 订单类型 1-积分订单 2-普通订单
      */
     @ApiModelProperty(value = "订单类型 1-积分订单 2-普通订单")
-    @ExcelField("订单类型 1-积分订单 2-普通订单")
     private Integer orderType;
+
+    /**
+     * 订单类型 1-积分订单 2-普通订单
+     */
+    @ApiModelProperty(value = "订单类型str")
+    @ExcelField("订单类型")
+    private String orderTypeStr;
 
     /**
      * 支付方式0-还未支付,1-支付宝,2-微信支付,3-积分
      */
     @ApiModelProperty(value = "支付方式0-还未支付,1-支付宝,2-微信支付,3-积分")
-    @ExcelField("支付方式0-还未支付,1-支付宝,2-微信支付,3-积分")
     private Integer payMethod;
+
+    @ExcelField("支付方式")
+    private  String payMethodStr;
 
     /**
      * 实际支付金额 单位：元
@@ -64,9 +72,10 @@ public class AdminOrderListExport implements Serializable {
      * 订单状态（1待付款2.待发货3.已发货4.已完成5.已关闭）
      */
     @ApiModelProperty(value = "订单状态(1待付款2.待发货3.已发货4.已完成5.已关闭)")
-    @ExcelField("订单状态(1待付款2.待发货3.已发货4.已完成5.已关闭)")
     private Integer orderStatus;
 
+    @ExcelField("订单状态")
+    private String orderStatusStr;
     /**
      * 省(收货地址)
      */

@@ -8,6 +8,9 @@ import com.cdzg.xzshop.config.annotations.api.MobileApi;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.ShopInfo;
+import com.cdzg.xzshop.enums.OrderStatusEnum;
+import com.cdzg.xzshop.enums.OrderTypeEnum;
+import com.cdzg.xzshop.enums.PayMethodEnum;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
@@ -178,8 +181,16 @@ public class AdminOrderController {
         }
         reqVO.setShopIds(shopIds);
         List<AdminOrderListExport> list = orderService.batchExportForAdmin(reqVO);
-        if (Objects.nonNull(list) && list.size() > 65533) {
-            return ApiResponse.buildCommonErrorResponse("导出订单数量最大不能超过65533条！");
+        if (CollectionUtils.isNotEmpty(list)) {
+            if (list.size() > 65533) {
+                return ApiResponse.buildCommonErrorResponse("导出订单数量最大不能超过65533条！");
+            }
+            //翻译参数 订单状态 订单类型 支付方式
+            list.forEach(l->{
+                l.setOrderTypeStr(OrderTypeEnum.getNameByCode(l.getOrderType()));
+                l.setOrderStatusStr(OrderStatusEnum.getNameByCode(l.getOrderStatus()));
+                l.setPayMethodStr(PayMethodEnum.getNameByCode(l.getPayMethod()));
+            });
         }
         // 导出
         ExcelKit.$Export(AdminOrderListExport.class, response)
