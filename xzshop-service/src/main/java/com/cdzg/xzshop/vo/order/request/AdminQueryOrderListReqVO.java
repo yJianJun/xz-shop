@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName : AdminQueryOrderListReqVO
@@ -48,7 +49,10 @@ public class AdminQueryOrderListReqVO  extends BasePageRequest implements Serial
     private Date endTime;
 
     @ApiModelProperty(value = "店铺id，不传",hidden = true)
-    private String shopId;
+    private List<Long> shopIds;
+
+    @ApiModelProperty(value = "店铺名称")
+    private String shopName;
 
 
 }

@@ -107,4 +107,12 @@ public class AdminOrderListExport implements Serializable {
     @ApiModelProperty(value = "创建时间")
     @ExcelField("下单时间")
     private String createTime;
+
+    @ApiModelProperty(value = "店铺id")
+    @ExcelField("店铺id")
+    private String shopId;
+
+    @ApiModelProperty(value = "店铺名称")
+    @ExcelField("店铺名称")
+    private String shopName;
 }

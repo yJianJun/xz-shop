@@ -102,4 +102,10 @@ public class AdminOrderListRespVO  implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
+    @ApiModelProperty(value = "店铺id")
+    private String shopId;
+
+    @ApiModelProperty(value = "店铺名称")
+    private String shopName;
+
 }

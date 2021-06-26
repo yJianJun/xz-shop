@@ -1,5 +1,6 @@
 package com.cdzg.xzshop.controller.admin;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.cdzg.universal.vo.response.user.UserLoginResponse;
@@ -28,6 +29,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +37,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName : AdminOrderController
@@ -71,14 +75,32 @@ public class AdminOrderController {
         if (ObjectUtils.isNull(adminUser)) {
             return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         }
+        List<Long> shopIds = new ArrayList<>();
         if (!adminUser.getIsAdmin()) {
             //非超管，查询本店铺的数据
             ShopInfo shopInfo = shopInfoService.findOneByShopUnion(adminUser.getUserBaseInfo().getOrganizationId().toString());
             if (ObjectUtils.isNull(shopInfo)) {
                 return ApiResponse.buildCommonErrorResponse("您的公会尚未创建店铺");
             }
-            reqVO.setShopId(shopInfo.getId() + "");
+            shopIds.add(shopInfo.getId());
+        }else if (adminUser.getIsAdmin() && StringUtils.isNotBlank(reqVO.getShopName())){
+            //超管，判断店铺名称搜索条件
+            LambdaQueryWrapper<ShopInfo> shopInfoLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            shopInfoLambdaQueryWrapper.eq(ShopInfo::getStatus,1).like(ShopInfo::getShopName,reqVO.getShopName());
+            List<ShopInfo> shopList = shopInfoService.list(shopInfoLambdaQueryWrapper);
+            if (CollectionUtils.isEmpty(shopList)) {
+                //若空，直接返回
+                PageResultVO<AdminOrderListRespVO> result = new PageResultVO<>();
+                result.setPageSize(reqVO.getPageSize());
+                result.setTotalNum(0);
+                result.setTotalPage(0);
+                result.setCurrentPage(reqVO.getCurrentPage());
+                result.setData(new ArrayList<>());
+                return ApiResponse.buildSuccessResponse(result);
+            }
+            shopIds = shopList.stream().map(ShopInfo::getId).collect(Collectors.toList());
         }
+        reqVO.setShopIds(shopIds);
         PageResultVO<AdminOrderListRespVO> result = orderService.pageListForAdmin(reqVO);
         return ApiResponse.buildSuccessResponse(result);
     }
@@ -136,14 +158,25 @@ public class AdminOrderController {
         if (ObjectUtils.isNull(adminUser)) {
             return ApiResponse.buildCommonErrorResponse("登录失效，请重新登录");
         }
+        List<Long> shopIds = new ArrayList<>();
         if (!adminUser.getIsAdmin()) {
             //非超管，查询本店铺的数据
             ShopInfo shopInfo = shopInfoService.findOneByShopUnion(adminUser.getUserBaseInfo().getOrganizationId().toString());
             if (ObjectUtils.isNull(shopInfo)) {
                 return ApiResponse.buildCommonErrorResponse("您的公会尚未创建店铺");
             }
-            reqVO.setShopId(shopInfo.getId() + "");
+            shopIds.add(shopInfo.getId());
+        }else if (adminUser.getIsAdmin() && StringUtils.isNotBlank(reqVO.getShopName())){
+            //超管，判断店铺名称搜索条件
+            LambdaQueryWrapper<ShopInfo> shopInfoLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            shopInfoLambdaQueryWrapper.eq(ShopInfo::getStatus,1).like(ShopInfo::getShopName,reqVO.getShopName());
+            List<ShopInfo> shopList = shopInfoService.list(shopInfoLambdaQueryWrapper);
+            if (CollectionUtils.isEmpty(shopList)) {
+                return ApiResponse.buildCommonErrorResponse("暂无数据");
+            }
+            shopIds = shopList.stream().map(ShopInfo::getId).collect(Collectors.toList());
         }
+        reqVO.setShopIds(shopIds);
         List<AdminOrderListExport> list = orderService.batchExportForAdmin(reqVO);
         if (Objects.nonNull(list) && list.size() > 65533) {
             return ApiResponse.buildCommonErrorResponse("导出订单数量最大不能超过65533条！");

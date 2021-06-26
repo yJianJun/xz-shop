@@ -131,4 +131,98 @@
         FROM
             express_coding
     </select>
+    <select id="pageListFroAdmin" resultType="com.cdzg.xzshop.vo.order.response.AdminOrderListRespVO">
+        SELECT
+            t1.id,
+            t1.customer_id customerId,
+            t1.customer_account customerAccount,
+            t1.order_type orderType,
+            t1.pay_method payMethod,
+            t1.pay_money payMoney,
+            t1.order_status orderStatus,
+            t1.province,
+            t1.city,
+            t1.area,
+            t1.address,
+            t1.consignee_name consigneeName,
+            t1.consignee_phone consigneePhone,
+            t1.create_time createTime,
+            t1.shop_id shopId,
+            t2.shop_name shopName
+        FROM
+            `order` t1
+            LEFT JOIN shop_info t2 ON t1.shop_id = t2.id
+        WHERE
+            t1.deleted = 0
+            AND t2.`status` = 1
+        <if test="param.orderId != null ">
+            and t1.id LIKE concat(concat('%',#{param.orderId}),'%')
+        </if>
+        <if test="param.customerAccount != null ">
+            and t1.customer_account LIKE concat(concat('%',#{param.customerAccount}),'%')
+        </if>
+        <if test="param.orderStatus != null and param.orderStatus > 0">
+            and t1.order_status = #{param.orderStatus}
+        </if>
+        <if test="param.startTime != null ">
+            and t1.create_time &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null ">
+            and t1.create_time &lt;= #{param.endTime}
+        </if>
+        <if test="param.shopIds != null and param.shopIds.size() > 0">
+            and t1.shop_id in
+            <foreach collection="param.shopIds" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=BIGINT}
+            </foreach>
+        </if>
+        ORDER BY t1.create_time DESC
+    </select>
+    <select id="batchExportForAdmin" resultType="com.cdzg.xzshop.vo.order.response.AdminOrderListExport">
+        SELECT
+        t1.id,
+        t1.customer_id customerId,
+        t1.customer_account customerAccount,
+        t1.order_type orderType,
+        t1.pay_method payMethod,
+        t1.pay_money payMoney,
+        t1.order_status orderStatus,
+        t1.province,
+        t1.city,
+        t1.area,
+        t1.address,
+        t1.consignee_name consigneeName,
+        t1.consignee_phone consigneePhone,
+        t1.create_time createTime,
+        t1.shop_id shopId,
+        t2.shop_name shopName
+        FROM
+        `order` t1
+        LEFT JOIN shop_info t2 ON t1.shop_id = t2.id
+        WHERE
+        t1.deleted = 0
+        AND t2.`status` = 1
+        <if test="param.orderId != null ">
+            and t1.id LIKE concat(concat('%',#{param.orderId}),'%')
+        </if>
+        <if test="param.customerAccount != null ">
+            and t1.customer_account LIKE concat(concat('%',#{param.customerAccount}),'%')
+        </if>
+        <if test="param.orderStatus != null and param.orderStatus > 0">
+            and t1.order_status = #{param.orderStatus}
+        </if>
+        <if test="param.startTime != null ">
+            and t1.create_time &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null ">
+            and t1.create_time &lt;= #{param.endTime}
+        </if>
+        <if test="param.shopIds != null and param.shopIds.size() > 0">
+            and t1.shop_id in
+            <foreach collection="param.shopIds" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=BIGINT}
+            </foreach>
+        </if>
+        ORDER BY t1.create_time DESC
+    </select>
 </mapper>

@@ -186,24 +186,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public PageResultVO<AdminOrderListRespVO> pageListForAdmin(AdminQueryOrderListReqVO reqVO) {
         PageResultVO<AdminOrderListRespVO> result = new PageResultVO<>();
-        LambdaQueryWrapper<Order> queryWrapper = getListQueryWrapper(reqVO);
         Page<Order> page = new Page<>();
         page.setCurrent(reqVO.getCurrentPage());
         page.setPages(reqVO.getPageSize());
-        Page<Order> orderPage = baseMapper.selectPage(page, queryWrapper);
-        result.setPageParams(orderPage);
-        List<Order> records = orderPage.getRecords();
-        List<AdminOrderListRespVO> orderList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(records)) {
-            records.forEach(r->{
-                AdminOrderListRespVO order = new AdminOrderListRespVO();
-                BeanUtils.copyProperties(r,order);
-                order.setId(r.getId() + "");
-                order.setCustomerId(r.getCustomerId() + "");
-                order.setPayMoney(r.getPayMoney().toString());
-                orderList.add(order);
-            });
-        }
+        List<AdminOrderListRespVO> orderList = baseMapper.pageListFroAdmin(page, reqVO);
+        result.setPageParams(page);
         result.setData(orderList);
         return result;
     }
@@ -221,49 +208,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     public List<AdminOrderListExport> batchExportForAdmin(AdminQueryOrderListReqVO reqVO) {
-        List<AdminOrderListExport> result = new ArrayList<>();
-        LambdaQueryWrapper<Order> queryWrapper = getListQueryWrapper(reqVO);
-        List<Order> ordersList = baseMapper.selectList(queryWrapper);
-        if (!CollectionUtils.isEmpty(ordersList)) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            ordersList.forEach(r->{
-                AdminOrderListExport order = new AdminOrderListExport();
-                BeanUtils.copyProperties(r,order);
-                order.setId(r.getId() + "");
-                order.setCustomerId(r.getCustomerId() + "");
-                order.setPayMoney(r.getPayMoney().toString());
-                order.setAddress(order.getProvince() + order.getCity() + order.getArea() + order.getAddress());
-                order.setCreateTime(sdf.format(r.getCreateTime()));
-                result.add(order);
-            });
-        }
-        return result;
+        return baseMapper.batchExportForAdmin(reqVO);
     }
 
-    private LambdaQueryWrapper<Order> getListQueryWrapper(AdminQueryOrderListReqVO reqVO){
-        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
-        if (ObjectUtils.isNotNull(reqVO)) {
-            if (StringUtils.isNotBlank(reqVO.getOrderId())) {
-                queryWrapper.like(Order::getId,reqVO.getOrderId());
-            }
-            if (StringUtils.isNotBlank(reqVO.getShopId())) {
-                queryWrapper.eq(Order::getShopId,reqVO.getShopId());
-            }
-            if (StringUtils.isNotBlank(reqVO.getCustomerAccount())) {
-                queryWrapper.like(Order::getCustomerAccount,reqVO.getCustomerAccount());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getOrderStatus()) && reqVO.getOrderStatus() > 0) {
-                queryWrapper.eq(Order::getOrderStatus,reqVO.getOrderStatus());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getStartTime())) {
-                queryWrapper.gt(Order::getCreateTime,reqVO.getStartTime());
-            }
-            if (ObjectUtils.isNotNull(reqVO.getEndTime())) {
-                queryWrapper.lt(Order::getCreateTime,reqVO.getEndTime());
-            }
-        }
-        return queryWrapper;
-    }
 
     /**
      * 处理商品图片，获取第一张(数据库存储规则逗号隔开)

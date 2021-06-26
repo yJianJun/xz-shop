@@ -1,9 +1,8 @@
 package com.cdzg.xzshop.mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cdzg.xzshop.vo.order.request.AdminQueryOrderListReqVO;
 import com.cdzg.xzshop.vo.order.request.AppQueryOrderListReqVO;
-import com.cdzg.xzshop.vo.order.response.AdminOrderStatisticsRespVO;
-import com.cdzg.xzshop.vo.order.response.ExpressCodingRespVO;
-import com.cdzg.xzshop.vo.order.response.UserOrderListRespVO;
+import com.cdzg.xzshop.vo.order.response.*;
 import org.apache.ibatis.annotations.Param;
 
 import com.cdzg.xzshop.domain.Order;
@@ -49,4 +48,18 @@ public interface OrderMapper extends BaseMapper<Order> {
      */
     List<ExpressCodingRespVO> logisticsList();
 
+    /**
+     * admin pageList
+     * @param page
+     * @param reqVO
+     * @return
+     */
+    List<AdminOrderListRespVO> pageListFroAdmin(Page<Order> page, @Param("param")AdminQueryOrderListReqVO reqVO);
+
+    /**
+     * admin batch export
+     * @param reqVO
+     * @return
+     */
+    List<AdminOrderListExport> batchExportForAdmin(@Param("param")AdminQueryOrderListReqVO reqVO);
 }
