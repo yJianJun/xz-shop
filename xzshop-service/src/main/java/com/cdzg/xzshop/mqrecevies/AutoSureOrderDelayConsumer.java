@@ -53,6 +53,7 @@ public class AutoSureOrderDelayConsumer implements ChannelAwareMessageListener {
                 Date date = new Date();
                 order.setOrderStatus(4);
                 order.setUpdateBy("system");
+                order.setDealTime(date);
                 order.setUpdateTime(date);
                 orderService.updateById(order);
             }
