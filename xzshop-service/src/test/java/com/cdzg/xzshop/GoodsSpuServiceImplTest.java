@@ -3,9 +3,11 @@ package com.cdzg.xzshop;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
 import com.cdzg.xzshop.constant.PaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 import com.cdzg.xzshop.repository.GoodsSpuRepository;
 import com.cdzg.xzshop.service.GoodsSpuService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ class GoodsSpuServiceImplTest extends BaseTest {
 
     @Autowired
     GoodsSpuRepository goodsSpuRepository;
+
+    @Autowired
+    GoodsSpuMapper goodsSpuMapper;
 
     @Autowired
     SnowflakeIdWorker snowflakeIdWorker;
@@ -70,5 +75,12 @@ class GoodsSpuServiceImplTest extends BaseTest {
     void get(){
         Page<GoodsSpu> page = goodsSpuRepository.findAll(PageRequest.of(0, 10));
         log.info("page:{}",page.getContent());
+    }
+
+    @Test
+    void sync(){
+        List<GoodsSpu> goodsSpus = goodsSpuMapper.selectByMap(Maps.newHashMap());
+        log.info("商品:{}",goodsSpus);
+        goodsSpuRepository.saveAll(goodsSpus);
     }
 }
