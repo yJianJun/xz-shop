@@ -1,10 +1,10 @@
 package com.cdzg.xzshop.vo.order.request;
 
 import com.cdzg.xzshop.vo.common.BasePageRequest;
+import com.framework.utils.validate.constraint.Range;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

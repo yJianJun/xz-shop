@@ -8,6 +8,10 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +19,14 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.elasticsearch.config.ElasticsearchConfigurationSupport;
-import org.springframework.data.elasticsearch.core.ElasticsearchEntityMapper;
-import org.springframework.data.elasticsearch.core.EntityMapper;
+import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
+import org.springframework.data.elasticsearch.core.convert.MappingElasticsearchConverter;
+import org.springframework.data.elasticsearch.core.mapping.SimpleElasticsearchMappingContext;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -36,6 +44,15 @@ import java.util.stream.Collectors;
  */
 @Configuration
 public class ElasticsearchConfiguration extends ElasticsearchConfigurationSupport {
+
+    @Bean
+    public TransportClient transportClient() throws UnknownHostException {
+        return new PreBuiltXPackTransportClient(Settings.builder()
+                .put("cluster.name", "my-application")
+                .put("xpack.security.user", "elastic:cdzg@123")
+                .build())
+                .addTransportAddress(new TransportAddress(new InetSocketAddress("101.201.49.9", 9301)));
+    }
 
     @Bean
     @Override
@@ -66,12 +83,11 @@ public class ElasticsearchConfiguration extends ElasticsearchConfigurationSuppor
 
     @Bean
     @Override
-    public EntityMapper entityMapper() {
-
-        ElasticsearchEntityMapper entityMapper = new ElasticsearchEntityMapper(elasticsearchMappingContext(),
-                new DefaultConversionService());
-        entityMapper.setConversions(elasticsearchCustomConversions());
-        return entityMapper;
+    public ElasticsearchConverter elasticsearchEntityMapper(SimpleElasticsearchMappingContext elasticsearchMappingContext) {
+        MappingElasticsearchConverter elasticsearchConverter = new MappingElasticsearchConverter(
+                elasticsearchMappingContext);
+        elasticsearchConverter.setConversions(elasticsearchCustomConversions());
+        return elasticsearchConverter;
     }
 
     // Direction: ES -> Java
