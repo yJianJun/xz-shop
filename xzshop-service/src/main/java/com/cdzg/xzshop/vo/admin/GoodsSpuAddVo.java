@@ -1,6 +1,6 @@
 package com.cdzg.xzshop.vo.admin;
 
-import com.cdzg.xzshop.constant.PaymentType;
+import com.cdzg.xzshop.enums.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

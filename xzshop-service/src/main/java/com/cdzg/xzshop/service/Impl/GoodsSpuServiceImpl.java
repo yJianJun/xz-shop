@@ -2,7 +2,6 @@ package com.cdzg.xzshop.service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.domain.GoodsSpu;
 
 import java.util.List;
@@ -12,13 +11,12 @@ import com.cdzg.universal.vo.response.user.UserBaseInfoVo;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
-import com.cdzg.xzshop.constant.PaymentType;
+import com.cdzg.xzshop.enums.PaymentType;
 import com.cdzg.xzshop.domain.*;
 import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 import com.cdzg.xzshop.mapper.GoodsSpuSalesMapper;
 import com.cdzg.xzshop.mapper.SearchHistoryMapper;
 import com.cdzg.xzshop.mapper.UserGoodsFavoritesMapper;
-import com.cdzg.xzshop.repository.GoodsSpuRepository;
 import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
@@ -36,9 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -64,9 +59,6 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
     @Resource
     private UserGoodsFavoritesMapper favoritesMapper;
-
-    @Resource
-    private GoodsSpuRepository goodsSpuRepository;
 
     @Resource
     private GoodsSpuSalesMapper salesMapper;

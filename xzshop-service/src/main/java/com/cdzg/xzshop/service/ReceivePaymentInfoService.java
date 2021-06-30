@@ -1,5 +1,5 @@
 package com.cdzg.xzshop.service;
-import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.cdzg.xzshop.enums.ReceivePaymentType;
 
 import java.util.List;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;

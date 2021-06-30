@@ -1,13 +1,9 @@
 package com.cdzg.xzshop.vo.order.response;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.cdzg.xzshop.constant.PaymentType;
-import com.cdzg.xzshop.vo.order.request.SettlementGoodsListReqVO;
+import com.cdzg.xzshop.enums.PaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -1,11 +1,12 @@
-package com.cdzg.xzshop.constant;
+package com.cdzg.xzshop.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.cdzg.xzshop.enums.PaymentType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ReceivePaymentType implements IEnum<Integer> {
+public enum ReceivePaymentType implements IEnum<Integer>,BaseEnum {
 
     /**
      * 1:支付宝支付 2:微信支付

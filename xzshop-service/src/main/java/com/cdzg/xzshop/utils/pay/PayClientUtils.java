@@ -7,7 +7,7 @@ import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
 import com.cdzg.xzshop.config.pay.WechatPayConfig;
 import com.cdzg.xzshop.config.pay.WxPayShopConfig;
-import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.cdzg.xzshop.enums.ReceivePaymentType;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.mapper.OrderMapper;

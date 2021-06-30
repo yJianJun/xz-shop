@@ -665,16 +665,19 @@
         where `status` = true and is_delete = false
         <if test="keyWords != null and keyWords.size() &gt; 0">
             <foreach collection="keyWords" index="index" item="item">
-                <if test="index &gt;= 0">
-                    or (
-                </if>
+                <choose>
+                    <when test="index &gt; 0">
+                        or
+                    </when>
+                    <otherwise>
+                        and (
+                    </otherwise>
+                </choose>
                 ad_word like concat('%',#{item,jdbcType=VARCHAR},'%')
                 or goods_name like concat('%',#{item,jdbcType=VARCHAR},'%')
                 or goods_name=#{item,jdbcType=VARCHAR}
-                <if test="index &gt;= 0">
-                    )
-                </if>
             </foreach>
+            )
         </if>
     </select>
 </mapper>

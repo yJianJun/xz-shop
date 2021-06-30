@@ -6,7 +6,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
-import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.cdzg.xzshop.enums.ReceivePaymentType;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import com.cdzg.xzshop.domain.ReturnGoodsInfo;
 import com.cdzg.xzshop.mapper.GoodsSpuMapper;

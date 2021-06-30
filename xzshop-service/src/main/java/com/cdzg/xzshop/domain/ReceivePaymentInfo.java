@@ -1,6 +1,6 @@
 package com.cdzg.xzshop.domain;
 
-import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.cdzg.xzshop.enums.ReceivePaymentType;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;

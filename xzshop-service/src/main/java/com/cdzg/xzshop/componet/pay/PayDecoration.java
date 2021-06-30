@@ -1,24 +1,17 @@
 package com.cdzg.xzshop.componet.pay;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.cdzg.xzshop.common.BaseException;
 import com.cdzg.xzshop.common.ResultCode;
-import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
-import com.cdzg.xzshop.config.annotations.api.MobileApi;
-import com.cdzg.xzshop.constant.PaymentMethod;
-import com.cdzg.xzshop.domain.GoodsSpu;
+import com.cdzg.xzshop.enums.PaymentMethod;
 import com.cdzg.xzshop.domain.Order;
-import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.OrderItemService;
 import com.cdzg.xzshop.service.OrderService;
 import com.cdzg.xzshop.service.RefundRecordService;
 import com.cdzg.xzshop.service.pay.PayService;
 import com.cdzg.xzshop.to.app.QueryOrderTo;
 import com.cdzg.xzshop.to.app.RefundTo;
-import com.cdzg.xzshop.vo.pay.PayParam;
 import com.cdzg.xzshop.vo.pay.RefundParam;
-import com.framework.utils.core.api.ApiResponse;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +19,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

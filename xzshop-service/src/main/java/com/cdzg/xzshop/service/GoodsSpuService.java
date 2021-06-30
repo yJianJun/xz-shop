@@ -1,6 +1,6 @@
 package com.cdzg.xzshop.service;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cdzg.xzshop.constant.PaymentType;
+import com.cdzg.xzshop.enums.PaymentType;
 import java.time.LocalDateTime;
 
 import java.util.Collection;
@@ -16,7 +16,6 @@ import com.cdzg.xzshop.vo.admin.GoodsSpuUpdateVO;
 import com.cdzg.xzshop.vo.app.GoodsSpuSearchPageVo;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.cdzg.xzshop.vo.order.request.CommitOrderGoodsReqVO;
-import com.github.pagehelper.PageInfo;
 
 public interface GoodsSpuService extends IService<GoodsSpu> {
 

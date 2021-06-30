@@ -1,13 +1,11 @@
 package com.cdzg.xzshop.vo.app.homepage;
 
-import com.cdzg.xzshop.constant.PaymentType;
+import com.cdzg.xzshop.enums.PaymentType;
 import com.cdzg.xzshop.vo.common.BasePageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import javax.validation.constraints.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
