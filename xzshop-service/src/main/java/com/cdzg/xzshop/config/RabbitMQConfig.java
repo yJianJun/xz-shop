@@ -343,8 +343,8 @@ public class RabbitMQConfig {
      */
     @Bean
     public Binding delaySystemAutoRefundBiding() {
-        return BindingBuilder.bind(delaySystemAutoDealQueue())
-                .to(delaySystemAutoDealExchange())
+        return BindingBuilder.bind(delaySystemAutoRefundQueue())
+                .to(delaySystemAutoRefundExchange())
                 .with(SYSTEM_AUTO_REFUND_KEY).noargs();
     }
 

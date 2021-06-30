@@ -293,7 +293,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         this.updateById(modify);
         // 流程记录
         CustomerLoginResponse appUser = LoginSessionUtils.getAppUser();
-        refundProcessService.save(new RefundProcess(id, appUser.getUserBaseInfo().getUserName() + "买家已发货。",
+        refundProcessService.save(new RefundProcess(id, appUser.getUserBaseInfo().getMobile() + "买家已发货。",
                 modify.getStatus(), Long.parseLong(appUser.getCustomerId())));
         return null;
     }
@@ -558,7 +558,7 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
             modify.setStatus(0);
             this.updateById(modify);
             // 流程记录
-            refundProcessService.save(new RefundProcess(id, appUser.getUserBaseInfo().getUserName() + "买家撤销申请。",
+            refundProcessService.save(new RefundProcess(id, appUser.getUserBaseInfo().getMobile() + "买家撤销申请。",
                     modify.getStatus(), appUser.getUserBaseInfo().getId()));
             revertOrderStatus(refundOrder, 0);
             return null;
