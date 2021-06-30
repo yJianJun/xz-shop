@@ -5,21 +5,15 @@ import com.cdzg.xzshop.enums.PaymentType;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
-import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
+import org.springframework.data.elasticsearch.config.ElasticsearchConfigurationSupport;
+import org.springframework.data.elasticsearch.core.ElasticsearchEntityMapper;
+import org.springframework.data.elasticsearch.core.EntityMapper;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchCustomConversions;
 
 import java.time.Instant;
@@ -38,7 +32,7 @@ import java.util.stream.Collectors;
  * @date 2020-10-13 19:20
  */
 @Configuration
-public class ElasticsearchConfiguration extends AbstractElasticsearchConfiguration {
+public class ElasticsearchConfiguration extends ElasticsearchConfigurationSupport {
 
     @Bean
     @Override
@@ -67,39 +61,15 @@ public class ElasticsearchConfiguration extends AbstractElasticsearchConfigurati
         return new ElasticsearchCustomConversions(converters);
     }
 
-    //@Bean
-    //@Override
-    //public ElasticsearchConverter elasticsearchEntityMapper(SimpleElasticsearchMappingContext elasticsearchMappingContext) {
-    //    MappingElasticsearchConverter elasticsearchConverter = new MappingElasticsearchConverter(
-    //            elasticsearchMappingContext);
-    //    elasticsearchConverter.setConversions(elasticsearchCustomConversions());
-    //    return elasticsearchConverter;
-    //}
-
-    //需要用户名和密码的认证
-    @Override
     @Bean
-    public RestHighLevelClient elasticsearchClient() {
-        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "cdzg@123"));
-        RestClientBuilder restClientBuilder = RestClient.builder(new HttpHost("101.201.49.9", 9201, "http"))
-                .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                    @Override
-                    public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
-                        return httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-                    }
-                });
-        return new RestHighLevelClient(restClientBuilder);
-    }
+    @Override
+    public EntityMapper entityMapper() {
 
-    //@Bean
-    //public TransportClient transportClient() throws UnknownHostException {
-    //    return new PreBuiltXPackTransportClient(Settings.builder()
-    //            .put("cluster.name", "my-application")
-    //            .put("xpack.security.user", "elastic:cdzg@123")
-    //            .build())
-    //            .addTransportAddress(new TransportAddress(new InetSocketAddress("101.201.49.9", 9301)));
-    //}
+        ElasticsearchEntityMapper entityMapper = new ElasticsearchEntityMapper(elasticsearchMappingContext(),
+                new DefaultConversionService());
+        entityMapper.setConversions(elasticsearchCustomConversions());
+        return entityMapper;
+    }
 
     // Direction: ES -> Java
     @ReadingConverter

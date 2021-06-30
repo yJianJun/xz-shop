@@ -3,7 +3,7 @@ package com.cdzg.xzshop.vo.shoppingcart.request;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import com.framework.utils.validate.constraint.Range;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

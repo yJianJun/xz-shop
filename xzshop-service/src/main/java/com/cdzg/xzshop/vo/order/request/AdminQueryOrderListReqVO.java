@@ -2,10 +2,10 @@ package com.cdzg.xzshop.vo.order.request;
 
 import com.cdzg.xzshop.vo.common.BasePageRequest;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.framework.utils.validate.constraint.Range;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;

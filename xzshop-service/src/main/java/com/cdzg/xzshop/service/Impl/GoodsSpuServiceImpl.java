@@ -56,6 +56,9 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     private GoodsSpuMapper goodsSpuMapper;
 
     @Resource
+    ElasticsearchTemplate template;
+
+    @Resource
     private SearchHistoryMapper historyMapper;
 
     @Resource
