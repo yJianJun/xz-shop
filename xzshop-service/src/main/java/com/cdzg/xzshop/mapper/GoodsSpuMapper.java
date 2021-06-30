@@ -62,4 +62,7 @@ public interface GoodsSpuMapper extends BaseMapper<GoodsSpu> {
      */
     int batchUpdateGoodsStock(@Param("goodsList") List<CommitOrderGoodsReqVO> commitGoodsList);
 
+    List<GoodsSpu> findByStatusTrueAndIsDeleteFalseAndAdWordContainingOrGoodsNameContainingOrGoodsName(@Param("keyWords") List<String> keyWords);
+
+
 }

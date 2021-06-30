@@ -2,6 +2,7 @@ package com.cdzg.xzshop.service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.domain.GoodsSpu;
 
 import java.util.List;
@@ -130,7 +131,6 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
         goodsSpu.setShopId(shopInfo.getId());
         goodsSpu.setGmtCreate(LocalDateTime.now());
         goodsSpuMapper.insert(goodsSpu);
-        goodsSpuRepository.save(goodsSpu);
     }
 
     @Override
@@ -147,13 +147,6 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateStatusAndGmtPutOnTheShelfByIdIn(Boolean updatedStatus, LocalDateTime updatedGmtPutOnTheShelf, Collection<Long> idCollection) {
-        Iterable<GoodsSpu> goodsSpus = goodsSpuRepository.findAllById(idCollection);
-        for (Iterator<GoodsSpu> iter = goodsSpus.iterator(); iter.hasNext();) {
-            GoodsSpu spu = (GoodsSpu)iter.next();
-            spu.setStatus(updatedStatus);
-            spu.setGmtPutOnTheShelf(updatedGmtPutOnTheShelf);
-            goodsSpuRepository.save(spu);
-        }
         return goodsSpuMapper.updateStatusAndGmtPutOnTheShelfByIdIn(updatedStatus, updatedGmtPutOnTheShelf, idCollection);
     }
 
@@ -168,7 +161,6 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
             BeanUtils.copyProperties(vo, goodsSpu, "spuNo");
             goodsSpuMapper.insertOrUpdate(goodsSpu);
-            goodsSpuRepository.save(goodsSpu);
         } else {
             throw new BaseException(ResultCode.DATA_ERROR);
         }
@@ -214,7 +206,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
         } else {
             PageHelper.startPage(page, pageSize);
-            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByGmtPutOnTheShelf(paymentMethod,sort)));
+            return PageUtil.transform(new PageInfo(goodsSpuMapper.findByPaymentMethodOrderByGmtPutOnTheShelf(paymentMethod, sort)));
         }
     }
 
@@ -269,9 +261,21 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
         String keyWord = vo.getKeyWord();
         PageRequest pageRequest = PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize());
-        Page goodsSpus = goodsSpuRepository.search(keyWord, pageRequest);
+        PageResultVO<GoodsSpu> page;
 
-        if (!CollectionUtils.isEmpty(goodsSpus.getContent())) {
+        keyWord = keyWord.trim();
+
+        if (StringUtils.isNotBlank(keyWord)) {
+
+            String[] split = keyWord.split("\\s+");
+            List<String> keyWords = new ArrayList<String>(Arrays.asList(split));
+            page = searchWithPage(vo.getCurrentPage(),vo.getPageSize(),keyWords);
+
+        } else {
+            return new PageResultVO<GoodsSpu>();
+        }
+
+        if (!CollectionUtils.isEmpty(page.getData())) {
             if (StringUtils.isNotBlank(keyWord)) {
 
                 SearchHistory history = historyMapper.findOneByKeyWordAndUserId(keyWord, Long.parseLong(customerId));
@@ -288,17 +292,7 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
                 historyMapper.insertOrUpdate(history);
             }
         }
-        return PageUtil.transform(goodsSpus);
-
-        //String keyWord = vo.getKeyWord();
-        //NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withFilter(QueryBuilders.boolQuery().filter(
-        //        QueryBuilders.boolQuery()
-        //                .should(QueryBuilders.matchQuery("ad_word", keyWord))
-        //                .should(QueryBuilders.matchQuery("goods_name", keyWord))
-        //                .should(QueryBuilders.termQuery("goods_name.keyword", keyWord))
-        //)).withPageable(PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize())).build();
-        //AggregatedPage goodsSpus = template.queryForPage(searchQuery, GoodsSpu.class);
-        //return PageUtil.transform(goodsSpus);
+        return page;
     }
 
     @Override
@@ -411,25 +405,30 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
 
     }
 
-	@Override
-	public GoodsSpu findOneBySpuNo(Long spuNo){
-		 return goodsSpuMapper.findOneBySpuNo(spuNo);
-	}
+    @Override
+    public GoodsSpu findOneBySpuNo(Long spuNo) {
+        return goodsSpuMapper.findOneBySpuNo(spuNo);
+    }
 
-	@Override
-	public List<GoodsSpu> findByPaymentMethodOrderByPrice(PaymentType paymentMethod,Boolean sort){
-		 return goodsSpuMapper.findByPaymentMethodOrderByPrice(paymentMethod,sort);
-	}
+    @Override
+    public List<GoodsSpu> findByPaymentMethodOrderByPrice(PaymentType paymentMethod, Boolean sort) {
+        return goodsSpuMapper.findByPaymentMethodOrderByPrice(paymentMethod, sort);
+    }
 
-	@Override
-	public List<GoodsSpu> findBySpuNoIn(Collection<Long> spuNoCollection){
-		 return goodsSpuMapper.findBySpuNoIn(spuNoCollection);
-	}
+    @Override
+    public List<GoodsSpu> findBySpuNoIn(Collection<Long> spuNoCollection) {
+        return goodsSpuMapper.findBySpuNoIn(spuNoCollection);
+    }
 
-	@Override
+    @Override
     public PageResultVO<GoodsSpu> findBySpuNoInwithPage(int page, int pageSize, Collection<Long> spuNoCollection) {
         PageHelper.startPage(page, pageSize);
         return PageUtil.transform(new PageInfo(goodsSpuMapper.findBySpuNoIn(spuNoCollection)));
+    }
+
+    public PageResultVO<GoodsSpu> searchWithPage(int page, int pageSize, List<String> keyWords) {
+        PageHelper.startPage(page, pageSize);
+        return PageUtil.transform(new PageInfo(goodsSpuMapper.findByStatusTrueAndIsDeleteFalseAndAdWordContainingOrGoodsNameContainingOrGoodsName(keyWords)));
     }
 }
 

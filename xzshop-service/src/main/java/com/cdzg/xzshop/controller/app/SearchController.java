@@ -69,7 +69,7 @@ public class SearchController {
     public ApiResponse deleteSearchHistory() {
 
         String customerId = LoginSessionUtils.getAppUser().getCustomerId();
-       // searchHistoryService.deleteByKeyWordAndUserId(keyWord,Long.parseLong(customerId));
+        // searchHistoryService.deleteByKeyWordAndUserId(keyWord,Long.parseLong(customerId));
         searchHistoryService.deleteByUserId(Long.parseLong(customerId));
         return CommonResult.buildSuccessResponse();
     }
