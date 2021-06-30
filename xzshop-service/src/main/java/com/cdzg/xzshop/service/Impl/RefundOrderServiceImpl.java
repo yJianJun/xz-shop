@@ -709,10 +709,18 @@ public class RefundOrderServiceImpl extends ServiceImpl<RefundOrderMapper, Refun
         orderItemService.update(updateWrapper);
         // 退货完成修改订单状态为交易关闭
         if (status.equals(2) || status.equals(4)) {
-            Order order = new Order();
-            order.setId(refundOrder.getOrderId());
-            order.setOrderStatus(5);
-            orderService.updateById(order);
+            boolean flag = true;
+            if (refundOrder.getRefundType().equals(RefundTypeEnum.RETURN.getCode())) {
+                List<OrderItem> orderItems = orderItemService.getByOrderId(refundOrder.getOrderId());
+                long count = orderItems.stream().filter(o -> o.getStatus().equals(4)).count();
+                flag = count == orderItems.size();
+            }
+            if (flag) {
+                Order order = new Order();
+                order.setId(refundOrder.getOrderId());
+                order.setOrderStatus(5);
+                orderService.updateById(order);
+            }
         }
     }
 
