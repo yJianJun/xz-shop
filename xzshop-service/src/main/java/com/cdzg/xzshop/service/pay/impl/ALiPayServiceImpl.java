@@ -18,7 +18,7 @@ import com.cdzg.xzshop.to.app.QueryOrderTo;
 import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.utils.pay.PayClientUtils;
 import com.cdzg.xzshop.config.pay.AlipayConfig;
-import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.cdzg.xzshop.enums.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;

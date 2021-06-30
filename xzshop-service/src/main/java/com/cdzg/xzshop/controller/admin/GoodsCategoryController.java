@@ -1,23 +1,16 @@
 package com.cdzg.xzshop.controller.admin;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.common.CommonResult;
 import com.cdzg.xzshop.common.ResultCode;
-import com.cdzg.xzshop.config.annotations.api.IgnoreAuth;
 import com.cdzg.xzshop.config.annotations.api.WebApi;
-import com.cdzg.xzshop.constant.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsCategory;
-import com.cdzg.xzshop.domain.ReceivePaymentInfo;
-import com.cdzg.xzshop.domain.ShopInfo;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;
 import com.cdzg.xzshop.service.GoodsCategoryService;
 import com.cdzg.xzshop.to.admin.GoodsCategoryTo;
-import com.cdzg.xzshop.to.admin.ShopInfoDetailTo;
 import com.cdzg.xzshop.vo.admin.*;
 import com.cdzg.xzshop.vo.common.PageResultVO;
 import com.framework.utils.core.api.ApiResponse;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;

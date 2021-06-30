@@ -1,12 +1,11 @@
 package com.cdzg.xzshop.service.pay.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.cdzg.xzshop.domain.OrderPayHistory;
 import com.cdzg.xzshop.mapper.OrderPayHistoryMapper;
 import com.cdzg.xzshop.to.app.QueryOrderTo;
 import com.cdzg.xzshop.to.app.RefundTo;
 import com.cdzg.xzshop.utils.pay.PayClientUtils;
-import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.cdzg.xzshop.enums.ReceivePaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.domain.Order;
 import com.cdzg.xzshop.domain.ReceivePaymentInfo;
@@ -26,7 +25,6 @@ import com.github.binarywang.wxpay.constant.WxPayConstants;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonObject;
 import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -1,7 +1,7 @@
 package com.cdzg.xzshop.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cdzg.xzshop.constant.ReceivePaymentType;import com.cdzg.xzshop.domain.ReceivePaymentInfo;
+import com.cdzg.xzshop.enums.ReceivePaymentType;import com.cdzg.xzshop.domain.ReceivePaymentInfo;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

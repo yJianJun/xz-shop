@@ -1,12 +1,10 @@
 package com.cdzg.xzshop;
 
 import com.cdzg.xzshop.componet.SnowflakeIdWorker;
-import com.cdzg.xzshop.constant.PaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 import com.cdzg.xzshop.repository.GoodsSpuRepository;
 import com.cdzg.xzshop.service.GoodsSpuService;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -14,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j

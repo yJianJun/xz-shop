@@ -1,7 +1,7 @@
 package com.cdzg.xzshop.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cdzg.xzshop.constant.PaymentType;
+import com.cdzg.xzshop.enums.PaymentType;
 import com.cdzg.xzshop.domain.GoodsSpu;
 
 import java.time.LocalDateTime;

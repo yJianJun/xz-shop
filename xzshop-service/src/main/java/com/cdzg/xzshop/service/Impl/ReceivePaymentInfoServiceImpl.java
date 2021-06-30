@@ -1,5 +1,5 @@
 package com.cdzg.xzshop.service.Impl;
-import com.cdzg.xzshop.constant.ReceivePaymentType;
+import com.cdzg.xzshop.enums.ReceivePaymentType;
 
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;

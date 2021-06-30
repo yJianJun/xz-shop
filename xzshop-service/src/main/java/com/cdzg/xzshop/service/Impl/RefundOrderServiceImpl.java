@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cdzg.customer.vo.response.CustomerLoginResponse;
 import com.cdzg.universal.vo.response.user.UserLoginResponse;
 import com.cdzg.xzshop.componet.pay.PayDecoration;
-import com.cdzg.xzshop.constant.PaymentMethod;
+import com.cdzg.xzshop.enums.PaymentMethod;
 import com.cdzg.xzshop.domain.*;
 import com.cdzg.xzshop.enums.RefundTypeEnum;
 import com.cdzg.xzshop.filter.auth.LoginSessionUtils;

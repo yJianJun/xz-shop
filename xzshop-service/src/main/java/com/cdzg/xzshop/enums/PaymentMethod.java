@@ -1,23 +1,24 @@
-package com.cdzg.xzshop.constant;
+package com.cdzg.xzshop.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.cdzg.xzshop.enums.PaymentType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum PaymentType implements IEnum<Integer> {
+public enum PaymentMethod implements IEnum<Integer>,BaseEnum {
 
     /**
-     * 1:积分换购 2:线上支付
+     * 1:支付宝支付 2:微信支付
      */
-    Integral(1),
-    Wallet(2);
+    Alipay(1),
+    Wechat(2);
 
     @EnumValue
     @JsonValue
     private int code;
 
-    PaymentType(int code) {
+    PaymentMethod(int code) {
         this.code = code;
     }
 
@@ -27,7 +28,7 @@ public enum PaymentType implements IEnum<Integer> {
 
         int code = Integer.parseInt(text);
         for (PaymentType value : PaymentType.values()) {
-            if (value.code == code) {
+            if (value.getValue() == code) {
 
                 return value;
             }
@@ -50,4 +51,3 @@ public enum PaymentType implements IEnum<Integer> {
         return code;
     }
 }
-
