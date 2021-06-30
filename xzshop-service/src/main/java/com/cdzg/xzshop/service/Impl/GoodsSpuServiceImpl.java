@@ -17,7 +17,6 @@ import com.cdzg.xzshop.mapper.GoodsSpuMapper;
 import com.cdzg.xzshop.mapper.GoodsSpuSalesMapper;
 import com.cdzg.xzshop.mapper.SearchHistoryMapper;
 import com.cdzg.xzshop.mapper.UserGoodsFavoritesMapper;
-import com.cdzg.xzshop.repository.GoodsSpuRepository;
 import com.cdzg.xzshop.service.GoodsSpuService;
 import com.cdzg.xzshop.service.ShopInfoService;
 import com.cdzg.xzshop.to.admin.GoodsSpuTo;
@@ -56,16 +55,10 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     private GoodsSpuMapper goodsSpuMapper;
 
     @Resource
-    ElasticsearchTemplate template;
-
-    @Resource
     private SearchHistoryMapper historyMapper;
 
     @Resource
     private UserGoodsFavoritesMapper favoritesMapper;
-
-    @Resource
-    private GoodsSpuRepository goodsSpuRepository;
 
     @Resource
     private GoodsSpuSalesMapper salesMapper;

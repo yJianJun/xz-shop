@@ -2,7 +2,6 @@ package com.cdzg.xzshop.componet;
 
 import com.beust.jcommander.internal.Maps;
 import com.cdzg.xzshop.enums.BaseEnum;
-import io.netty.util.internal.ObjectUtil;
 import org.springframework.core.convert.converter.Converter;
 
 import java.util.Map;
