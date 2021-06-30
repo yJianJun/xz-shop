@@ -260,7 +260,6 @@ public class GoodsSpuServiceImpl extends ServiceImpl<GoodsSpuMapper, GoodsSpu> i
     public PageResultVO<GoodsSpu> search(GoodsSpuSearchPageVo vo, String customerId) {
 
         String keyWord = vo.getKeyWord();
-        PageRequest pageRequest = PageRequest.of(vo.getCurrentPage() - 1, vo.getPageSize());
         PageResultVO<GoodsSpu> page;
 
         keyWord = keyWord.trim();
