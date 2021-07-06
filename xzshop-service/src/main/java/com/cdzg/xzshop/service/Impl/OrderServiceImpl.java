@@ -109,7 +109,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public void rollbackCommitOrder(Long id) {
         baseMapper.deleteById(id);
         HashMap<String, Object> map = new HashMap<>(1);
-        map.put("orderId", id);
+        map.put("order_id", id);
         orderItemMapper.deleteByMap(map);
     }
 
