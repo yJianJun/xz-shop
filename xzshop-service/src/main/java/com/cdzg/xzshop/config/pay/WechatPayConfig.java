@@ -4,9 +4,11 @@ package com.cdzg.xzshop.config.pay;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 @ConfigurationProperties(prefix = "wxpay")
 @Slf4j
+@Configuration
 public class WechatPayConfig {
 
     /**
@@ -19,7 +21,7 @@ public class WechatPayConfig {
      */
   //  private static String mchId = "1495430712";
 
-    private static String notifyUrl = "https://47.105.37.49/xz-shop/app/pay/wechat/notify";
+    private static String notifyUrl;
 
    // private static String keyPath = "classpath:pay/apiclient_cert.p12";
 
